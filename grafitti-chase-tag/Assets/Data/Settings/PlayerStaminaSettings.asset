@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7c0886ab6ffabb469d07e3f9f1f442e, type: 3}
   m_Name: PlayerStaminaSettings
   m_EditorClassIdentifier: Assembly-CSharp::StaminaSettings
-  maxStamina: 100
+  maxStamina: 200
   regenerationRate: 20
   regenerationDelay: 0.5

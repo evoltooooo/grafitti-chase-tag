@@ -60,7 +60,7 @@ MonoBehaviour:
     verticalLaunchSpeed: 5
   poleSpinSettings:
     staminaPerRevolution: 10
-    angularSpeed: 2.5
+    angularSpeed: 7
     rotationSpeed: 10
   useTargetMatching: 0
   matchBodyPart: 5
