@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourActionData
   actionType: 7
   actionState: 8
-  animationStateName: 
-  motionType: 0
+  animationStateName: Armature|PoleSpin_Start
+  motionType: 3
   holdToExecute: 1
   duration: 1
   cooldown: 0
@@ -60,12 +60,12 @@ MonoBehaviour:
     verticalLaunchSpeed: 5
   poleSpinSettings:
     staminaPerRevolution: 10
-    angularSpeed: 7
-    rotationSpeed: 10
-  useTargetMatching: 0
-  matchBodyPart: 5
-  matchStartTime: 0.2
-  matchEndTime: 0.5
+    angularSpeed: 3
+    rotationSpeed: 5
+  useTargetMatching: 1
+  matchBodyPart: 0
+  matchStartTime: 0.05
+  matchEndTime: 0.2
   targetPositionOffset: {x: 0, y: 0, z: 0}
   matchRotation: 1
   motionProfile: {fileID: 0}

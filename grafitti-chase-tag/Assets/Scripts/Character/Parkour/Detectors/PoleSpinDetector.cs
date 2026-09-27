@@ -57,7 +57,11 @@ public class PoleSpinDetector : MonoBehaviour
             poleHit.collider.bounds.center;
 
         Vector3 interactionPosition =
-            poleHit.point;
+            new Vector3(
+                poleHit.point.x,
+                transform.position.y + 1f,
+                poleHit.point.z
+            );
 
         Vector3 playerToPole =
             environmentDetector.GetHorizontalDirection(

@@ -25,7 +25,7 @@ MonoBehaviour:
   airControl: 0.5
   sprintStaminaPerSecond: 5
   jumpStaminaCost: 30
-  wallReboundMinSpeed: 6
+  wallReboundMinSpeed: 10
   wallReboundSpeed: 10
   wallReboundCooldown: 0.2
   wallReboundMaxApproachAngle: 60
