@@ -9,10 +9,11 @@ public class CharacterTargetMatcher : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool logMatching = true;
 
-    private bool hasStartedMatching;
-
     private CharacterActionType lastActionType =
         CharacterActionType.None;
+
+    private int currentPhaseIndex = -1;
+    private int lastQueuedLoop = -1;
 
     private void Awake()
     {
@@ -37,19 +38,21 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (!actionRuntime.IsExecuting)
         {
-            hasStartedMatching = false;
-            lastActionType = CharacterActionType.None;
+            ResetMatcher();
             return;
         }
 
-        // New action started.
+        // -------------------------------------------------
+        // NEW ACTION
+        // -------------------------------------------------
+
         if (lastActionType !=
             actionRuntime.CurrentActionType)
         {
             lastActionType =
                 actionRuntime.CurrentActionType;
 
-            hasStartedMatching = false;
+            currentPhaseIndex = -1;
 
             if (logMatching)
             {
@@ -63,11 +66,9 @@ public class CharacterTargetMatcher : MonoBehaviour
         }
 
         // -------------------------------------------------
-        // MOTION TYPE
+        // PARKOUR CHECK
         // -------------------------------------------------
 
-        // Only parkour actions can use the current
-        // target-matching implementation.
         if (actionRuntime.CurrentParkourActionType ==
             ParkourActionType.None)
         {
@@ -93,41 +94,21 @@ public class CharacterTargetMatcher : MonoBehaviour
             return;
         }
 
-        if (actionRuntime.CurrentParkourActionType ==
-            ParkourActionType.None)
-        {
-            return;
-        }
-
-        if (actionRuntime.CurrentMotionType != ActionMotionType.TargetMatch &&
-            actionRuntime.CurrentMotionType != ActionMotionType.Hybrid)
-        {
-            return;
-        }
-
-        if (hasStartedMatching)
-            return;
-
         ParkourActionData parkourActionData =
             actionRuntime.CurrentParkourActionData;
 
         if (parkourActionData == null)
         {
             Debug.LogWarning(
-                $"TARGET MATCH FAILED | " +
-                $"Runtime has no ParkourActionData for " +
-                $"{actionRuntime.CurrentParkourActionType}."
+                "TARGET MATCH FAILED | " +
+                "Runtime has no ParkourActionData."
             );
+
             return;
         }
 
         if (!parkourActionData.useTargetMatching)
         {
-            Debug.Log(
-                $"TARGET MATCH FAILED | " +
-                $"Target Matching disabled for " +
-                $"{parkourActionData.actionType}"
-            );
             return;
         }
 
@@ -137,59 +118,79 @@ public class CharacterTargetMatcher : MonoBehaviour
         if (!target.IsValid)
         {
             Debug.LogWarning(
-                $"TARGET MATCH FAILED | " +
-                $"ParkourTarget is invalid."
+                "TARGET MATCH FAILED | " +
+                "ParkourTarget is invalid."
             );
+
             return;
         }
 
-        // -------------------------------------------------
-        // ANIMATION STATE
-        // -------------------------------------------------
+        TargetMatchPhase[] phases =
+            parkourActionData.TargetMatchPhases;
 
-        if (string.IsNullOrWhiteSpace(
-                parkourActionData.animationStateName))
+        if (phases == null ||
+            phases.Length == 0)
         {
             Debug.LogWarning(
                 $"TARGET MATCH FAILED | " +
-                $"Animation state name is empty."
+                $"No Target Match Phases configured for " +
+                $"{parkourActionData.actionType}."
             );
+
             return;
         }
 
-        if (animator.IsInTransition(0))
+        // -------------------------------------------------
+        // UNITY CAN ONLY HAVE ONE MATCH ACTIVE
+        // -------------------------------------------------
+
+        if (animator.isMatchingTarget)
+        {
             return;
+        }
+
+        // -------------------------------------------------
+        // FIND CURRENT ANIMATION PHASE
+        // -------------------------------------------------
+
+        if (animator.IsInTransition(0))
+        {
+            return;
+        }
 
         AnimatorStateInfo stateInfo =
             animator.GetCurrentAnimatorStateInfo(0);
 
-        Debug.Log(
-            $"VAULT STATE DEBUG | " +
-            $"Configured={parkourActionData.animationStateName} | " +
-            $"IsName={stateInfo.IsName(parkourActionData.animationStateName)} | " +
-            $"ShortHash={stateInfo.shortNameHash} | " +
-            $"FullHash={stateInfo.fullPathHash}"
-        );
+        int phaseIndex =
+            FindMatchingPhase(phases, stateInfo);
 
-        bool correctState =
-            stateInfo.IsName(
-                parkourActionData.animationStateName
-            );
-
-        if (!correctState)
+        if (phaseIndex == -1)
         {
+            return;
+        }
+
+        TargetMatchPhase phase =
+            phases[phaseIndex];
+
+        // -------------------------------------------------
+        // STATE CHANGED
+        // -------------------------------------------------
+
+        if (currentPhaseIndex != phaseIndex)
+        {
+            currentPhaseIndex = phaseIndex;
+
+            // Allow this phase to queue its match once.
+            lastQueuedLoop = -1;
+
             if (logMatching)
             {
                 Debug.Log(
-                    $"TARGET MATCH STATE WAIT | " +
-                    $"Action={actionRuntime.CurrentActionType} | " +
-                    $"Expected={parkourActionData.animationStateName} | " +
-                    $"ShortHash={stateInfo.shortNameHash} | " +
-                    $"FullHash={stateInfo.fullPathHash}"
+                    $"TARGET MATCH PHASE ENTERED | " +
+                    $"Index={phaseIndex} | " +
+                    $"State={phase.animationStateName}"
                 );
             }
-
-            return;
         }
 
         // -------------------------------------------------
@@ -199,84 +200,138 @@ public class CharacterTargetMatcher : MonoBehaviour
         float normalizedTime =
             stateInfo.normalizedTime % 1f;
 
-        Debug.Log(
-            $"VAULT MATCH TIME | " +
-            $"Normalized={normalizedTime:0.000} | " +
-            $"Start={parkourActionData.matchStartTime:0.000} | " +
-            $"End={parkourActionData.matchEndTime:0.000}"
-        );
-
         float matchStart =
-            parkourActionData.matchStartTime;
+            phase.matchStartTime;
 
         float matchEnd =
-            parkourActionData.matchEndTime;
+            phase.matchEndTime;
 
-        if (normalizedTime < matchStart ||
-            normalizedTime > matchEnd)
+        if (normalizedTime < matchStart)
         {
             return;
         }
 
-        if (animator.isMatchingTarget)
+        if (normalizedTime > matchEnd)
         {
-            hasStartedMatching = true;
+            return;
+        }
+
+        // Non-repeating phases may only queue one match.
+        if (!phase.repeatWhileActionActive &&
+            lastQueuedLoop == phaseIndex)
+        {
             return;
         }
 
         // -------------------------------------------------
-        // TARGET
+        // TARGET POSITION
         // -------------------------------------------------
 
         Vector3 targetPosition =
             target.InteractionPosition +
-            parkourActionData.targetPositionOffset;
+            phase.targetPositionOffset;
 
         Quaternion targetRotation =
-            parkourActionData.matchRotation
+            phase.matchRotation
                 ? target.TargetRotation
                 : transform.rotation;
 
         MatchTargetWeightMask weightMask =
             new MatchTargetWeightMask(
                 Vector3.one,
-                parkourActionData.matchRotation
+                phase.matchRotation
                     ? 1f
                     : 0f
             );
 
         // -------------------------------------------------
-        // START TARGET MATCH
+        // START MATCH
         // -------------------------------------------------
+
+        float targetStartTime = matchStart;
+        float targetEndTime = matchEnd;
+
+        if (phase.repeatWhileActionActive)
+        {
+            int currentLoop =
+                Mathf.FloorToInt(normalizedTime);
+
+            targetStartTime =
+                currentLoop + matchStart;
+
+            targetEndTime =
+                currentLoop + matchEnd;
+
+            // If we have already passed this loop's
+            // matching window, schedule the NEXT loop.
+            if (normalizedTime > targetEndTime)
+            {
+                currentLoop++;
+
+                targetStartTime =
+                    currentLoop + matchStart;
+
+                targetEndTime =
+                    currentLoop + matchEnd;
+            }
+        }
 
         animator.MatchTarget(
             targetPosition,
             targetRotation,
-            parkourActionData.matchBodyPart,
+            phase.matchBodyPart,
             weightMask,
-            matchStart,
-            matchEnd
+            targetStartTime,
+            targetEndTime
         );
+
+        if (!phase.repeatWhileActionActive)
+        {
+            lastQueuedLoop = phaseIndex;
+        }
 
         Debug.Log(
-            $"VAULT MATCH POSITION DEBUG | " +
-            $"Player={transform.position} | " +
-            $"Target={targetPosition} | " +
-            $"Distance={Vector3.Distance(transform.position, targetPosition):0.00}"
+            $"TARGET MATCH STARTED | " +
+            $"Phase={phaseIndex} | " +
+            $"State={phase.animationStateName} | " +
+            $"Normalized={normalizedTime:0.000} | " +
+            $"Window={matchStart:0.000}->{matchEnd:0.000} | " +
+            $"Target={targetPosition}"
         );
+    }
 
-        hasStartedMatching = true;
+    private int FindMatchingPhase(
+        TargetMatchPhase[] phases,
+        AnimatorStateInfo stateInfo)
+    {
+        for (int i = 0; i < phases.Length; i++)
+        {
+            TargetMatchPhase phase = phases[i];
 
-        Debug.Log(
-            $"TARGET MATCHING STARTED\n" +
-            $"Action: {actionRuntime.CurrentActionType}\n" +
-            $"Parkour: {actionRuntime.CurrentParkourActionType}\n" +
-            $"Animation: {parkourActionData.animationStateName}\n" +
-            $"Body Part: {parkourActionData.matchBodyPart}\n" +
-            $"Normalized Time: {normalizedTime:0.00}\n" +
-            $"Window: {matchStart:0.00} -> {matchEnd:0.00}\n" +
-            $"Target: {targetPosition}",
-            this
-        );
+            if (phase == null)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(
+                phase.animationStateName))
+            {
+                continue;
+            }
+
+            if (stateInfo.IsName(
+                phase.animationStateName))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private void ResetMatcher()
+    {
+        lastActionType =
+            CharacterActionType.None;
+
+        currentPhaseIndex = -1;
     }
 }

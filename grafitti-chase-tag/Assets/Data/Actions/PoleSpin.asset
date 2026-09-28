@@ -50,7 +50,7 @@ MonoBehaviour:
   parkourActionType: 4
   landingForwardOffset: 0.5
   landingDistance: 1.5
-  maxTriggerDistance: 1.5
+  maxTriggerDistance: 4
   detectionRadius: 0.3
   minObstacleHeight: 5
   maxObstacleHeight: 10
@@ -63,9 +63,22 @@ MonoBehaviour:
     angularSpeed: 3
     rotationSpeed: 5
   useTargetMatching: 1
-  matchBodyPart: 0
+  matchBodyPart: 5
   matchStartTime: 0.05
-  matchEndTime: 0.2
+  matchEndTime: 0.5
   targetPositionOffset: {x: 0, y: 0, z: 0}
-  matchRotation: 1
+  matchRotation: 0
+  targetMatchPhases:
+  - animationStateName: Armature|PoleSpin_Start
+    matchStartTime: 0.05
+    matchEndTime: 0.3
+    repeatWhileActionActive: 0
+  - animationStateName: Armature|PoleSpin_Loop
+    matchStartTime: 0.05
+    matchEndTime: 0.5
+    repeatWhileActionActive: 1
+  - animationStateName: Armature|PoleSpin_End
+    matchStartTime: 0.05
+    matchEndTime: 0.5
+    repeatWhileActionActive: 0
   motionProfile: {fileID: 0}
