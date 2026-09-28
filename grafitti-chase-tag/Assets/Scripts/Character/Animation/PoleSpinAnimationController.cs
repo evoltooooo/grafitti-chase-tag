@@ -5,19 +5,24 @@ public class PoleSpinAnimationController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterActionRuntime actionRuntime;
+    [SerializeField] private CharacterMotor characterMotor;
 
     [Header("Pole Spin Animation")]
     [Range(0f, 1f)]
-    [SerializeField] private float holdStart = 0.23f;
+    [SerializeField] private float startEnd = 0.05f;
 
     [Range(0f, 1f)]
-    [SerializeField] private float holdEnd = 0.518f;
+    [SerializeField] private float holdEnd = 0.23f;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float releaseStart = 0.518f;
 
     [Header("Animator State")]
     [SerializeField] private string poleSpinStateName = "PoleSpin";
 
     private bool controllingPoleSpin;
-    private int poleSpinStateHash;
+    
+    private bool releaseStarted;
 
     private void Awake()
     {
@@ -33,8 +38,10 @@ public class PoleSpinAnimationController : MonoBehaviour
                 GetComponent<CharacterActionRuntime>();
         }
 
-        poleSpinStateHash =
-            Animator.StringToHash(poleSpinStateName);
+        if (characterMotor == null)
+        {
+            characterMotor = GetComponent<CharacterMotor>();
+        }
     }
 
     private void Update()
@@ -52,6 +59,10 @@ public class PoleSpinAnimationController : MonoBehaviour
         if (!IsPoleSpinExecuting())
         {
             controllingPoleSpin = false;
+
+            if (animator.speed == 0f)
+                animator.speed = 1f;
+
             return;
         }
 
@@ -68,6 +79,49 @@ public class PoleSpinAnimationController : MonoBehaviour
         }
 
         // -------------------------------------------------
+        // RELEASE
+        // -------------------------------------------------
+
+        if (actionRuntime.IsReleasing)
+        {
+            if (!releaseStarted)
+            {
+                releaseStarted = true;
+
+                animator.speed = 1f;
+
+                animator.Play(
+                    poleSpinStateName,
+                    0,
+                    releaseStart
+                );
+
+                Debug.Log(
+                    $"POLE SPIN RELEASE START | Normalized={releaseStart:0.000}",
+                    this
+                );
+            }
+
+            AnimatorStateInfo releaseState =
+                animator.GetCurrentAnimatorStateInfo(0);
+
+            if (releaseState.normalizedTime >= 1f)
+            {
+                if (characterMotor != null)
+                {
+                    characterMotor.StopHorizontalMovement();
+                }
+
+                actionRuntime.CompleteAction();
+
+                controllingPoleSpin = false;
+                releaseStarted = false;
+            }
+
+            return;
+        }
+
+        // -------------------------------------------------
         // FIRST FRAME OF POLE SPIN
         // -------------------------------------------------
 
@@ -77,7 +131,7 @@ public class PoleSpinAnimationController : MonoBehaviour
 
             Debug.Log(
                 $"POLE SPIN ANIMATION START | " +
-                $"Playing start section 0.000->{holdStart:0.000}",
+                $"Playing start section 0.000->{startEnd:0.000}",
                 this
             );
 
@@ -94,10 +148,14 @@ public class PoleSpinAnimationController : MonoBehaviour
         if (normalizedTime >= holdEnd)
         {
             animator.Play(
+                poleSpinStateName,
                 0,
-                0,
-                holdStart
+                holdEnd
             );
+
+            animator.speed = 0f;
+
+            return;
         }
     }
 

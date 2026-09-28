@@ -42,6 +42,13 @@ public class ParkourTrajectoryMotionController : MonoBehaviour
             return;
         }
 
+        if (actionRuntime.CurrentParkourActionType ==
+            ParkourActionType.PoleSpin)
+        {
+            ResetMotion();
+            return;
+        }
+
         if (actionRuntime.CurrentMotionType !=
                 ActionMotionType.ScriptMotion &&
             actionRuntime.CurrentMotionType !=

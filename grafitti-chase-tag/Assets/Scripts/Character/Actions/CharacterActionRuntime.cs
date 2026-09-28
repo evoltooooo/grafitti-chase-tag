@@ -6,6 +6,7 @@ public class CharacterActionRuntime : MonoBehaviour
     public Vector2 SteeringInput { get; private set; }
     public bool IsHoldControlled { get; private set; }
     public ActionMotionType CurrentMotionType { get; private set; }
+    public bool IsReleasing { get; private set; }
 
     public event System.Action ActionCompleted;
 
@@ -98,6 +99,8 @@ public class CharacterActionRuntime : MonoBehaviour
 
         IsExecuting = true;
 
+        IsReleasing = false;
+
         CurrentActionData = actionData;
 
         IsHoldControlled = actionData.holdToExecute;
@@ -139,6 +142,8 @@ public class CharacterActionRuntime : MonoBehaviour
     {
         IsExecuting = true;
 
+        IsReleasing = false;
+
         CurrentActionData = actionData;
 
         IsHoldControlled = actionData.holdToExecute;
@@ -163,6 +168,26 @@ public class CharacterActionRuntime : MonoBehaviour
 
         ActionDuration =
             actionData.duration;
+    }
+
+    public void BeginRelease()
+    {
+        if (!IsExecuting)
+            return;
+
+        if (!IsHoldControlled)
+            return;
+
+        if (IsReleasing)
+            return;
+
+        IsReleasing = true;
+
+        Debug.Log(
+            $"[{name}] Action Release Started: " +
+            $"{CurrentActionType}",
+            this
+        );
     }
 
     public void CompleteAction()
@@ -205,6 +230,8 @@ public class CharacterActionRuntime : MonoBehaviour
     private void ResetRuntime()
     {
         IsHoldControlled = false;
+
+        IsReleasing = false;
 
         CurrentActionData = null;
 

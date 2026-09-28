@@ -19,6 +19,7 @@ public class PoleSpinMotionController : MonoBehaviour
         CharacterActionType.None;
 
     private bool actionInitialized;
+    private bool waitingForTargetMatch;
 
     private void Awake()
     {
@@ -47,6 +48,12 @@ public class PoleSpinMotionController : MonoBehaviour
             return;
         }
 
+        if (actionRuntime.IsReleasing)
+        {
+            ResetMotion();
+            return;
+        }
+
         if (actionRuntime.CurrentParkourActionType !=
             ParkourActionType.PoleSpin)
         {
@@ -62,7 +69,14 @@ public class PoleSpinMotionController : MonoBehaviour
         if (animator != null &&
             animator.isMatchingTarget)
         {
+            waitingForTargetMatch = true;
             return;
+        }
+
+        if (waitingForTargetMatch)
+        {
+            waitingForTargetMatch = false;
+            ReinitializePoleSpinFromCurrentPosition();
         }
 
         if (actionInitialized)
@@ -135,15 +149,75 @@ public class PoleSpinMotionController : MonoBehaviour
         poleSpinAngularSpeed =
             actionRuntime.CurrentParkourActionData.PoleSpinSettings.angularSpeed;
 
-        actionInitialized = true;
+        waitingForTargetMatch =
+            animator != null &&
+            animator.isMatchingTarget;
+
+        actionInitialized = !waitingForTargetMatch;
 
         Debug.Log(
             $"POLE SPIN MOTION STARTED | " +
+            $"WaitingForTargetMatch={waitingForTargetMatch} | " +
             $"Pivot={poleSpinPivot} | " +
             $"Radius={poleSpinRadius:F2} | " +
             $"Angle={poleSpinAngle:F2} | " +
             $"Clockwise={poleSpinClockwise} | " +
             $"AngularSpeed={poleSpinAngularSpeed:F2}",
+            this
+        );
+    }
+
+    private void ReinitializePoleSpinFromCurrentPosition()
+    {
+        Vector3 fromPivot =
+            transform.position -
+            poleSpinPivot;
+
+        fromPivot.y = 0f;
+
+        if (fromPivot.sqrMagnitude < 0.001f)
+        {
+            actionInitialized = false;
+            return;
+        }
+
+        poleSpinRadius =
+            fromPivot.magnitude;
+
+        poleSpinAngle =
+            Mathf.Atan2(
+                fromPivot.z,
+                fromPivot.x
+            );
+
+        poleSpinHeight =
+            transform.position.y;
+
+        Vector3 radialDirection =
+            fromPivot.normalized;
+
+        Vector3 tangent =
+            Vector3.Cross(
+                Vector3.up,
+                radialDirection
+            );
+
+        float directionDot =
+            Vector3.Dot(
+                transform.forward,
+                tangent
+            );
+
+        poleSpinClockwise =
+            directionDot < 0f;
+
+        actionInitialized = true;
+
+        Debug.Log(
+            $"POLE SPIN ORBIT REINITIALIZED | " +
+            $"Position={transform.position} | " +
+            $"Radius={poleSpinRadius:F2} | " +
+            $"Angle={poleSpinAngle:F2}",
             this
         );
     }
@@ -283,5 +357,7 @@ public class PoleSpinMotionController : MonoBehaviour
 
         poleSpinClockwise =
             false;
+        
+        waitingForTargetMatch = false;
     }
 }

@@ -63,9 +63,12 @@ MonoBehaviour:
     angularSpeed: 2.5
     rotationSpeed: 10
   useTargetMatching: 1
-  matchBodyPart: 4
-  matchStartTime: 0.01
-  matchEndTime: 0.15
-  targetPositionOffset: {x: 0, y: 0, z: 0}
-  matchRotation: 0
+  targetMatchPhases:
+  - animationStateName: Armature|Vaulting
+    matchStartTime: 0.01
+    matchEndTime: 0.15
+    matchBodyPart: 4
+    matchRotation: 0
+    targetPositionOffset: {x: 0, y: 0, z: 0}
+    repeatWhileActionActive: 0
   motionProfile: {fileID: 11400000, guid: 1fde2dc9801d8a54c9585fd4e102e4be, type: 2}

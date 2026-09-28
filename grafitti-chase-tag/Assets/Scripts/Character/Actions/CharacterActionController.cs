@@ -132,7 +132,7 @@ public class CharacterActionController : MonoBehaviour
             actionRuntime.IsExecuting &&
             actionRuntime.IsHoldControlled)
         {
-            actionRuntime.CompleteAction();
+            actionRuntime.BeginRelease();
         }
     }
 

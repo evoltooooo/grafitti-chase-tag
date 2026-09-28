@@ -452,6 +452,11 @@ public class CharacterMotor : MonoBehaviour
         }
     }
 
+    public void StopHorizontalMovement()
+    {
+        horizontalVelocity = Vector3.zero;
+    }
+
     public void ApplyActionMotion(
         Vector3 deltaPosition,
         Quaternion deltaRotation)

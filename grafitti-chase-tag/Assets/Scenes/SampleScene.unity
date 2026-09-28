@@ -2482,6 +2482,7 @@ GameObject:
   - component: {fileID: 9159842513244291425}
   - component: {fileID: 5941304517251678265}
   - component: {fileID: 9159842513244291427}
+  - component: {fileID: 9159842513244291428}
   - component: {fileID: 6433910232916041603}
   - component: {fileID: 745383184105591328}
   - component: {fileID: 5404571230625050387}
@@ -2650,6 +2651,25 @@ MonoBehaviour:
   actionRuntime: {fileID: 0}
   stamina: {fileID: 0}
   animator: {fileID: 0}
+--- !u!114 &9159842513244291428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5972007808107674803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae58ac9614f6fc8458dab9ab953c7ac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoleSpinAnimationController
+  animator: {fileID: 6341617714537831924}
+  actionRuntime: {fileID: 2638782849746775603}
+  characterMotor: {fileID: 0}
+  startEnd: 0.05
+  holdEnd: 0.23
+  releaseStart: 0.518
+  poleSpinStateName: Armature|PoleSpin_Full
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
