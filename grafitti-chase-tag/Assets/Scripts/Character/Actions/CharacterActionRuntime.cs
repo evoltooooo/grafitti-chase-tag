@@ -88,7 +88,7 @@ public class CharacterActionRuntime : MonoBehaviour
         {
             CompleteAction();
         }
-}
+    }
 
     public void StartAction(
         CharacterActionData actionData)

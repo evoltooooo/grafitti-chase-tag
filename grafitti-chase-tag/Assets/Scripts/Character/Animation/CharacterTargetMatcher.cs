@@ -22,6 +22,20 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (actionRuntime == null)
             actionRuntime = GetComponent<CharacterActionRuntime>();
+
+        if (actionRuntime != null)
+            actionRuntime.ActionCompleted += OnActionCompleted;
+    }
+
+    private void OnDestroy()
+    {
+        if (actionRuntime != null)
+            actionRuntime.ActionCompleted -= OnActionCompleted;
+    }
+
+    private void OnActionCompleted()
+    {
+        ResetMatcher();
     }
 
     private void Update()
@@ -276,7 +290,7 @@ public class CharacterTargetMatcher : MonoBehaviour
             }
         }
 
-        animator.MatchTarget(
+        ApplyTargetMatch(
             targetPosition,
             targetRotation,
             phase.matchBodyPart,
@@ -297,6 +311,44 @@ public class CharacterTargetMatcher : MonoBehaviour
             $"Normalized={normalizedTime:0.000} | " +
             $"Window={matchStart:0.000}->{matchEnd:0.000} | " +
             $"Target={targetPosition}"
+        );
+    }
+
+    private void ApplyTargetMatch(
+        Vector3 targetPosition,
+        Quaternion targetRotation,
+        AvatarTarget bodyPart,
+        MatchTargetWeightMask weightMask,
+        float startTime,
+        float endTime)
+    {
+        if (animator == null)
+            return;
+
+        if (!animator.applyRootMotion)
+        {
+            if (logMatching)
+            {
+                Debug.LogWarning(
+                    "TARGET MATCH FAILED | " +
+                    "Animator.applyRootMotion is disabled.",
+                    this
+                );
+            }
+
+            return;
+        }
+
+        if (animator.isMatchingTarget)
+            return;
+
+        animator.MatchTarget(
+            targetPosition,
+            targetRotation,
+            bodyPart,
+            weightMask,
+            startTime,
+            endTime
         );
     }
 
@@ -333,5 +385,7 @@ public class CharacterTargetMatcher : MonoBehaviour
             CharacterActionType.None;
 
         currentPhaseIndex = -1;
+
+        lastQueuedLoop = -1;
     }
 }

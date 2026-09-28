@@ -151,6 +151,54 @@ public class CharacterActionController : MonoBehaviour
         interactionResolver.TryResolveInteraction();
     }
 
+    public bool RequestJump()
+    {
+        return RequestAction(
+            new CharacterActionRequest(
+                CharacterActionType.Jump
+            )
+        );
+    }
+
+    public bool RequestSlide()
+    {
+        return RequestAction(
+            new CharacterActionRequest(
+                CharacterActionType.Slide
+            )
+        );
+    }
+
+    public bool RequestTag()
+    {
+        return RequestAction(
+            new CharacterActionRequest(
+                CharacterActionType.Tag
+            )
+        );
+    }
+
+    private bool IsAirborne()
+    {
+        return characterMotor != null &&
+            !characterMotor.IsGrounded;
+    }
+
+    private bool TryAirborneJumpAction()
+    {
+        Debug.Log("JUMP INPUT → AIRBORNE → TRY TIC TAC");
+
+        if (RequestParkourAction(
+                ParkourActionType.TicTac))
+        {
+            Debug.Log("JUMP INPUT → TIC TAC");
+            return true;
+        }
+
+        Debug.Log("JUMP INPUT → NO TIC TAC");
+        return false;
+    }
+
     public bool RequestJumpInput()
     {
         Debug.Log("Jump input received.");
@@ -159,20 +207,9 @@ public class CharacterActionController : MonoBehaviour
         // AIRBORNE → TRY TIC TAC
         // =====================================================
 
-        if (!characterMotor.IsGrounded)
+        if (IsAirborne())
         {
-            Debug.Log("JUMP INPUT → AIRBORNE → TRY TIC TAC");
-
-            if (RequestParkourAction(
-                    ParkourActionType.TicTac))
-            {
-                Debug.Log("JUMP INPUT → TIC TAC");
-                return true;
-            }
-
-            Debug.Log("JUMP INPUT → NO TIC TAC");
-
-            return false;
+            return TryAirborneJumpAction();
         }
 
         // =====================================================
@@ -180,11 +217,7 @@ public class CharacterActionController : MonoBehaviour
         // =====================================================
 
         bool jumpPerformed =
-            RequestAction(
-                new CharacterActionRequest(
-                    CharacterActionType.Jump
-                )
-            );
+            RequestJump();
 
         if (jumpPerformed)
         {
@@ -198,12 +231,7 @@ public class CharacterActionController : MonoBehaviour
     {
         Debug.Log("Tag input received.");
 
-        bool tagPerformed =
-            RequestAction(
-                new CharacterActionRequest(
-                    CharacterActionType.Tag
-                )
-            );
+        bool tagPerformed = RequestTag();
 
         if (tagPerformed)
         {
