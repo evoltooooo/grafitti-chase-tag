@@ -5,7 +5,8 @@ public enum ActionMotionType
     ScriptMotion,
     RootMotion,
     TargetMatch,
-    Hybrid
+    Hybrid,
+    Specialized
 }
 
 [CreateAssetMenu(

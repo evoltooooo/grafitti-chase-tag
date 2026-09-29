@@ -92,7 +92,9 @@ public class CharacterTargetMatcher : MonoBehaviour
         if (actionRuntime.CurrentMotionType !=
                 ActionMotionType.TargetMatch &&
             actionRuntime.CurrentMotionType !=
-                ActionMotionType.Hybrid)
+                ActionMotionType.Hybrid &&
+            actionRuntime.CurrentMotionType !=
+                ActionMotionType.Specialized)
         {
             return;
         }

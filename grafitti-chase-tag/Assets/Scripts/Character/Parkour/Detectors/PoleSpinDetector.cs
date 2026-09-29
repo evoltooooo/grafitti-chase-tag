@@ -56,11 +56,13 @@ public class PoleSpinDetector : MonoBehaviour
         Vector3 poleCenter =
             poleHit.collider.bounds.center;
 
+        Vector3 handTargetPosition =
+            transform.position +
+            Vector3.up * 1f;
+
         Vector3 interactionPosition =
-            new Vector3(
-                poleHit.point.x,
-                transform.position.y + 1f,
-                poleHit.point.z
+            poleHit.collider.ClosestPoint(
+                handTargetPosition
             );
 
         Vector3 playerToPole =

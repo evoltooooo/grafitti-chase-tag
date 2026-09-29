@@ -102,12 +102,10 @@ public class CharacterMotor : MonoBehaviour
 
         bool actionControlsNormalMovement =
             actionExecuting &&
-            (actionRuntime.CurrentMotionType ==
-                ActionMotionType.RootMotion ||
-            actionRuntime.CurrentMotionType ==
-                ActionMotionType.TargetMatch ||
-            actionRuntime.CurrentMotionType ==
-                ActionMotionType.Hybrid);
+            (actionRuntime.CurrentMotionType == ActionMotionType.RootMotion ||
+            actionRuntime.CurrentMotionType == ActionMotionType.TargetMatch ||
+            actionRuntime.CurrentMotionType == ActionMotionType.Hybrid ||
+            actionRuntime.CurrentMotionType == ActionMotionType.Specialized);
 
         if (!actionControlsNormalMovement)
         {

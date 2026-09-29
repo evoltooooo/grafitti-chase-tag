@@ -184,11 +184,11 @@ public class CharacterAnimator : MonoBehaviour
 
         if (motionType != ActionMotionType.RootMotion &&
             motionType != ActionMotionType.TargetMatch &&
-            motionType != ActionMotionType.Hybrid)
+            motionType != ActionMotionType.Hybrid &&
+            motionType != ActionMotionType.Specialized)
         {
             return;
         }
-
         Vector3 deltaPosition =
             animator.deltaPosition;
 
