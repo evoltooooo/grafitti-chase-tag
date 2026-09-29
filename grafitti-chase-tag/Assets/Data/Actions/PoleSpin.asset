@@ -15,7 +15,7 @@ MonoBehaviour:
   actionType: 7
   actionState: 8
   animationStateName: Armature|PoleSpin_Full
-  motionType: 3
+  motionType: 4
   holdToExecute: 1
   duration: 1
   cooldown: 0
