@@ -90,13 +90,7 @@ public class CharacterStateController : MonoBehaviour
 
     public bool CanEnterState(CharacterState newState)
     {
-        if (CurrentState == newState)
-            return false;
-
-        if (IsBusy)
-            return false;
-
-        return true;
+        return CurrentState != newState;
     }
 
     private void OnActionCompleted()

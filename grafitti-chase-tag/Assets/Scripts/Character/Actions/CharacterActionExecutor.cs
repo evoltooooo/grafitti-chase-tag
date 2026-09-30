@@ -86,9 +86,6 @@ public class CharacterActionExecutor : MonoBehaviour
         if (actionData == null)
             return false;
 
-        if (stamina != null && stamina.IsEmpty)
-            return false;
-
         if (!HasValidActionState(actionData))
             return false; 
 
@@ -113,9 +110,6 @@ public class CharacterActionExecutor : MonoBehaviour
         ParkourTarget target)
     {
         if (actionData == null)
-            return false;
-
-        if (stamina != null && stamina.IsEmpty)
             return false;
 
         if (!target.IsValid)
