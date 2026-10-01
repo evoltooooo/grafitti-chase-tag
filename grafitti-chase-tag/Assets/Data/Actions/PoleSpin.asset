@@ -59,8 +59,8 @@ MonoBehaviour:
     minBounceSpeed: 4
     verticalLaunchSpeed: 5
   poleSpinSettings:
-    staminaPerRevolution: 10
-    angularSpeed: 3
+    staminaPerRevolution: 0
+    angularSpeed: 10
     rotationSpeed: 5
   useTargetMatching: 1
   targetMatchPhases:
