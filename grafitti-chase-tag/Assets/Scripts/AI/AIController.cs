@@ -35,17 +35,21 @@ public class AIController : MonoBehaviour
     [Header("Chaser Commitment")]
     [SerializeField] private float minimumChaserStateTime = 0.5f;
 
+    [Header("Slide")]
+    [SerializeField] private float chaserSlideDistance = 4f;
+    [SerializeField] private float chaserSlideCooldown = 1.5f;
+
 
     // =========================================================
     // AI
     // =========================================================
 
     private AIContext context;
-    private AIChaser chaser;
-    private AIChaserDecision chaserDecision;
-    private AIChaserDestination chaserDestination;
-    private AIChaserCommitment chaserCommitment;
-    private AIChaserMovement chaserMovement;
+
+    private AIChaserController chaserController;
+
+    // Future:
+    // private AIEvaderController evaderController;
 
 
     // =========================================================
@@ -55,71 +59,57 @@ public class AIController : MonoBehaviour
     private void Awake()
     {
         if (characterRole == null)
-            characterRole = GetComponent<CharacterRole>();
+            characterRole =
+                GetComponent<CharacterRole>();
 
         if (characterMotor == null)
-            characterMotor = GetComponent<CharacterMotor>();
+            characterMotor =
+                GetComponent<CharacterMotor>();
 
         if (characterStamina == null)
-            characterStamina = GetComponent<CharacterStamina>();
+            characterStamina =
+                GetComponent<CharacterStamina>();
 
         if (actionRuntime == null)
-            actionRuntime = GetComponent<CharacterActionRuntime>();
+            actionRuntime =
+                GetComponent<CharacterActionRuntime>();
 
         if (actionController == null)
-            actionController = GetComponent<CharacterActionController>();
+            actionController =
+                GetComponent<CharacterActionController>();
 
         if (perception == null)
-            perception = GetComponent<AIPerception>();
+            perception =
+                GetComponent<AIPerception>();
 
 
-        context = new AIContext();
+        context =
+            new AIContext();
 
-        AISteering steering = new AISteering();
-        AINavigation navigation = new AINavigation();
-        AIPrediction prediction = new AIPrediction();
-        AIIntercept intercept = new AIIntercept();
-        
-        chaserMovement = new AIChaserMovement();
 
-        chaserDestination = new AIChaserDestination(
-            prediction,
-            intercept,
-            minPredictionTime,
-            maxPredictionTime,
-            minInterceptLeadTime,
-            maxInterceptLeadTime
-        );
+        chaserController =
+            new AIChaserController(
+                destinationRepathDistance,
+                pathRetryInterval,
 
-        chaser = new AIChaser(
-            steering,
-            navigation,
-            chaserDestination,
-            chaserMovement,
-            destinationRepathDistance,
-            pathRetryInterval
-        );
+                minPredictionTime,
+                maxPredictionTime,
 
-        chaserDecision = new AIChaserDecision();
+                minInterceptLeadTime,
+                maxInterceptLeadTime,
 
-        chaserCommitment =
-            new AIChaserCommitment(
-                minimumChaserStateTime
+                minimumChaserStateTime,
+
+                chaserSlideDistance,
+                chaserSlideCooldown
             );
-
-        chaserCommitment.SetInitialState(
-            AIChaserState.Pursue
-        );
     }
 
 
     private void Update()
     {
-        chaserCommitment.Update(
-            Time.deltaTime
-        );
-
         UpdateContext();
+
         UpdateAI();
 
         actionController.TickMovement();
@@ -162,73 +152,18 @@ public class AIController : MonoBehaviour
         {
             case CharacterRoleType.Chaser:
 
-                AIChaserState desiredState =
-                    chaserDecision.Decide(context);
-
-                AIChaserState currentState =
-                    chaser.CurrentState;
-
-                // =========================================================
-                // CRITICAL TRANSITION
-                // =========================================================
-
-                bool forceSearch =
-                    !context.OpponentVisible &&
-                    currentState != AIChaserState.Search;
-
-                if (forceSearch)
-                {
-                    Debug.Log(
-                        $"AI CHASER STATE CHANGE | " +
-                        $"{currentState} -> Search"
-                    );
-
-                    chaserCommitment.ForceState(
-                        AIChaserState.Search
-                    );
-
-                    chaser.SetState(
-                        AIChaserState.Search
-                    );
-                }
-
-                // =========================================================
-                // NORMAL TRANSITION
-                // =========================================================
-
-                else if (desiredState != currentState)
-                {
-                    bool changed =
-                        chaserCommitment.TryChangeState(
-                            desiredState
-                        );
-
-                    if (changed)
-                    {
-                        Debug.Log(
-                            $"AI CHASER STATE CHANGE | " +
-                            $"{currentState} -> {desiredState}"
-                        );
-
-                        chaser.SetState(
-                            desiredState
-                        );
-                    }
-                }
-
-                // =========================================================
-                // EXECUTE CURRENT CHASER STATE
-                // =========================================================
-
-                chaser.Update(
+                chaserController.Update(
                     context,
                     actionController
                 );
 
                 break;
 
+
             case CharacterRoleType.Evader:
+
                 UpdateEvader();
+
                 break;
         }
     }

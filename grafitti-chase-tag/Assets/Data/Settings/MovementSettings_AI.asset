@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MovementSettings
   walkSpeed: 2
   runSpeed: 5
-  sprintSpeed: 7
+  sprintSpeed: 10
   sprintSpeedIncrease: 2
-  acceleration: 20
+  acceleration: 30
   deceleration: 25
   rotationSpeed: 15
   jumpHeight: 2.5
