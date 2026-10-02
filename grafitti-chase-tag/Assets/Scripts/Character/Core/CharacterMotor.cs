@@ -109,8 +109,11 @@ public class CharacterMotor : MonoBehaviour
 
         if (!actionControlsNormalMovement)
         {
+            Vector3 worldDirection =
+                GetCameraRelativeDirection(movementInput);
+
             HandleHorizontalMovement(
-                movementInput,
+                worldDirection,
                 sprintHeld
             );
 
@@ -118,6 +121,43 @@ public class CharacterMotor : MonoBehaviour
 
             ApplyMovement();
         }
+    }
+
+    public void TickWorldDirection(
+        Vector3 worldDirection,
+        bool sprintHeld)
+    {
+        if (settings == null)
+            return;
+
+        UpdateGroundedState();
+
+        bool actionExecuting =
+            actionRuntime != null &&
+            actionRuntime.IsExecuting;
+
+        bool actionControlsNormalMovement =
+            actionExecuting &&
+            (actionRuntime.CurrentMotionType == ActionMotionType.RootMotion ||
+            actionRuntime.CurrentMotionType == ActionMotionType.TargetMatch ||
+            actionRuntime.CurrentMotionType == ActionMotionType.Hybrid ||
+            actionRuntime.CurrentMotionType == ActionMotionType.Specialized);
+
+        if (actionControlsNormalMovement)
+            return;
+
+        HandleHorizontalMovement(
+            worldDirection,
+            sprintHeld
+        );
+
+        HandleVerticalMovement();
+        ApplyMovement();
+    }
+
+    public Vector3 GetWorldDirection(Vector2 movementInput)
+    {
+        return GetCameraRelativeDirection(movementInput);
     }
 
     // =========================================================
@@ -173,17 +213,20 @@ public class CharacterMotor : MonoBehaviour
     // MOVEMENT
     // =========================================================
 
-    private void HandleHorizontalMovement(Vector2 input, bool sprintHeld)
+    private void HandleHorizontalMovement(
+        Vector3 desiredDirection,
+        bool sprintHeld)
     {
-        Vector3 desiredDirection =
-            GetCameraRelativeDirection(input);
+        desiredDirection.y = 0f;
 
         float inputAmount =
-            Mathf.Clamp01(input.magnitude);
+            Mathf.Clamp01(desiredDirection.magnitude);
+
+        if (desiredDirection.sqrMagnitude > 1f)
+            desiredDirection.Normalize();
 
         bool canSprint =
             sprintHeld &&
-            input.y > 0.1f &&
             inputAmount > 0.1f &&
             stamina != null &&
             !stamina.IsEmpty;

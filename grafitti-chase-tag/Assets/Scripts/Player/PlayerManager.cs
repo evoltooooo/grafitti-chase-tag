@@ -7,6 +7,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private CameraManager cameraManager;
     [SerializeField] private CharacterMotor characterMotor;
     [SerializeField] private CharacterActionRuntime actionRuntime;
+    [SerializeField] private CharacterActionController actionController;
 
     private void Awake()
     {
@@ -25,18 +26,27 @@ public class PlayerManager : MonoBehaviour
         if (actionRuntime == null)
             actionRuntime =
                 GetComponent<CharacterActionRuntime>();
+
+        if (actionController == null)
+            actionController = 
+                GetComponent<CharacterActionController>();
     }
 
     private void Update()
     {
-        actionRuntime.SetSteeringInput(
-            inputManager.MovementInput
-        );
+        actionRuntime.SetSteeringInput(inputManager.MovementInput);
 
-        characterMotor.Tick(
-            inputManager.MovementInput,
-            inputManager.SprintHeld
-        );
+        Vector3 worldDirection =
+            characterMotor.GetWorldDirection(inputManager.MovementInput);
+
+        CharacterMovementIntent intent =
+            new CharacterMovementIntent(
+                worldDirection,
+                inputManager.SprintHeld
+            );
+
+        actionController.SetMovementIntent(intent);
+        actionController.TickMovement();
     }
 
     private void LateUpdate()

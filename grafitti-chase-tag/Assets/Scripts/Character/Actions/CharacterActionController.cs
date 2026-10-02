@@ -8,6 +8,7 @@ public class CharacterActionController : MonoBehaviour
     [SerializeField] private CharacterActionExecutor actionExecutor;
     [SerializeField] private CharacterMotor characterMotor;
     [SerializeField] private CharacterActionRuntime actionRuntime;
+    private CharacterMovementIntent movementIntent;
 
     [Header("Interaction")]
     [SerializeField] private CharacterInteractionResolver interactionResolver;
@@ -239,5 +240,19 @@ public class CharacterActionController : MonoBehaviour
         }
 
         return tagPerformed;
+    }
+
+    public void SetMovementIntent(
+        CharacterMovementIntent intent)
+    {
+        movementIntent = intent;
+    }
+
+    public void TickMovement()
+    {
+        characterMotor.TickWorldDirection(
+            movementIntent.WorldDirection,
+            movementIntent.Sprint
+        );
     }
 }
