@@ -642,7 +642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 993e0ed9f7e4a4344a6b76a5cdbd44ec, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 921391927218321214, guid: 993e0ed9f7e4a4344a6b76a5cdbd44ec, type: 3}
       propertyPath: m_Layer
@@ -1879,6 +1879,8 @@ MonoBehaviour:
   visionBlockingLayers:
     serializedVersion: 2
     m_Bits: 128
+  eyeHeight: 1.5
+  targetHeight: 1
 --- !u!114 &1214089003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1898,7 +1900,17 @@ MonoBehaviour:
   actionController: {fileID: 0}
   opponentTransform: {fileID: 5107098310531226799}
   opponentMotor: {fileID: 2753013232459372589}
+  destinationRepathDistance: 2
+  pathRetryInterval: 0.25
   perception: {fileID: 0}
+  minPredictionTime: 0.15
+  maxPredictionTime: 1
+  minInterceptLeadTime: 0.25
+  maxInterceptLeadTime: 1.25
+  minimumChaserStateTime: 0.5
+  parkourCheckInterval: 0.15
+  chaserSlideDistance: 4
+  chaserSlideCooldown: 1.5
 --- !u!1001 &1249298633
 PrefabInstance:
   m_ObjectHideFlags: 0

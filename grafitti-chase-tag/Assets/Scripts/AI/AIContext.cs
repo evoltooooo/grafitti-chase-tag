@@ -16,6 +16,8 @@ public class AIContext
     public bool IsJumping { get; private set; }
     public bool IsSprinting { get; private set; }
 
+    public Vector3 Forward { get; private set; }
+
 
     // =========================================================
     // STAMINA
@@ -113,6 +115,8 @@ public class AIContext
         );
 
         HorizontalSpeed = HorizontalVelocity.magnitude;
+
+        Forward = selfMotor.transform.forward;
 
         IsGrounded = selfMotor.IsGrounded;
 

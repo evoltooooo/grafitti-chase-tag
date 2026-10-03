@@ -35,9 +35,18 @@ public class AIController : MonoBehaviour
     [Header("Chaser Commitment")]
     [SerializeField] private float minimumChaserStateTime = 0.5f;
 
+    [Header("Parkour")]
+    [SerializeField] private float parkourCheckInterval = 0.15f;
+
     [Header("Slide")]
     [SerializeField] private float chaserSlideDistance = 4f;
     [SerializeField] private float chaserSlideCooldown = 1.5f;
+
+    [Header("Slide Detection")]
+    [SerializeField] private float slideDetectionDistance = 2f;
+    [SerializeField] private float slideLowDetectionHeight = 0.55f;
+    [SerializeField] private float slideHighDetectionHeight = 1.2f;
+    [SerializeField] private LayerMask slideObstacleMask;
 
 
     // =========================================================
@@ -91,17 +100,18 @@ public class AIController : MonoBehaviour
             new AIChaserController(
                 destinationRepathDistance,
                 pathRetryInterval,
-
                 minPredictionTime,
                 maxPredictionTime,
-
                 minInterceptLeadTime,
                 maxInterceptLeadTime,
-
                 minimumChaserStateTime,
-
                 chaserSlideDistance,
-                chaserSlideCooldown
+                chaserSlideCooldown,
+                parkourCheckInterval,
+                slideDetectionDistance,
+                slideLowDetectionHeight,
+                slideHighDetectionHeight,
+                slideObstacleMask
             );
     }
 

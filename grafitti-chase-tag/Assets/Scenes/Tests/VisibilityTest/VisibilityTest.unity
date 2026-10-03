@@ -1731,7 +1731,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1361200791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2086,7 +2086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1459165030
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2997,6 +2997,9 @@ MonoBehaviour:
   minInterceptLeadTime: 0.25
   maxInterceptLeadTime: 1.25
   minimumChaserStateTime: 0.5
+  parkourCheckInterval: 0.15
+  chaserSlideDistance: 4
+  chaserSlideCooldown: 1.5
 --- !u!95 &2050302551
 Animator:
   serializedVersion: 7

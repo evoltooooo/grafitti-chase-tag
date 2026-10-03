@@ -16,7 +16,12 @@ public class AIChaserController
         float maxInterceptLeadTime,
         float minimumChaserStateTime,
         float chaserSlideDistance,
-        float chaserSlideCooldown)
+        float chaserSlideCooldown,
+        float parkourCheckInterval,
+        float slideDetectionDistance,
+        float slideLowDetectionHeight,
+        float slideHighDetectionHeight,
+        LayerMask slideObstacleMask)
     {
         AISteering steering =
             new AISteering();
@@ -66,10 +71,15 @@ public class AIChaserController
         );
 
         actions =
-            new AIChaserActions(
-                chaserSlideDistance,
-                chaserSlideCooldown
-            );
+        new AIChaserActions(
+            chaserSlideDistance,
+            chaserSlideCooldown,
+            parkourCheckInterval,
+            slideDetectionDistance,
+            slideLowDetectionHeight,
+            slideHighDetectionHeight,
+            slideObstacleMask
+        );
     }
 
     public void Update(
@@ -89,9 +99,8 @@ public class AIChaserController
             actionController
         );
 
-        actions.Update(
+        UpdateActions(
             context,
-            chaser.CurrentState,
             actionController
         );
     }

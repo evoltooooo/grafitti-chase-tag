@@ -255,4 +255,33 @@ public class CharacterActionController : MonoBehaviour
             movementIntent.Sprint
         );
     }
+
+    public bool TryFindParkourTarget(
+        ParkourActionType parkourActionType,
+        out ParkourTarget target)
+    {
+        target = default;
+
+        if (actionResolver == null ||
+            parkourActionResolver == null)
+        {
+            return false;
+        }
+
+        if (!actionResolver.TryResolveParkourAction(
+                parkourActionType,
+                out ParkourActionData parkourActionData))
+        {
+            return false;
+        }
+
+        if (!parkourActionResolver.TryResolve(
+                parkourActionData,
+                out target))
+        {
+            return false;
+        }
+
+        return target.IsValid;
+    }
 }
