@@ -10,6 +10,14 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private CharacterStateController stateController;
     [SerializeField] private CharacterActionRuntime actionRuntime;
 
+    [Header("Slide Collider")]
+    [SerializeField] private float slideColliderHeight = 1.0f;
+
+    private float standingColliderHeight;
+    private Vector3 standingColliderCenter;
+
+    public bool IsSliding { get; private set; }
+
     private CharacterController characterController;
 
     private Vector3 horizontalVelocity;
@@ -58,6 +66,12 @@ public class CharacterMotor : MonoBehaviour
     {
         characterController =
             GetComponent<CharacterController>();
+        
+        standingColliderHeight =
+            characterController.height;
+
+        standingColliderCenter =
+            characterController.center;
 
         if (cameraTransform == null && Camera.main != null)
         {
@@ -90,6 +104,8 @@ public class CharacterMotor : MonoBehaviour
     public void Tick(Vector2 movementInput, bool sprintHeld)
     {
         MovementInput = movementInput;
+
+        UpdateSlideCollider();
 
         if (settings == null)
             return;
@@ -129,6 +145,8 @@ public class CharacterMotor : MonoBehaviour
     {
         if (settings == null)
             return;
+        
+        UpdateSlideCollider();
 
         UpdateGroundedState();
 
@@ -190,6 +208,20 @@ public class CharacterMotor : MonoBehaviour
         );
 
         return true;
+    }
+
+    private void UpdateSlideCollider()
+    {
+        if (!IsSliding)
+            return;
+
+        if (actionRuntime == null ||
+            !actionRuntime.IsExecuting ||
+            actionRuntime.CurrentActionType !=
+                CharacterActionType.Slide)
+        {
+            TryEndSlide();
+        }
     }
 
     // =========================================================
@@ -367,6 +399,98 @@ public class CharacterMotor : MonoBehaviour
                 settings.rotationSpeed *
                 Time.deltaTime
             );
+    }
+
+    public bool BeginSlide()
+    {
+        if (characterController == null)
+            return false;
+
+        if (IsSliding)
+            return true;
+
+        float minimumHeight =
+            characterController.radius * 2f;
+
+        float targetHeight =
+            Mathf.Max(
+                slideColliderHeight,
+                minimumHeight
+            );
+
+        float standingBottom =
+            standingColliderCenter.y -
+            standingColliderHeight * 0.5f;
+
+        float slideCenterY =
+            standingBottom +
+            targetHeight * 0.5f;
+
+        characterController.height =
+            targetHeight;
+
+        characterController.center =
+            new Vector3(
+                standingColliderCenter.x,
+                slideCenterY,
+                standingColliderCenter.z
+            );
+
+        IsSliding = true;
+
+        return true;
+    }
+
+    private void TryEndSlide()
+    {
+        if (!IsSliding)
+            return;
+
+        if (!CanRestoreStandingCollider())
+            return;
+
+        characterController.height =
+            standingColliderHeight;
+
+        characterController.center =
+            standingColliderCenter;
+
+        IsSliding = false;
+    }
+
+    private bool CanRestoreStandingCollider()
+    {
+        Vector3 worldCenter =
+            transform.TransformPoint(
+                standingColliderCenter
+            );
+
+        float radius =
+            characterController.radius;
+
+        float halfHeight =
+            Mathf.Max(
+                standingColliderHeight * 0.5f,
+                radius
+            );
+
+        Vector3 bottom =
+            worldCenter +
+            Vector3.down *
+            (halfHeight - radius);
+
+        Vector3 top =
+            worldCenter +
+            Vector3.up *
+            (halfHeight - radius);
+
+        return !Physics.CheckCapsule(
+            bottom,
+            top,
+            radius,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Ignore
+        );
     }
     
 

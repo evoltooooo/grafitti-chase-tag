@@ -71,8 +71,8 @@ public class AISlideOpportunity
         bool lowBlocked =
             Physics.Raycast(
                 lowOrigin,
-                direction,
-                detectionDistance,
+                context.Forward,
+               detectionDistance,
                 obstacleMask,
                 QueryTriggerInteraction.Ignore
             );
@@ -80,17 +80,16 @@ public class AISlideOpportunity
         bool highBlocked =
             Physics.Raycast(
                 highOrigin,
-                direction,
-                detectionDistance,
+                context.Forward,
+               detectionDistance,
                 obstacleMask,
                 QueryTriggerInteraction.Ignore
             );
 
         Debug.Log(
-            $"SLIDE RAY HEIGHTS || " +
-            $"AI Y={context.Position.y:F2} | " +
-            $"Low Y={lowOrigin.y:F2} | " +
-            $"High Y={highOrigin.y:F2}"
+            $"SLIDE RAYS | " +
+            $"LowBlocked={lowBlocked} | " +
+            $"HighBlocked={highBlocked}"
         );
 
         // Slide opportunity:

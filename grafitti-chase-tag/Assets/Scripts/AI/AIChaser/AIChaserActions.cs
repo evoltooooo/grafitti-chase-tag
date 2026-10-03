@@ -58,22 +58,10 @@ public class AIChaserActions
         AIChaserState state,
         CharacterActionController actionController)
     {
-        if (decision.ShouldSlide(context, state))
-        {
-            bool slidePerformed =
-                actionController.RequestSlide();
-
-            if (slidePerformed)
-            {
-                decision.StartSlideCooldown();
-
-                Debug.Log(
-                    "AI CHASER ACTION | Slide"
-                );
-            }
-        }
-
-        CheckSlideOpportunity(context);
+        CheckSlideOpportunity(
+            context,
+            actionController
+        );
 
         CheckVault(
             context,
@@ -143,13 +131,41 @@ public class AIChaserActions
     }
 
     private void CheckSlideOpportunity(
-        AIContext context)
+        AIContext context,
+        CharacterActionController actionController)
     {
         if (!slideOpportunity.HasLowObstacleAhead(context))
             return;
 
         Debug.Log(
             "AI SLIDE OPPORTUNITY | Low obstacle ahead"
+        );
+
+        if (context.IsExecutingAction)
+            return;
+
+        if (!context.IsGrounded)
+            return;
+
+        if (context.IsStaminaEmpty)
+            return;
+
+        bool slidePerformed =
+            actionController.RequestSlide();
+
+        if (!slidePerformed)
+        {
+            Debug.Log(
+                "AI SLIDE EXECUTION FAILED | Low obstacle"
+            );
+
+            return;
+        }
+
+        decision.StartSlideCooldown();
+
+        Debug.Log(
+            "AI SLIDE EXECUTION | Low obstacle"
         );
     }
 }

@@ -247,6 +247,12 @@ public class CharacterActionExecutor : MonoBehaviour
 
         actionRuntime.StartAction(actionData);
 
+        if (!characterMotor.BeginSlide())
+        {
+            actionRuntime.CancelAction();
+            return false;
+        }
+
         SetActionState(actionData);
 
         return true;
