@@ -73,8 +73,6 @@ public class AIChaserDestination
                 predictionTime
             );
 
-        destination.y = context.Position.y;
-
         return destination;
     }
 
@@ -90,8 +88,6 @@ public class AIChaserDestination
                 minInterceptLeadTime,
                 maxInterceptLeadTime
             );
-
-        destination.y = context.Position.y;
 
         return destination;
     }

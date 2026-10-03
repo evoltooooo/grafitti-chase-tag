@@ -26,10 +26,14 @@ public class ClimbDetector : MonoBehaviour
         Vector3 forward =
             environmentDetector.GetHorizontalForward();
 
+        // -------------------------------------------------
+        // WALL
+        // -------------------------------------------------
+
         if (!environmentDetector.TryDetectWall(
-                actionData,
-                parkourLayers,
-                out RaycastHit wallHit))
+            actionData,
+            parkourLayers,
+            out RaycastHit wallHit))
         {
             return false;
         }
@@ -39,7 +43,13 @@ public class ClimbDetector : MonoBehaviour
                 wallHit.normal);
 
         if (wallUpDot > 0.5f)
+        {
             return false;
+        }
+
+        // -------------------------------------------------
+        // TOP
+        // -------------------------------------------------
 
         float maxHeight =
             actionData.maxObstacleHeight;
@@ -54,16 +64,24 @@ public class ClimbDetector : MonoBehaviour
             return false;
         }
 
+        // -------------------------------------------------
+        // HEIGHT
+        // -------------------------------------------------
+
         float obstacleHeight =
             environmentDetector.GetColliderHeight(
                 wallHit.collider);
 
         if (!environmentDetector.IsHeightValid(
-                obstacleHeight,
-                actionData))
+            obstacleHeight,
+            actionData))
         {
             return false;
         }
+
+        // -------------------------------------------------
+        // LANDING
+        // -------------------------------------------------
 
         Vector3 landingBase =
             topHit.point + Vector3.up * 0.25f;
@@ -76,7 +94,8 @@ public class ClimbDetector : MonoBehaviour
 
         float landingSearchStep = 0.25f;
 
-        for (float offset = landingSearchStep;
+        for (
+            float offset = landingSearchStep;
             offset <= maxLandingSearchDistance;
             offset += landingSearchStep)
         {
@@ -84,11 +103,11 @@ public class ClimbDetector : MonoBehaviour
                 landingBase + forward * offset;
 
             if (environmentDetector.TryDetectLanding(
-                    landingSearchOrigin,
-                    0f,
-                    5f,
-                    parkourLayers,
-                    out landingHit))
+                landingSearchOrigin,
+                0f,
+                5f,
+                parkourLayers,
+                out landingHit))
             {
                 foundLanding = true;
                 break;
@@ -97,6 +116,10 @@ public class ClimbDetector : MonoBehaviour
 
         if (!foundLanding)
             return false;
+
+        // -------------------------------------------------
+        // TARGET
+        // -------------------------------------------------
 
         Vector3 interactionPosition =
             topHit.point;

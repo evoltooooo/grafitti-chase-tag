@@ -11,4 +11,14 @@ public class AIParkourOpportunity
             out target
         );
     }
+
+    public bool TryFindClimb(
+        CharacterActionController actionController,
+        out ParkourTarget target)
+    {
+        return actionController.TryFindParkourTarget(
+            ParkourActionType.Climb,
+            out target
+        );
+    }
 }

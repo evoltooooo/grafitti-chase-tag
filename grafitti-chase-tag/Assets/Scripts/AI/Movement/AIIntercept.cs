@@ -41,7 +41,7 @@ public class AIIntercept
             targetPosition +
             horizontalTargetVelocity * leadTime;
 
-        result.y = selfPosition.y;
+        result.y = targetPosition.y;
 
         return result;
     }

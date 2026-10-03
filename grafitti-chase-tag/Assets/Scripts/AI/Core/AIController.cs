@@ -39,7 +39,6 @@ public class AIController : MonoBehaviour
     [SerializeField] private float parkourCheckInterval = 0.15f;
 
     [Header("Slide")]
-    [SerializeField] private float chaserSlideDistance = 4f;
     [SerializeField] private float chaserSlideCooldown = 1.5f;
 
     [Header("Slide Detection")]
@@ -105,7 +104,6 @@ public class AIController : MonoBehaviour
                 minInterceptLeadTime,
                 maxInterceptLeadTime,
                 minimumChaserStateTime,
-                chaserSlideDistance,
                 chaserSlideCooldown,
                 parkourCheckInterval,
                 slideDetectionDistance,
@@ -123,6 +121,15 @@ public class AIController : MonoBehaviour
         UpdateAI();
 
         actionController.TickMovement();
+
+        Debug.Log(
+            $"AI MOVEMENT DEBUG | " +
+            $"Role={context.Role} | " +
+            $"Visible={context.OpponentVisible} | " +
+            $"AI Pos={context.Position} | " +
+            $"Player Pos={context.OpponentPosition} | " +
+            $"AI Speed={context.HorizontalSpeed:0.00}"
+        );
     }
 
 

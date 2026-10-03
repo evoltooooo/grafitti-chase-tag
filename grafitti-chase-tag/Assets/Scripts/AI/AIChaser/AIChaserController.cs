@@ -5,7 +5,7 @@ public class AIChaserController
     private readonly AIChaser chaser;
     private readonly AIChaserDecision chaserDecision;
     private readonly AIChaserCommitment chaserCommitment;
-    private readonly AIChaserActions actions;
+    private readonly AIChaserTactics tactics;
 
     public AIChaserController(
         float destinationRepathDistance,
@@ -15,7 +15,6 @@ public class AIChaserController
         float minInterceptLeadTime,
         float maxInterceptLeadTime,
         float minimumChaserStateTime,
-        float chaserSlideDistance,
         float chaserSlideCooldown,
         float parkourCheckInterval,
         float slideDetectionDistance,
@@ -70,9 +69,8 @@ public class AIChaserController
             AIChaserState.Pursue
         );
 
-        actions =
-        new AIChaserActions(
-            chaserSlideDistance,
+        tactics =
+        new AIChaserTactics(
             chaserSlideCooldown,
             parkourCheckInterval,
             slideDetectionDistance,
@@ -90,7 +88,7 @@ public class AIChaserController
             Time.deltaTime
         );
 
-        actions.UpdateTimer();
+        tactics.UpdateTimer();
 
         UpdateState(context);
 
@@ -99,7 +97,7 @@ public class AIChaserController
             actionController
         );
 
-        UpdateActions(
+        UpdateTactics(
             context,
             actionController
         );
@@ -110,6 +108,13 @@ public class AIChaserController
     {
         AIChaserState desiredState =
             chaserDecision.Decide(context);
+        
+        Debug.Log(
+            $"AI CHASER DEBUG | " +
+            $"Current={chaser.CurrentState} | " +
+            $"Desired={desiredState} | " +
+            $"Visible={context.OpponentVisible}"
+        );
 
         AIChaserState currentState =
             chaser.CurrentState;
@@ -165,14 +170,22 @@ public class AIChaserController
         }
     }
 
-    private void UpdateActions(
+    public bool HasReachedPartialPathEnd()
+    {
+        return chaser.HasReachedPartialPathEnd();
+    }
+
+    private void UpdateTactics(
         AIContext context,
         CharacterActionController actionController)
     {
-        actions.Update(
+        tactics.Update(
             context,
             chaser.CurrentState,
-            actionController
+            actionController,
+            chaser.HasReachedPartialPathEnd(),
+            chaser.IsAscendingPartialPath()
         );
     }
+    
 }

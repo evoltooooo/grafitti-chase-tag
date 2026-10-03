@@ -71,7 +71,7 @@ public class AISlideOpportunity
         bool lowBlocked =
             Physics.Raycast(
                 lowOrigin,
-                context.Forward,
+                direction,
                detectionDistance,
                 obstacleMask,
                 QueryTriggerInteraction.Ignore
@@ -80,7 +80,7 @@ public class AISlideOpportunity
         bool highBlocked =
             Physics.Raycast(
                 highOrigin,
-                context.Forward,
+                direction,
                detectionDistance,
                 obstacleMask,
                 QueryTriggerInteraction.Ignore

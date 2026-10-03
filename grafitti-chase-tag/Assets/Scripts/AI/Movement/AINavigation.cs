@@ -12,6 +12,8 @@ public class AINavigation
     private int currentCornerIndex;
 
     public bool HasPath { get; private set; }
+    public bool IsPartialPath { get; private set; }
+    public bool ReachedPartialPathEnd { get; private set; }
 
     public Vector3 CurrentWaypoint { get; private set; }
 
@@ -36,12 +38,21 @@ public class AINavigation
         Vector3 startPosition,
         Vector3 destination)
     {
+        ReachedPartialPathEnd = false;
+
         if (!NavMesh.SamplePosition(
-            startPosition,
-            out NavMeshHit startHit,
-            2f,
-            NavMesh.AllAreas))
+                startPosition,
+                out NavMeshHit startHit,
+                2f,
+                NavMesh.AllAreas))
         {
+            IsPartialPath = false;
+
+            Debug.Log(
+                $"AI NAV DEBUG | Start Sample FAILED | " +
+                $"Position={startPosition}"
+            );
+
             return false;
         }
 
@@ -51,11 +62,16 @@ public class AINavigation
             2f,
             NavMesh.AllAreas))
         {
+            Debug.Log(
+                $"AI NAV DEBUG | Destination Sample FAILED | " +
+                $"Destination={destination}"
+            );
+
             return false;
         }
 
-        NavMeshPath newPath = new NavMeshPath();
-        
+        NavMeshPath newPath =
+            new NavMeshPath();
 
         bool pathFound =
             NavMesh.CalculatePath(
@@ -65,33 +81,38 @@ public class AINavigation
                 newPath
             );
 
+        Debug.Log(
+            $"AI NAV DEBUG | " +
+            $"StartHit={startHit.position} | " +
+            $"DestinationHit={destinationHit.position} | " +
+            $"PathFound={pathFound} | " +
+            $"Status={newPath.status} | " +
+            $"Corners={newPath.corners.Length}"
+        );
+
         if (!pathFound ||
-            newPath.status != NavMeshPathStatus.PathComplete ||
             newPath.corners.Length < 2)
         {
+            IsPartialPath = false;
             return false;
         }
 
-        // New path is valid.
-        // Now replace the current path.
+        IsPartialPath =
+            newPath.status == NavMeshPathStatus.PathPartial;
 
         corners = newPath.corners;
         currentCornerIndex = 1;
 
         CurrentWaypoint =
             corners[currentCornerIndex];
-        
-        for (int i = 0; i < newPath.corners.Length - 1; i++)
-        {
-            Debug.DrawLine(
-                newPath.corners[i],
-                newPath.corners[i + 1],
-                Color.cyan,
-                1f
-            );
-        }
 
         HasPath = true;
+
+        Debug.Log(
+            $"AI NAV PATH ACCEPTED | " +
+            $"Status={newPath.status} | " +
+            $"Waypoint={CurrentWaypoint}"
+        );
 
         return true;
     }
@@ -101,6 +122,8 @@ public class AINavigation
         Vector3 currentPosition,
         float waypointReachedDistance = 0.75f)
     {
+        ReachedPartialPathEnd = false;
+
         if (!HasPath ||
             corners == null ||
             corners.Length == 0)
@@ -121,6 +144,8 @@ public class AINavigation
 
         if (currentCornerIndex >= corners.Length)
         {
+            ReachedPartialPathEnd = IsPartialPath;
+
             HasPath = false;
             CurrentWaypoint = Vector3.zero;
 
@@ -136,6 +161,7 @@ public class AINavigation
     public void ClearPath()
     {
         HasPath = false;
+        IsPartialPath = false;
         CurrentWaypoint = Vector3.zero;
 
         currentCornerIndex = 0;

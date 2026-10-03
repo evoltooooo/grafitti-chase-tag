@@ -126,6 +126,13 @@ public class ParkourEnvironmentDetector : MonoBehaviour
             actionData.maxTriggerDistance +
             castBackOffset;
 
+        Debug.DrawRay(
+            origin,
+            forward * detectionDistance,
+            Color.red,
+            2f
+        );
+
         return Physics.SphereCast(
             origin,
             wallDetectionRadius,

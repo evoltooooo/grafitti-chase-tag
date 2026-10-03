@@ -32,6 +32,7 @@ public class CharacterMotor : MonoBehaviour
 
     private float currentSprintSpeed;
     private float nextSprintDebugTime;
+    private float nextMotorDebugTime;
 
     private Vector3 lastWallNormal;
     private bool hasWallContact;
@@ -162,7 +163,20 @@ public class CharacterMotor : MonoBehaviour
             actionRuntime.CurrentMotionType == ActionMotionType.Specialized);
 
         if (actionControlsNormalMovement)
+        {
+            Debug.Log(
+                $"AI MOTOR MOVEMENT BLOCKED | " +
+                $"ActionExecuting={actionExecuting} | " +
+                $"Action={actionRuntime.CurrentActionType} | " +
+                $"Parkour={actionRuntime.CurrentParkourActionType} | " +
+                $"MotionType={actionRuntime.CurrentMotionType} | " +
+                $"ActionTime={actionRuntime.ActionTime:F2} | " +
+                $"ActionNormalized={actionRuntime.ActionNormalizedTime:F2} | " +
+                $"WorldDirection={worldDirection}"
+            );
+
             return;
+        }
 
         HandleHorizontalMovement(
             worldDirection,
@@ -591,7 +605,21 @@ public class CharacterMotor : MonoBehaviour
 
         isGrounded =
             (collisionFlags &
-             CollisionFlags.Below) != 0;
+            CollisionFlags.Below) != 0;
+
+        if (Time.time >= nextMotorDebugTime)
+        {
+            Debug.Log(
+                $"AI MOTOR DEBUG | " +
+                $"Grounded={isGrounded} | " +
+                $"VerticalVelocity={verticalVelocity:F2} | " +
+                $"HorizontalSpeed={HorizontalSpeed:F2} | " +
+                $"CollisionFlags={collisionFlags}"
+            );
+
+            nextMotorDebugTime =
+                Time.time + 0.25f;
+        }
 
         if (isGrounded && jumpDebugActive)
         {
