@@ -2441,7 +2441,6 @@ GameObject:
   - component: {fileID: 2050302531}
   - component: {fileID: 2050302530}
   - component: {fileID: 2050302529}
-  - component: {fileID: 2050302528}
   - component: {fileID: 2050302527}
   - component: {fileID: 2050302526}
   - component: {fileID: 2050302525}
@@ -2511,20 +2510,6 @@ MonoBehaviour:
   actionController: {fileID: 2050302543}
   characterMotor: {fileID: 2050302548}
   interactionBufferTime: 0.2
---- !u!114 &2050302528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050302523}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01ffb68186662724da5823127bff5a84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterParkourInput
-  inputSettings: {fileID: 11400000, guid: ceb5a816f0e0e514c8468955a48cd604, type: 2}
-  actionController: {fileID: 2050302543}
 --- !u!114 &2050302529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2973,7 +2958,7 @@ Transform:
   m_GameObject: {fileID: 2050302523}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 12.22}
+  m_LocalPosition: {x: 0, y: 0, z: 10.87}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

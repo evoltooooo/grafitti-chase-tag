@@ -75,18 +75,38 @@ public class CharacterAnimator : MonoBehaviour
     {
         Vector2 input = characterMotor.MovementInput;
 
-        float moveX = Mathf.Clamp(
-            input.x,
-            -1f,
-            1f
-        );
+        float moveX = 0f;
+        float moveY = 0f;
 
-        float moveY =
-            characterMotor.LocomotionAnimationValue;
-
-        if (input.y < -0.1f)
+        // Sprint has priority.
+        // W + Sprint, including W+A/D, always plays Sprint.
+        if (characterMotor.IsSprinting)
         {
-            moveY = -Mathf.Abs(moveY);
+            moveX = 0f;
+            moveY = 2f;
+        }
+        // Forward has priority over A/D.
+        else if (input.y > 0.1f)
+        {
+            moveX = 0f;
+            moveY = 1f;
+        }
+        // Backward has priority over A/D.
+        else if (input.y < -0.1f)
+        {
+            moveX = 0f;
+            moveY = -1f;
+        }
+        // Only A/D now produces strafing.
+        else if (input.x > 0.1f)
+        {
+            moveX = 1f;
+            moveY = 0f;
+        }
+        else if (input.x < -0.1f)
+        {
+            moveX = -1f;
+            moveY = 0f;
         }
 
         animator.SetFloat(

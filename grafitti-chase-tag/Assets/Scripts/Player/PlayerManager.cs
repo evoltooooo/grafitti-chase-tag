@@ -34,10 +34,18 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        actionRuntime.SetSteeringInput(inputManager.MovementInput);
+        actionRuntime.SetSteeringInput(
+            inputManager.MovementInput
+        );
+
+        characterMotor.SetMovementInput(
+            inputManager.MovementInput
+        );
 
         Vector3 worldDirection =
-            characterMotor.GetWorldDirection(inputManager.MovementInput);
+            characterMotor.GetWorldDirection(
+                inputManager.MovementInput
+            );
 
         CharacterMovementIntent intent =
             new CharacterMovementIntent(

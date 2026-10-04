@@ -196,9 +196,9 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.13333334
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 66aec9a0e221c5b4aa96c12d23ac9825, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 92a0c8da8a262d44482abaa511fd93f9, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &353649316
 Transform:
@@ -828,6 +828,7 @@ MonoBehaviour:
   stamina: {fileID: 611205450}
   stateController: {fileID: 611205449}
   actionRuntime: {fileID: 611205434}
+  slideColliderHeight: 1
 --- !u!114 &611205454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2949,6 +2950,7 @@ MonoBehaviour:
   stamina: {fileID: 2050302546}
   stateController: {fileID: 2050302545}
   actionRuntime: {fileID: 2050302530}
+  slideColliderHeight: 1
 --- !u!114 &2050302549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2998,8 +3000,13 @@ MonoBehaviour:
   maxInterceptLeadTime: 1.25
   minimumChaserStateTime: 0.5
   parkourCheckInterval: 0.15
-  chaserSlideDistance: 4
   chaserSlideCooldown: 1.5
+  slideDetectionDistance: 2
+  slideLowDetectionHeight: 0.55
+  slideHighDetectionHeight: 1.2
+  slideObstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!95 &2050302551
 Animator:
   serializedVersion: 7

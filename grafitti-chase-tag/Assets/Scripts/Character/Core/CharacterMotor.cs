@@ -187,6 +187,11 @@ public class CharacterMotor : MonoBehaviour
         ApplyMovement();
     }
 
+    public void SetMovementInput(Vector2 movementInput)
+    {
+        MovementInput = movementInput;
+    }
+
     public Vector3 GetWorldDirection(Vector2 movementInput)
     {
         return GetCameraRelativeDirection(movementInput);
@@ -266,13 +271,14 @@ public class CharacterMotor : MonoBehaviour
         desiredDirection.y = 0f;
 
         float inputAmount =
-            Mathf.Clamp01(desiredDirection.magnitude);
+            Mathf.Clamp01(MovementInput.magnitude);
 
-        if (desiredDirection.sqrMagnitude > 1f)
-            desiredDirection.Normalize();
+        bool movingForward =
+            MovementInput.y > 0.1f;
 
         bool canSprint =
             sprintHeld &&
+            movingForward &&
             inputAmount > 0.1f &&
             stamina != null &&
             !stamina.IsEmpty;
@@ -357,32 +363,34 @@ public class CharacterMotor : MonoBehaviour
                 Time.deltaTime
             );
 
-        if (desiredDirection.sqrMagnitude >
-            0.001f)
+        if (desiredDirection.sqrMagnitude > 0.001f)
         {
-            RotateTowards(
-                desiredDirection
-            );
+            RotateTowardsCamera();
         }
     }
 
-    private Vector3 GetCameraRelativeDirection(
-        Vector2 input)
+    private Vector3 GetCameraRelativeDirection(Vector2 input)
     {
         if (cameraTransform == null)
         {
+            if (Mathf.Abs(input.y) > 0.1f)
+            {
+                return new Vector3(
+                    0f,
+                    0f,
+                    Mathf.Sign(input.y)
+                );
+            }
+
             return new Vector3(
-                input.x,
+                Mathf.Sign(input.x),
                 0f,
-                input.y
-            ).normalized;
+                0f
+            );
         }
 
-        Vector3 cameraForward =
-            cameraTransform.forward;
-
-        Vector3 cameraRight =
-            cameraTransform.right;
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
 
         cameraForward.y = 0f;
         cameraRight.y = 0f;
@@ -390,14 +398,28 @@ public class CharacterMotor : MonoBehaviour
         cameraForward.Normalize();
         cameraRight.Normalize();
 
-        Vector3 direction =
-            cameraForward * input.y +
-            cameraRight * input.x;
+        // Forward/backward has priority over strafing.
+        if (input.y > 0.1f)
+        {
+            return cameraForward;
+        }
 
-        return Vector3.ClampMagnitude(
-            direction,
-            1f
-        );
+        if (input.y < -0.1f)
+        {
+            return -cameraForward;
+        }
+
+        if (input.x > 0.1f)
+        {
+            return cameraRight;
+        }
+
+        if (input.x < -0.1f)
+        {
+            return -cameraRight;
+        }
+
+        return Vector3.zero;
     }
 
     private void RotateTowards(
@@ -413,6 +435,29 @@ public class CharacterMotor : MonoBehaviour
                 settings.rotationSpeed *
                 Time.deltaTime
             );
+    }
+
+    private void RotateTowardsCamera()
+    {
+        if (cameraTransform == null)
+            return;
+
+        Vector3 cameraForward =
+            cameraTransform.forward;
+
+        cameraForward.y = 0f;
+
+        if (cameraForward.sqrMagnitude <
+            0.001f)
+        {
+            return;
+        }
+
+        cameraForward.Normalize();
+
+        RotateTowards(
+            cameraForward
+        );
     }
 
     public bool BeginSlide()

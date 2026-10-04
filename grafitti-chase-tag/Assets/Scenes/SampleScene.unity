@@ -2978,6 +2978,7 @@ MonoBehaviour:
   stamina: {fileID: 2003608428}
   stateController: {fileID: 2003608427}
   actionRuntime: {fileID: 2003608412}
+  slideColliderHeight: 1
 --- !u!114 &2003608432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3000,7 +3001,7 @@ Animator:
   m_GameObject: {fileID: 2003608405}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 263d90d31172a5e4f9b569dca154cf32, type: 3}
-  m_Controller: {fileID: 9100000, guid: 029c4586b2c413b4880de45b11d4935d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 32bdac6b799c5ea47bf2927096306bfa, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -3462,6 +3463,7 @@ MonoBehaviour:
   stamina: {fileID: 1069213921272521915}
   stateController: {fileID: 5607828791707984192}
   actionRuntime: {fileID: 2638782849746775603}
+  slideColliderHeight: 1
 --- !u!114 &3947250234654457305
 MonoBehaviour:
   m_ObjectHideFlags: 0

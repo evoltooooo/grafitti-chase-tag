@@ -26,6 +26,10 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private float minimumPivotAngle = -35f;
     [SerializeField] private float maximumPivotAngle = 35f;
 
+    [Header("Horizontal Limits")]
+    [SerializeField] private float minimumLookAngle = -120f;
+    [SerializeField] private float maximumLookAngle = 120f;
+
     private float defaultPosition;
 
     private Vector3 cameraFollowVelocity;
@@ -63,8 +67,8 @@ public class CameraManager : MonoBehaviour
 
         if (cameraTransform != null)
         {
-            defaultPosition =
-                cameraTransform.localPosition.z;
+            defaultPosition = cameraTransform.localPosition.z;
+            lookAngle = transform.eulerAngles.y;
         }
     }
 
@@ -99,29 +103,44 @@ public class CameraManager : MonoBehaviour
 
     private void RotateCamera()
     {
-        Vector2 cameraInput =
-            inputManager.CameraInput;
+        Vector2 cameraInput = inputManager.CameraInput;
 
-        lookAngle +=
-            cameraInput.x *
-            cameraLookSpeed;
+        // Horizontal camera rotation.
+        lookAngle += cameraInput.x * cameraLookSpeed;
 
-        pivotAngle -=
-            cameraInput.y *
-            cameraPivotSpeed;
+        float targetYaw = targetTransform.eulerAngles.y;
 
-        pivotAngle =
-            Mathf.Clamp(
-                pivotAngle,
-                minimumPivotAngle,
-                maximumPivotAngle
+        float relativeYaw =
+            Mathf.DeltaAngle(
+                targetYaw,
+                lookAngle
             );
+
+        relativeYaw =
+            Mathf.Clamp(
+                relativeYaw,
+                minimumLookAngle,
+                maximumLookAngle
+            );
+
+        lookAngle =
+            targetYaw + relativeYaw;
 
         transform.rotation =
             Quaternion.Euler(
                 0f,
                 lookAngle,
                 0f
+            );
+
+        // Vertical camera rotation.
+        pivotAngle -= cameraInput.y * cameraPivotSpeed;
+
+        pivotAngle =
+            Mathf.Clamp(
+                pivotAngle,
+                minimumPivotAngle,
+                maximumPivotAngle
             );
 
         cameraPivot.localRotation =

@@ -50,8 +50,8 @@ MonoBehaviour:
   parkourActionType: 2
   landingForwardOffset: 0.5
   landingDistance: 1.5
-  maxTriggerDistance: 0.5
-  detectionRadius: 0.3
+  maxTriggerDistance: 0.8
+  detectionRadius: 1.5
   minObstacleHeight: 1.2
   maxObstacleHeight: 5
   detectionCastBackOffset: 0.3
