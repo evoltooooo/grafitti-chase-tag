@@ -8,6 +8,7 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private Transform targetTransform;
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private Transform cameraTransform;
+    [SerializeField] private CharacterActionRuntime actionRuntime;
 
     [Header("Collision")]
     [SerializeField] private LayerMask collisonLayers;
@@ -38,6 +39,9 @@ public class CameraManager : MonoBehaviour
     private float lookAngle;
     private float pivotAngle;
 
+    private bool poleSpinCameraLocked;
+    private float poleSpinCameraYaw;
+
     private void Awake()
     {
         inputManager =
@@ -52,6 +56,13 @@ public class CameraManager : MonoBehaviour
             {
                 targetTransform = player.transform;
             }
+        }
+
+        if (actionRuntime == null &&
+            targetTransform != null)
+        {
+            actionRuntime =
+                targetTransform.GetComponent<CharacterActionRuntime>();
         }
 
         if (cameraTransform == null)
@@ -105,10 +116,43 @@ public class CameraManager : MonoBehaviour
     {
         Vector2 cameraInput = inputManager.CameraInput;
 
+        bool isPoleSpin =
+            actionRuntime != null &&
+            actionRuntime.IsExecuting &&
+            actionRuntime.CurrentParkourActionType ==
+                ParkourActionType.PoleSpin;
+
+        // Capture the player's rotation when Pole Spin starts.
+        if (isPoleSpin && !poleSpinCameraLocked)
+        {
+            poleSpinCameraLocked = true;
+
+            poleSpinCameraYaw =
+                targetTransform.eulerAngles.y;
+        }
+
+        // Reset when Pole Spin ends.
+        if (!isPoleSpin)
+        {
+            poleSpinCameraLocked = false;
+        }
+
         // Horizontal camera rotation.
         lookAngle += cameraInput.x * cameraLookSpeed;
 
-        float targetYaw = targetTransform.eulerAngles.y;
+        float targetYaw;
+
+        if (poleSpinCameraLocked)
+        {
+            // During Pole Spin, keep using the player's
+            // rotation from the moment Pole Spin started.
+            targetYaw = poleSpinCameraYaw;
+        }
+        else
+        {
+            // Normal camera behavior.
+            targetYaw = targetTransform.eulerAngles.y;
+        }
 
         float relativeYaw =
             Mathf.DeltaAngle(
