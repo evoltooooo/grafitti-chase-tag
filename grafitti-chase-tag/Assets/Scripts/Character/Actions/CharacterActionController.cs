@@ -252,7 +252,9 @@ public class CharacterActionController : MonoBehaviour
     {
         characterMotor.TickWorldDirection(
             movementIntent.WorldDirection,
-            movementIntent.Sprint
+            movementIntent.Sprint,
+            movementIntent.MovementInput,
+            movementIntent.FaceCameraDirection
         );
     }
 

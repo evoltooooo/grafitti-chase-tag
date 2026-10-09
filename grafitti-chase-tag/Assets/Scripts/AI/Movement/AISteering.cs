@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class AISteering
 {
+    
     public CharacterMovementIntent CreateMoveTowardIntent(
         Vector3 currentPosition,
         Vector3 targetPosition,
@@ -17,7 +18,11 @@ public class AISteering
 
         return new CharacterMovementIntent(
             direction,
-            sprint
+            sprint,
+            direction.sqrMagnitude > 0.001f
+                ? Vector2.up
+                : Vector2.zero,
+            false
         );
     }
 }

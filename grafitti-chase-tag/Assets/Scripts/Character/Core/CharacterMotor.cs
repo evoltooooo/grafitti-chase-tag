@@ -142,15 +142,14 @@ public class CharacterMotor : MonoBehaviour
 
     public void TickWorldDirection(
         Vector3 worldDirection,
-        bool sprintHeld)
+        bool sprintHeld,
+        Vector2 movementInput,
+        bool faceCameraDirection)
     {
         if (settings == null)
             return;
         
-        MovementInput = new Vector2(
-            0f,
-            Mathf.Clamp01(worldDirection.magnitude)
-        );
+        MovementInput = movementInput;
         
         UpdateSlideCollider();
 
@@ -183,10 +182,17 @@ public class CharacterMotor : MonoBehaviour
             return;
         }
 
+        Debug.Log(
+            $"MOTOR INPUT | WorldDirection={worldDirection} | " +
+            $"MovementInput={MovementInput} | " +
+            $"SprintHeld={sprintHeld} | " +
+            $"FaceCamera={faceCameraDirection}"
+        );
+
         HandleHorizontalMovement(
             worldDirection,
             sprintHeld,
-            false
+            faceCameraDirection
         );
 
         HandleVerticalMovement();

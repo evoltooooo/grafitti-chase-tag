@@ -50,18 +50,12 @@ public class PlayerManager : MonoBehaviour
         CharacterMovementIntent intent =
             new CharacterMovementIntent(
                 worldDirection,
-                inputManager.SprintHeld
+                inputManager.SprintHeld,
+                inputManager.MovementInput,
+                true
             );
 
         actionController.SetMovementIntent(intent);
         actionController.TickMovement();
-    }
-
-    private void LateUpdate()
-    {
-        if (cameraManager != null)
-        {
-            cameraManager.HandleAllCameraMovement();
-        }
     }
 }
