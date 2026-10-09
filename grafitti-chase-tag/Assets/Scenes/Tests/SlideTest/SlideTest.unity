@@ -501,6 +501,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbDetector
   environmentDetector: {fileID: 440866922}
+  climbableLayers:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!114 &440866921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,7 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourDetector
   parkourLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 2176
   vaultDetector: {fileID: 440866921}
   climbDetector: {fileID: 440866920}
   ticTacDetector: {fileID: 440866919}
@@ -3074,6 +3077,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbDetector
   environmentDetector: {fileID: 2050302541}
+  climbableLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &2050302540
 MonoBehaviour:
   m_ObjectHideFlags: 0

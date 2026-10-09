@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 292911186}
   - component: {fileID: 292911185}
   - component: {fileID: 292911184}
-  m_Layer: 7
+  m_Layer: 11
   m_Name: Cube (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1814,6 +1814,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbDetector
   environmentDetector: {fileID: 1565578997}
+  climbableLayers:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!114 &1565578996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1857,7 +1860,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourDetector
   parkourLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 2176
   vaultDetector: {fileID: 1565578996}
   climbDetector: {fileID: 1565578995}
   ticTacDetector: {fileID: 1565578994}
@@ -3058,6 +3061,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbDetector
   environmentDetector: {fileID: 2050302541}
+  climbableLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &2050302540
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using UnityEngine;
 public class ClimbDetector : MonoBehaviour
 {
     [SerializeField] private ParkourEnvironmentDetector environmentDetector;
+    [SerializeField] private LayerMask climbableLayers;
 
     private void Awake()
     {
@@ -31,10 +32,11 @@ public class ClimbDetector : MonoBehaviour
         // -------------------------------------------------
 
         if (!environmentDetector.TryDetectWall(
-            actionData,
-            parkourLayers,
-            out RaycastHit wallHit))
+                actionData,
+                climbableLayers,
+                out RaycastHit wallHit))
         {
+            Debug.Log("CLIMB DETECTION FAILED | Wall not detected");
             return false;
         }
 
@@ -58,9 +60,10 @@ public class ClimbDetector : MonoBehaviour
                 wallHit.point + forward * 0.05f,
                 maxHeight,
                 maxHeight + 0.5f,
-                parkourLayers,
+                climbableLayers,
                 out RaycastHit topHit))
         {
+            Debug.Log("CLIMB DETECTION FAILED | Top surface not found");
             return false;
         }
 
@@ -76,6 +79,12 @@ public class ClimbDetector : MonoBehaviour
             obstacleHeight,
             actionData))
         {
+            Debug.Log(
+                $"CLIMB DETECTION FAILED | " +
+                $"Height={obstacleHeight:F2} | " +
+                $"Min={actionData.minObstacleHeight:F2} | " +
+                $"Max={actionData.maxObstacleHeight:F2}"
+            );
             return false;
         }
 
@@ -106,7 +115,7 @@ public class ClimbDetector : MonoBehaviour
                 landingSearchOrigin,
                 0f,
                 5f,
-                parkourLayers,
+                climbableLayers,
                 out landingHit))
             {
                 foundLanding = true;

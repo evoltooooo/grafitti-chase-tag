@@ -1077,7 +1077,7 @@ MonoBehaviour:
       Enabled: 1
       Input:
         InputAction: {fileID: 6507471194925065649, guid: e14200ea3a7ef064c99977db0f35d4ef, type: 3}
-        Gain: 15
+        Gain: 30
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -1088,7 +1088,7 @@ MonoBehaviour:
       Enabled: 1
       Input:
         InputAction: {fileID: 6507471194925065649, guid: e14200ea3a7ef064c99977db0f35d4ef, type: 3}
-        Gain: 15
+        Gain: 30
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -1792,6 +1792,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbDetector
   environmentDetector: {fileID: 1183088077}
+  climbableLayers:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!114 &1183088076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1835,7 +1838,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourDetector
   parkourLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 2176
   vaultDetector: {fileID: 1183088076}
   climbDetector: {fileID: 1183088075}
   ticTacDetector: {fileID: 1183088074}
@@ -3073,6 +3076,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbDetector
   environmentDetector: {fileID: 2050302541}
+  climbableLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &2050302540
 MonoBehaviour:
   m_ObjectHideFlags: 0

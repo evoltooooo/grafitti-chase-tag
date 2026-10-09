@@ -144,6 +144,9 @@ public class AIChaserTactics
         AIContext context,
         CharacterActionController actionController)
     {
+        if (context.IsExecutingAction)
+            return;
+
         if (parkourCheckTimer > 0f)
             return;
 
@@ -205,6 +208,9 @@ public class AIChaserTactics
         AIContext context,
         CharacterActionController actionController)
     {
+        if (context.IsExecutingAction)
+            return;
+
         if (slideCooldownTimer > 0f)
             return;
 
@@ -214,9 +220,6 @@ public class AIChaserTactics
         Debug.Log(
             "AI SLIDE OPPORTUNITY | Low obstacle ahead"
         );
-
-        if (context.IsExecutingAction)
-            return;
 
         if (!context.IsGrounded)
             return;
@@ -373,8 +376,6 @@ public class AIChaserTactics
             $"Landing={target.LandingPosition}"
         );
     }
-
-
     
     private void CheckTicTacOpportunity(
         AIContext context,
