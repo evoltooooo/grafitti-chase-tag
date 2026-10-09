@@ -74,6 +74,7 @@ public class AIChaser
         }
     }
 
+    
     public void SetState(AIChaserState newState)
     {
         if (state == newState)
@@ -81,8 +82,15 @@ public class AIChaser
 
         state = newState;
 
+        // Invalidate the previous destination.
         hasPathDestination = false;
         lastPathDestination = Vector3.zero;
+
+        // Allow the new state to build a path immediately.
+        pathRetryTimer = 0f;
+
+        // Remove the previous state's NavMesh path.
+        navigation.ClearPath();
     }
 
     public AIChaserState CurrentState => state;

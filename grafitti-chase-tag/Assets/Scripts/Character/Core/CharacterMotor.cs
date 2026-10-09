@@ -147,6 +147,11 @@ public class CharacterMotor : MonoBehaviour
         if (settings == null)
             return;
         
+        MovementInput = new Vector2(
+            0f,
+            Mathf.Clamp01(worldDirection.magnitude)
+        );
+        
         UpdateSlideCollider();
 
         UpdateGroundedState();
@@ -180,7 +185,8 @@ public class CharacterMotor : MonoBehaviour
 
         HandleHorizontalMovement(
             worldDirection,
-            sprintHeld
+            sprintHeld,
+            false
         );
 
         HandleVerticalMovement();
@@ -266,7 +272,8 @@ public class CharacterMotor : MonoBehaviour
 
     private void HandleHorizontalMovement(
         Vector3 desiredDirection,
-        bool sprintHeld)
+        bool sprintHeld,
+        bool faceCameraDirection = true)
     {
         desiredDirection.y = 0f;
 
@@ -365,7 +372,14 @@ public class CharacterMotor : MonoBehaviour
 
         if (desiredDirection.sqrMagnitude > 0.001f)
         {
-            RotateTowardsCamera();
+            if (faceCameraDirection)
+            {
+                RotateTowardsCamera();
+            }
+            else
+            {
+                RotateTowards(desiredDirection);
+            }
         }
     }
 
