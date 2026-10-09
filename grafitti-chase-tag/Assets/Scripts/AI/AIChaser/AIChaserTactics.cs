@@ -22,6 +22,15 @@ public class AIChaserTactics
     private const float ClimbCheckInterval = 0.15f;
     private bool upwardClimbAttempt;
     private bool upwardClimbHandled;
+    private bool upwardClimbJumpRequested;
+
+    // TICTAC
+    private float ticTacCooldownTimer;
+    private const float TicTacCooldown = 1f;
+    private bool ticTacApproachActive;
+    private float ticTacJumpCooldownTimer;
+    private const float TicTacJumpCooldown = 0.75f;
+
 
     public AIChaserTactics(
         float slideCooldown,
@@ -58,6 +67,8 @@ public class AIChaserTactics
         vaultCooldownTimer -= Time.deltaTime;
         slideCooldownTimer -= Time.deltaTime;
         climbCheckTimer -= Time.deltaTime;
+        ticTacCooldownTimer -= Time.deltaTime;
+        ticTacJumpCooldownTimer -= Time.deltaTime;
     }
 
     public void Update(
@@ -101,6 +112,8 @@ public class AIChaserTactics
                 return;
             }
 
+            upwardClimbJumpRequested = false;
+
             bool climbPerformed =
                 CheckClimbOpportunity(
                     context,
@@ -117,6 +130,12 @@ public class AIChaserTactics
 
         CheckClimbOpportunity(
             context,
+            actionController
+        );
+
+        CheckTicTacOpportunity(
+            context,
+            state,
             actionController
         );
     }
@@ -286,15 +305,20 @@ public class AIChaserTactics
         if (!context.IsGrounded)
             return;
 
+        // Do not request another jump while waiting
+        // for the previous jump request to take effect.
+        if (upwardClimbJumpRequested)
+            return;
+
         bool jumpPerformed =
             actionController.RequestJump();
 
         if (!jumpPerformed)
             return;
 
-        Debug.Log(
-            "AI UPWARD CLIMB | Jump"
-        );
+        upwardClimbJumpRequested = true;
+
+        Debug.Log("AI UPWARD CLIMB | Jump requested");
     }
 
     private void CheckClimbAtPartialPath(
@@ -349,4 +373,124 @@ public class AIChaserTactics
             $"Landing={target.LandingPosition}"
         );
     }
+
+
+    
+    private void CheckTicTacOpportunity(
+        AIContext context,
+        AIChaserState state,
+        CharacterActionController actionController)
+    {
+        // Only attempt this traversal while actively chasing.
+        if (state != AIChaserState.Pursue &&
+            state != AIChaserState.Intercept)
+            return;
+
+        if (!context.OpponentVisible)
+            return;
+
+        if (ticTacCooldownTimer > 0f)
+            return;
+
+        if (context.IsExecutingAction)
+            return;
+
+        if (context.IsStaminaEmpty)
+            return;
+
+        if (context.HorizontalSpeed < 0.5f)
+            return;
+
+        // Phase 1: find a wall and deliberately jump toward it.
+        if (context.IsGrounded)
+        {
+            if (ticTacApproachActive)
+                return;
+
+            // Measure the player's movement on the ground plane.
+            Vector3 opponentHorizontalVelocity =
+                new Vector3(
+                    context.OpponentVelocity.x,
+                    0f,
+                    context.OpponentVelocity.z
+                );
+
+            float opponentHorizontalSpeed =
+                opponentHorizontalVelocity.magnitude;
+
+            // TicTac may be useful if the player is actively
+            // moving, or is significantly above the AI.
+            bool opponentIsMoving =
+                opponentHorizontalSpeed >= 1f;
+
+            bool opponentIsHigher =
+                context.OpponentPosition.y >
+                context.Position.y + 1f;
+
+            if (!opponentIsMoving && !opponentIsHigher)
+                return;
+
+            if (!parkourOpportunity.TryFindTicTac(
+                    actionController,
+                    out ParkourTarget groundTarget))
+                return;
+
+            Debug.Log(
+                $"AI TICTAC APPROACH | " +
+                $"PlayerSpeed={opponentHorizontalSpeed:F2} | " +
+                $"PlayerHigher={opponentIsHigher} | " +
+                $"Wall={groundTarget.InteractionPosition}"
+            );
+
+            bool jumpPerformed =
+                actionController.RequestJump();
+
+            if (!jumpPerformed)
+            {
+                Debug.Log("AI TICTAC APPROACH FAILED | Jump");
+                ticTacJumpCooldownTimer = TicTacJumpCooldown;
+                return;
+            }
+
+            ticTacApproachActive = true;
+
+            Debug.Log("AI TICTAC APPROACH | Jump requested");
+            return;
+        }
+
+        // Phase 2: while airborne, find the wall again
+        // and request the actual TicTac action.
+        if (!ticTacApproachActive)
+            return;
+
+        if (!parkourOpportunity.TryFindTicTac(
+                actionController,
+                out ParkourTarget airTarget))
+        {
+            Debug.Log("AI TICTAC CHECK | No valid wall while airborne");
+            return;
+        }
+
+        Debug.Log(
+            $"AI TICTAC TARGET FOUND | " +
+            $"Target={airTarget.InteractionPosition}"
+        );
+
+        bool performed =
+            actionController.RequestParkourAction(
+                ParkourActionType.TicTac
+            );
+
+        if (!performed)
+        {
+            Debug.Log("AI TICTAC EXECUTION FAILED");
+            return;
+        }
+
+        ticTacApproachActive = false;
+        ticTacCooldownTimer = TicTacCooldown;
+
+        Debug.Log("AI TICTAC EXECUTION | TicTac");
+    }
+
 }

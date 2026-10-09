@@ -21,4 +21,16 @@ public class AIParkourOpportunity
             out target
         );
     }
+
+
+    public bool TryFindTicTac(
+        CharacterActionController actionController,
+        out ParkourTarget target)
+    {
+        return actionController.TryFindParkourTarget(
+            ParkourActionType.TicTac,
+            out target
+        );
+    }
+
 }
