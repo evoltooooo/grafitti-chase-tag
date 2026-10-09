@@ -220,6 +220,7 @@ public class AIChaser
 
         bool destinationChanged =
             !hasPathDestination ||
+            !navigation.HasPath ||
             Vector3.Distance(
                 lastPathDestination,
                 destination
