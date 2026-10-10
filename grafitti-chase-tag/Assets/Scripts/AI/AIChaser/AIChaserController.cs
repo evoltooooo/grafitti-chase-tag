@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class AIChaserController
 {
+    private readonly CharacterMotor characterMotor;
     private readonly AIChaser chaser;
     private readonly AIChaserDecision chaserDecision;
     private readonly AIChaserCommitment chaserCommitment;
     private readonly AIChaserTactics tactics;
 
     public AIChaserController(
+        CharacterMotor characterMotor,
         float destinationRepathDistance,
         float pathRetryInterval,
         float minPredictionTime,
@@ -22,6 +24,8 @@ public class AIChaserController
         float slideHighDetectionHeight,
         LayerMask slideObstacleMask)
     {
+        this.characterMotor = characterMotor;
+
         AISteering steering =
             new AISteering();
 
@@ -69,8 +73,8 @@ public class AIChaserController
             AIChaserState.Pursue
         );
 
-        tactics =
-        new AIChaserTactics(
+        tactics = new AIChaserTactics(
+            characterMotor,
             chaserSlideCooldown,
             parkourCheckInterval,
             slideDetectionDistance,
@@ -92,11 +96,18 @@ public class AIChaserController
 
         UpdateState(context);
 
+        // Detect before deciding whether to sprint.
+        bool lowObstacleAhead =
+            tactics.UpdateSlideDetection(context);
+
+        // Feed the same detection result into movement.
         chaser.Update(
             context,
-            actionController
+            actionController,
+            lowObstacleAhead
         );
 
+        // Keep the existing tactics update and other parkour checks.
         UpdateTactics(
             context,
             actionController

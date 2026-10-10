@@ -45,7 +45,8 @@ public class AIChaser
 
     public void Update(
         AIContext context,
-        CharacterActionController actionController)
+        CharacterActionController actionController,
+        bool lowObstacleAhead)
     {
         pathRetryTimer -= Time.deltaTime;
 
@@ -54,14 +55,16 @@ public class AIChaser
             case AIChaserState.Pursue:
                 UpdatePursue(
                     context,
-                    actionController
+                    actionController,
+                    lowObstacleAhead
                 );
                 break;
 
             case AIChaserState.Intercept:
                 UpdateIntercept(
                     context,
-                    actionController
+                    actionController,
+                    lowObstacleAhead
                 );
                 break;
 
@@ -74,7 +77,6 @@ public class AIChaser
         }
     }
 
-    
     public void SetState(AIChaserState newState)
     {
         if (state == newState)
@@ -88,6 +90,13 @@ public class AIChaser
 
         // Allow the new state to build a path immediately.
         pathRetryTimer = 0f;
+
+        Debug.Log(
+            $"AI STATE TRANSITION PATH RESET | " +
+            $"PreviousState={state} | " +
+            $"NewState={newState} | " +
+            $"HasPath={navigation.HasPath}"
+        );
 
         // Remove the previous state's NavMesh path.
         navigation.ClearPath();
@@ -105,21 +114,33 @@ public class AIChaser
         return isAscendingPartialPath;
     }
 
+    
     private void UpdatePursue(
         AIContext context,
-        CharacterActionController actionController)
+        CharacterActionController actionController,
+        bool lowObstacleAhead)
     {
         Vector3 destination =
             this.destination.Calculate(
                 context,
                 AIChaserState.Pursue
             );
-
+        
         bool sprint =
             movement.ShouldSprint(
                 context,
-                AIChaserState.Pursue
+                AIChaserState.Pursue,
+                lowObstacleAhead
             );
+        
+        Debug.Log(
+            $"AI SPRINT INTENT DEBUG | " +
+            $"State=Pursue | " +
+            $"LowObstacleAhead={lowObstacleAhead} | " +
+            $"ShouldSprint={sprint} | " +
+            $"Grounded={context.IsGrounded} | " +
+            $"CurrentSprinting={context.IsSprinting}"
+        );
 
         MoveTowardDestination(
             context,
@@ -131,7 +152,8 @@ public class AIChaser
 
     private void UpdateIntercept(
         AIContext context,
-        CharacterActionController actionController)
+        CharacterActionController actionController,
+        bool lowObstacleAhead)
     {
         Vector3 destination =
             this.destination.Calculate(
@@ -142,7 +164,8 @@ public class AIChaser
         bool sprint =
             movement.ShouldSprint(
                 context,
-                AIChaserState.Intercept
+                AIChaserState.Intercept,
+                lowObstacleAhead
             );
 
         MoveTowardDestination(
@@ -404,6 +427,7 @@ public class AIChaser
 
         Debug.Log(
             $"AI PURSUIT INTENT | " +
+            $"Sprint={intent.Sprint} | " +
             $"Waypoint={navigation.CurrentWaypoint} | " +
             $"Direction={intent.WorldDirection} | " +
             $"Input={intent.MovementInput} | " +

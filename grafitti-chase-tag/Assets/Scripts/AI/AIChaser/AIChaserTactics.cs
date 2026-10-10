@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class AIChaserTactics
 {
+    private readonly CharacterMotor characterMotor;
     private readonly AIParkourOpportunity parkourOpportunity;
     private readonly AIChaserParkourDecision parkourDecision;
     private readonly AISlideOpportunity slideOpportunity;
@@ -19,6 +20,7 @@ public class AIChaserTactics
     // SLIDE
     private float slideCooldownTimer;
     private readonly float slideCooldown;
+    private bool lowObstacleAhead;
 
     // CLIMB
     private float climbCheckTimer;
@@ -36,6 +38,7 @@ public class AIChaserTactics
 
 
     public AIChaserTactics(
+        CharacterMotor characterMotor,
         float slideCooldown,
         float parkourCheckInterval,
         float slideDetectionDistance,
@@ -43,25 +46,20 @@ public class AIChaserTactics
         float slideHighDetectionHeight,
         LayerMask slideObstacleMask)
     {
-        this.slideCooldown =
-            slideCooldown;
+        this.characterMotor = characterMotor;
+        this.slideCooldown = slideCooldown;
 
-        parkourOpportunity =
-            new AIParkourOpportunity();
+        parkourOpportunity = new AIParkourOpportunity();
+        parkourDecision = new AIChaserParkourDecision();
 
-        parkourDecision =
-            new AIChaserParkourDecision();
+        slideOpportunity = new AISlideOpportunity(
+            slideDetectionDistance,
+            slideLowDetectionHeight,
+            slideHighDetectionHeight,
+            slideObstacleMask
+        );
 
-        slideOpportunity =
-            new AISlideOpportunity(
-                slideDetectionDistance,
-                slideLowDetectionHeight,
-                slideHighDetectionHeight,
-                slideObstacleMask
-            );
-
-        this.parkourCheckInterval =
-            parkourCheckInterval;
+        this.parkourCheckInterval = parkourCheckInterval;
     }
 
     public void UpdateTimer()
@@ -83,6 +81,7 @@ public class AIChaserTactics
     {
         CheckSlideOpportunity(
             context,
+            state,
             actionController
         );
 
@@ -143,6 +142,13 @@ public class AIChaserTactics
         );
     }
 
+    public bool UpdateSlideDetection(AIContext context)
+    {
+        lowObstacleAhead =
+            slideOpportunity.HasLowObstacleAhead(context);
+
+        return lowObstacleAhead;
+    }
     
     private void CheckVaultOpportunity(
         AIContext context,
@@ -224,26 +230,57 @@ public class AIChaserTactics
 
     private void CheckSlideOpportunity(
         AIContext context,
+        AIChaserState state,
         CharacterActionController actionController)
     {
+        // Slide is permitted only while actively pursuing
+        // or intercepting a visible player.
+        if (state != AIChaserState.Pursue &&
+            state != AIChaserState.Intercept)
+        {
+            return;
+        }
+
+        if (!lowObstacleAhead)
+            return;
+
         if (context.IsExecutingAction)
             return;
 
         if (slideCooldownTimer > 0f)
             return;
 
-        if (!slideOpportunity.HasLowObstacleAhead(context))
-            return;
-
-        Debug.Log(
-            "AI SLIDE OPPORTUNITY | Low obstacle ahead"
-        );
-
         if (!context.IsGrounded)
             return;
 
         if (context.IsStaminaEmpty)
             return;
+
+        Debug.Log(
+            $"AI SLIDE SPRINT CROSSCHECK | " +
+            $"ContextSprinting={context.IsSprinting} | " +
+            $"MotorSprinting={characterMotor.IsSprinting} | " +
+            $"Grounded={characterMotor.IsGrounded} | " +
+            $"Speed={characterMotor.HorizontalSpeed:F2}"
+        );
+
+        // An intent to sprint is not enough.
+        // Wait for CharacterMotor to confirm actual sprinting.
+        
+        if (!characterMotor.IsSprinting)
+        {
+            Debug.Log(
+                $"AI SLIDE WAITING | " +
+                $"State={state} | " +
+                $"LowObstacleAhead={lowObstacleAhead} | " +
+                $"Grounded={characterMotor.IsGrounded} | " +
+                $"Sprinting={characterMotor.IsSprinting} | " +
+                $"HorizontalSpeed={characterMotor.HorizontalSpeed:F2} | " +
+                $"Stamina={context.NormalizedStamina:F2}"
+            );
+
+            return;
+        }
 
         bool slidePerformed =
             actionController.RequestSlide();
@@ -257,8 +294,7 @@ public class AIChaserTactics
             return;
         }
 
-        slideCooldownTimer =
-            slideCooldown;
+        slideCooldownTimer = slideCooldown;
 
         Debug.Log(
             "AI SLIDE EXECUTION | Low obstacle"

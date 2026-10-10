@@ -97,6 +97,7 @@ public class AIController : MonoBehaviour
 
         chaserController =
             new AIChaserController(
+                characterMotor,
                 destinationRepathDistance,
                 pathRetryInterval,
                 minPredictionTime,

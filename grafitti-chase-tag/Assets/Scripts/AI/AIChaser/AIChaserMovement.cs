@@ -4,12 +4,23 @@ public class AIChaserMovement
 {
     public bool ShouldSprint(
         AIContext context,
-        AIChaserState state)
+        AIChaserState state,
+        bool lowObstacleAhead = false)
     {
-        if (state == AIChaserState.Search)
-            return false;
-
         if (context.IsStaminaEmpty)
+        return false;
+
+        // Prepare for a Slide when a low obstacle is detected.
+        // This must come before the Search-state restriction.
+        if (lowObstacleAhead &&
+            context.IsGrounded &&
+            context.NormalizedStamina > 0.4f)
+        {
+            return true;
+        }
+
+        // Normally, do not sprint while searching.
+        if (state == AIChaserState.Search)
             return false;
 
         float distance =
@@ -18,16 +29,14 @@ public class AIChaserMovement
                 context.OpponentPosition
             );
 
-        // Close enough that catching the target
-        // is immediately important.
+        // Sprint when close enough to catch the target.
         if (distance < 8f &&
             context.NormalizedStamina > 0.4f)
         {
             return true;
         }
 
-        // If the target is moving away,
-        // increase pursuit intensity.
+        // Sprint when the target is moving away.
         Vector3 toOpponent =
             context.OpponentPosition -
             context.Position;

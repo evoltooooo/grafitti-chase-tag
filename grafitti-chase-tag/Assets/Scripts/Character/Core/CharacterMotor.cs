@@ -168,6 +168,16 @@ public class CharacterMotor : MonoBehaviour
             actionRuntime.CurrentMotionType == ActionMotionType.Hybrid ||
             actionRuntime.CurrentMotionType == ActionMotionType.Specialized);
 
+        Debug.Log(
+            $"AI MOTOR SPRINT TRACE | " +
+            $"SprintHeld={sprintHeld} | " +
+            $"MovementInput={MovementInput} | " +
+            $"ActionExecuting={actionExecuting} | " +
+            $"Action={actionRuntime?.CurrentActionType} | " +
+            $"MotionType={actionRuntime?.CurrentMotionType} | " +
+            $"IsSprintingBeforeCheck={IsSprinting}"
+        );
+
         if (actionControlsNormalMovement)
         {
             Debug.Log(
@@ -304,6 +314,16 @@ public class CharacterMotor : MonoBehaviour
             !stamina.IsEmpty;
 
         IsSprinting = canSprint;
+
+        Debug.Log(
+            $"AI MOTOR SPRINT CHECK | " +
+            $"SprintHeld={sprintHeld} | " +
+            $"MovementInput={MovementInput} | " +
+            $"MovingForward={movingForward} | " +
+            $"InputAmount={inputAmount:F2} | " +
+            $"Grounded={IsGrounded} | " +
+            $"IsSprinting={IsSprinting}"
+        );
 
         float targetSpeed;
 
