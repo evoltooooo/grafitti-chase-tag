@@ -15,6 +15,8 @@ public class CharacterMotor : MonoBehaviour
 
     private float standingColliderHeight;
     private Vector3 standingColliderCenter;
+    private Collider lastSlideRestoreBlocker;
+    private bool wasSlideRestoreBlocked;
 
     public bool IsSliding { get; private set; }
 
@@ -546,13 +548,23 @@ public class CharacterMotor : MonoBehaviour
 
         return true;
     }
-
+    
     private void TryEndSlide()
     {
         if (!IsSliding)
             return;
 
-        if (!CanRestoreStandingCollider())
+        bool canRestore = CanRestoreStandingCollider();
+
+        Debug.Log(
+            $"PLAYER SLIDE COLLIDER CHECK | " +
+            $"CanRestore={canRestore} | " +
+            $"CurrentHeight={characterController.height:F2} | " +
+            $"StandingHeight={standingColliderHeight:F2} | " +
+            $"Position={transform.position}"
+        );
+
+        if (!canRestore)
             return;
 
         characterController.height =
@@ -562,43 +574,77 @@ public class CharacterMotor : MonoBehaviour
             standingColliderCenter;
 
         IsSliding = false;
-    }
 
+        Debug.Log(
+            $"PLAYER SLIDE COLLIDER RESTORED | " +
+            $"Height={characterController.height:F2}"
+        );
+    }
+    
     private bool CanRestoreStandingCollider()
     {
         Vector3 worldCenter =
-            transform.TransformPoint(
-                standingColliderCenter
-            );
+            transform.TransformPoint(standingColliderCenter);
 
-        float radius =
-            characterController.radius;
+        float radius = characterController.radius;
 
-        float halfHeight =
-            Mathf.Max(
-                standingColliderHeight * 0.5f,
-                radius
-            );
+        float halfHeight = Mathf.Max(
+            standingColliderHeight * 0.5f,
+            radius
+        );
 
-        Vector3 bottom =
-            worldCenter +
-            Vector3.down *
-            (halfHeight - radius);
+        Vector3 bottom = worldCenter +
+            Vector3.down * (halfHeight - radius);
 
-        Vector3 top =
-            worldCenter +
-            Vector3.up *
-            (halfHeight - radius);
+        Vector3 top = worldCenter +
+            Vector3.up * (halfHeight - radius);
 
-        return !Physics.CheckCapsule(
+        Collider[] overlaps = Physics.OverlapCapsule(
             bottom,
             top,
             radius,
             Physics.DefaultRaycastLayers,
             QueryTriggerInteraction.Ignore
         );
+
+        bool blocked = false;
+
+        foreach (Collider overlap in overlaps)
+        {
+            // Ignore this character's own colliders.
+            if (overlap.transform == transform ||
+                overlap.transform.IsChildOf(transform))
+            {
+                continue;
+            }
+
+            blocked = true;
+
+            if (!wasSlideRestoreBlocked || lastSlideRestoreBlocker != overlap)
+            {
+                Debug.Log(
+                    $"SLIDE RESTORE BLOCKED | " +
+                    $"Character={name} | " +
+                    $"Collider={overlap.name} | " +
+                    $"Layer={LayerMask.LayerToName(overlap.gameObject.layer)} | " +
+                    $"Position={overlap.transform.position} | " +
+                    $"CharacterPosition={transform.position}",
+                    overlap
+                );
+            }
+
+            lastSlideRestoreBlocker = overlap;
+            wasSlideRestoreBlocked = true;
+        }
+
+        if (!blocked)
+        {
+            lastSlideRestoreBlocker = null;
+            wasSlideRestoreBlocked = false;
+        }
+
+        return !blocked;
     }
-    
 
     // =========================================================
     // GRAVITY
@@ -641,11 +687,25 @@ public class CharacterMotor : MonoBehaviour
             Vector3.up *
             verticalVelocity;
 
+        Vector3 positionBefore = transform.position;
+        Vector3 velocityBeforeMove = horizontalVelocity;
+
         CollisionFlags collisionFlags =
             characterController.Move(
                 movement *
                 Time.deltaTime
             );
+
+        Vector3 actualDisplacement =
+            transform.position - positionBefore;
+
+        Debug.Log(
+            $"MOTOR MOVE TRACE | " +
+            $"VelocityBefore={velocityBeforeMove} | " +
+            $"Displacement={actualDisplacement} | " +
+            $"Flags={collisionFlags} | " +
+            $"VelocityAfter={horizontalVelocity}"
+        );
 
         if ((collisionFlags & CollisionFlags.Sides) != 0)
         {

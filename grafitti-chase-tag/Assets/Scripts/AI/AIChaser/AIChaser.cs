@@ -288,6 +288,25 @@ public class AIChaser
 
         bool waypointUpdated =
             navigation.UpdateWaypoint(context.Position);
+        
+        if (state == AIChaserState.Search)
+        {
+            Debug.Log(
+                $"AI SEARCH ROUTE DEBUG | " +
+                $"Position={context.Position} | " +
+                $"Waypoint={navigation.CurrentWaypoint} | " +
+                $"Destination={destination} | " +
+                $"HasPath={navigation.HasPath}"
+            );
+        }
+        
+        if (state == AIChaserState.Search)
+        {
+            navigation.DrawDebugPath(
+                context.Position,
+                new Color(0.54f, 0.17f, 0.89f, 1f)
+            );
+        }
 
         Debug.Log(
             $"AI NAV WAYPOINT RESULT | " +
@@ -413,16 +432,19 @@ public class AIChaser
                 navigation.CurrentWaypoint,
                 sprint
             );
-
-        Vector3 lookDirection =
-            context.OpponentPosition - context.Position;
-
-        lookDirection.y = 0f;
-
-        if (lookDirection.sqrMagnitude > 0.001f)
+        
+        if (context.OpponentVisible)
         {
-            intent.LookDirection = lookDirection.normalized;
-            intent.HasLookDirection = true;
+            Vector3 lookDirection =
+                context.OpponentPosition - context.Position;
+
+            lookDirection.y = 0f;
+
+            if (lookDirection.sqrMagnitude > 0.001f)
+            {
+                intent.LookDirection = lookDirection.normalized;
+                intent.HasLookDirection = true;
+            }
         }
 
         Debug.Log(
@@ -435,6 +457,18 @@ public class AIChaser
         );
 
         actionController.SetMovementIntent(intent);
+
+        if (state == AIChaserState.Search)
+        {
+            Debug.Log(
+                $"AI SEARCH MOVEMENT CHECK | " +
+                $"Position={context.Position} | " +
+                $"Waypoint={navigation.CurrentWaypoint} | " +
+                $"IntentDirection={intent.WorldDirection} | " +
+                $"Velocity={context.HorizontalVelocity} | " +
+                $"Speed={context.HorizontalSpeed:F2}"
+            );
+        }
     }
 
     private void Stop(

@@ -172,6 +172,38 @@ public class AINavigation
         return true;
     }
 
+    public void DrawDebugPath(
+        Vector3 currentPosition,
+        Color color)
+    {
+        if (!HasPath ||
+            corners == null ||
+            corners.Length < 2 ||
+            currentCornerIndex >= corners.Length)
+        {
+            return;
+        }
+
+        // AI position to its next waypoint.
+        Debug.DrawLine(
+            currentPosition,
+            corners[currentCornerIndex],
+            color
+        );
+
+        // Remaining route through the NavMesh corners.
+        for (int i = currentCornerIndex;
+            i < corners.Length - 1;
+            i++)
+        {
+            Debug.DrawLine(
+                corners[i],
+                corners[i + 1],
+                color
+            );
+        }
+    }
+
     public void ClearPath()
     {
         HasPath = false;
