@@ -12,6 +12,9 @@ public class AIChaserTactics
     // VAULT
     private float vaultCooldownTimer;
     private const float VaultCooldown = 0.75f;
+    private bool vaultWaitingForOpportunityToClear;
+    private Vector3 vaultStartPosition;
+    private const float VaultClearanceDistance = 2f;
 
     // SLIDE
     private float slideCooldownTimer;
@@ -140,6 +143,7 @@ public class AIChaserTactics
         );
     }
 
+    
     private void CheckVaultOpportunity(
         AIContext context,
         CharacterActionController actionController)
@@ -147,11 +151,35 @@ public class AIChaserTactics
         if (context.IsExecutingAction)
             return;
 
+        // Keep the previous Vault locked until the AI has
+        // moved away and the old opportunity is no longer detected.
+        if (vaultWaitingForOpportunityToClear)
+        {
+            Vector3 displacement = context.Position - vaultStartPosition;
+            displacement.y = 0f;
+
+            bool movedAway =
+                displacement.magnitude >= VaultClearanceDistance;
+
+            if (!movedAway)
+                return;
+
+            if (parkourOpportunity.TryFindVault(
+                    actionController,
+                    out _))
+            {
+                return;
+            }
+
+            vaultWaitingForOpportunityToClear = false;
+
+            Debug.Log("AI VAULT | Previous obstacle cleared");
+        }
+
         if (parkourCheckTimer > 0f)
             return;
 
-        parkourCheckTimer =
-            parkourCheckInterval;
+        parkourCheckTimer = parkourCheckInterval;
 
         if (vaultCooldownTimer > 0f)
             return;
@@ -165,22 +193,16 @@ public class AIChaserTactics
 
         Debug.Log(
             $"AI PARKOUR OPPORTUNITY | " +
-            $"Vault | " +
-            $"Target={target.InteractionPosition}"
+            $"Vault | Target={target.InteractionPosition}"
         );
 
         bool shouldVault =
-            parkourDecision.ShouldVault(
-                context,
-                target
-            );
+            parkourDecision.ShouldVault(context, target);
 
         if (!shouldVault)
             return;
 
-        Debug.Log(
-            "AI PARKOUR DECISION | Vault"
-        );
+        Debug.Log("AI PARKOUR DECISION | Vault");
 
         bool vaultPerformed =
             actionController.RequestParkourAction(
@@ -189,19 +211,15 @@ public class AIChaserTactics
 
         if (!vaultPerformed)
         {
-            Debug.Log(
-                "AI PARKOUR EXECUTION FAILED | Vault"
-            );
-
+            Debug.Log("AI PARKOUR EXECUTION FAILED | Vault");
             return;
         }
 
-        vaultCooldownTimer =
-            VaultCooldown;
+        vaultStartPosition = context.Position;
+        vaultWaitingForOpportunityToClear = true;
+        vaultCooldownTimer = VaultCooldown;
 
-        Debug.Log(
-            "AI PARKOUR EXECUTION | Vault"
-        );
+        Debug.Log("AI PARKOUR EXECUTION | Vault");
     }
 
     private void CheckSlideOpportunity(

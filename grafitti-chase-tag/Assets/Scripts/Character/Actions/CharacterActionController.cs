@@ -254,10 +254,11 @@ public class CharacterActionController : MonoBehaviour
             movementIntent.WorldDirection,
             movementIntent.Sprint,
             movementIntent.MovementInput,
-            movementIntent.FaceCameraDirection
+            movementIntent.FaceCameraDirection,
+            movementIntent.LookDirection,
+            movementIntent.HasLookDirection
         );
-    }
-
+}
     public bool TryFindParkourTarget(
         ParkourActionType parkourActionType,
         out ParkourTarget target)

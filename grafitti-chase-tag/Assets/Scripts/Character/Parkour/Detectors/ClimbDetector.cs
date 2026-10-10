@@ -36,7 +36,15 @@ public class ClimbDetector : MonoBehaviour
                 climbableLayers,
                 out RaycastHit wallHit))
         {
-            Debug.Log("CLIMB DETECTION FAILED | Wall not detected");
+            Debug.Log(
+                $"CLIMB WALL NOT DETECTED | " +
+                $"Position={transform.position} | " +
+                $"Forward={environmentDetector.GetHorizontalForward()} | " +
+                $"MaxDistance={actionData.maxTriggerDistance} | " +
+                $"CastBack={actionData.detectionCastBackOffset} | " +
+                $"ClimbableMask={climbableLayers.value}"
+            );
+
             return false;
         }
 

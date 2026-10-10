@@ -146,11 +146,25 @@ public class AINavigation
         {
             ReachedPartialPathEnd = IsPartialPath;
 
+            Debug.Log(
+                $"AI NAV PATH ENDED | " +
+                $"Partial={IsPartialPath} | " +
+                $"Corners={corners.Length} | " +
+                $"LastCorner={corners[corners.Length - 1]} | " +
+                $"Position={currentPosition} | " +
+                $"DistanceToLastCorner=" +
+                $"{Vector3.Distance(currentPosition, corners[corners.Length - 1]):F2}"
+            );
+
+            // The current path has no more waypoints.
+            // Keep the partial-path result available to the caller.
             HasPath = false;
             CurrentWaypoint = Vector3.zero;
 
             return false;
         }
+
+
 
         CurrentWaypoint =
             corners[currentCornerIndex];

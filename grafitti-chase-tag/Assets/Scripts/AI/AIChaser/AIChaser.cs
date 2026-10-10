@@ -256,7 +256,26 @@ public class AIChaser
             }
         }
 
-        if (!navigation.UpdateWaypoint(context.Position))
+        Debug.Log(
+            $"AI NAV AFTER VAULT CHECK | " +
+            $"HasPath={navigation.HasPath} | " +
+            $"Position={context.Position} | " +
+            $"PartialEnd={navigation.ReachedPartialPathEnd}"
+        );
+
+        bool waypointUpdated =
+            navigation.UpdateWaypoint(context.Position);
+
+        Debug.Log(
+            $"AI NAV WAYPOINT RESULT | " +
+            $"Updated={waypointUpdated} | " +
+            $"HasPath={navigation.HasPath} | " +
+            $"Waypoint={navigation.CurrentWaypoint} | " +
+            $"Position={context.Position}"
+        );
+
+
+        if (!waypointUpdated)
         {
             if (navigation.ReachedPartialPathEnd)
             {
@@ -318,6 +337,47 @@ public class AIChaser
 
                     return;
                 }
+                
+                if (!targetIsAbove && !targetIsBelow)
+                {
+                    Debug.Log(
+                        $"AI NAV PARTIAL END | " +
+                        $"Target at similar height. " +
+                        $"VerticalDifference={verticalDifference:F2} | " +
+                        $"Attempting path rebuild."
+                    );
+
+                    // Rebuild from the AI's current position.
+                    // The destination may now be reachable from a different route.
+                    bool recoveryPathBuilt = navigation.TryBuildPath(
+                        context.Position,
+                        destination
+                    );
+
+                    Debug.Log(
+                        $"AI PARTIAL PATH RECOVERY | " +
+                        $"PathBuilt={recoveryPathBuilt} | " +
+                        $"HasPath={navigation.HasPath} | " +
+                        $"Partial={navigation.IsPartialPath}"
+                    );
+
+                    if (recoveryPathBuilt)
+                    {
+                        lastPathDestination = destination;
+                        hasPathDestination = true;
+                        pathRetryTimer = 0f;
+                        return;
+                    }
+
+                    // No alternate path was found. Avoid repeatedly pushing
+                    // directly into the same obstacle.
+                    hasPathDestination = false;
+                    pathRetryTimer = pathRetryInterval;
+
+                    Stop(actionController);
+                    return;
+                }
+
             }
 
             Stop(actionController);
@@ -330,6 +390,25 @@ public class AIChaser
                 navigation.CurrentWaypoint,
                 sprint
             );
+
+        Vector3 lookDirection =
+            context.OpponentPosition - context.Position;
+
+        lookDirection.y = 0f;
+
+        if (lookDirection.sqrMagnitude > 0.001f)
+        {
+            intent.LookDirection = lookDirection.normalized;
+            intent.HasLookDirection = true;
+        }
+
+        Debug.Log(
+            $"AI PURSUIT INTENT | " +
+            $"Waypoint={navigation.CurrentWaypoint} | " +
+            $"Direction={intent.WorldDirection} | " +
+            $"Input={intent.MovementInput} | " +
+            $"Executing={context.IsExecutingAction}"
+        );
 
         actionController.SetMovementIntent(intent);
     }

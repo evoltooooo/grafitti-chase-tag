@@ -144,7 +144,9 @@ public class CharacterMotor : MonoBehaviour
         Vector3 worldDirection,
         bool sprintHeld,
         Vector2 movementInput,
-        bool faceCameraDirection)
+        bool faceCameraDirection,
+        Vector3 lookDirection,
+        bool hasLookDirection)
     {
         if (settings == null)
             return;
@@ -190,9 +192,14 @@ public class CharacterMotor : MonoBehaviour
         );
 
         HandleHorizontalMovement(
-            worldDirection,
+            hasLookDirection &&
+            lookDirection.sqrMagnitude > 0.001f
+                ? lookDirection
+                : worldDirection,
             sprintHeld,
-            faceCameraDirection
+            hasLookDirection
+                ? false
+                : faceCameraDirection
         );
 
         HandleVerticalMovement();

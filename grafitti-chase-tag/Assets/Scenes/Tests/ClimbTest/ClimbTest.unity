@@ -3063,7 +3063,7 @@ MonoBehaviour:
   environmentDetector: {fileID: 2050302541}
   climbableLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
 --- !u!114 &2050302540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3107,7 +3107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourDetector
   parkourLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 2176
   vaultDetector: {fileID: 2050302540}
   climbDetector: {fileID: 2050302539}
   ticTacDetector: {fileID: 2050302538}
@@ -3227,7 +3227,7 @@ MonoBehaviour:
   visionRange: 30
   visionBlockingLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 2176
   eyeHeight: 1.5
   targetHeight: 1
 --- !u!114 &2050302550
