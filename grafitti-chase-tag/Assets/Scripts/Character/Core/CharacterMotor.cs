@@ -416,6 +416,16 @@ public class CharacterMotor : MonoBehaviour
                 RotateTowards(desiredDirection);
             }
         }
+        
+        Debug.Log(
+            $"AI HORIZONTAL RESULT | " +
+            $"Input={MovementInput} | " +
+            $"DesiredDirection={desiredDirection} | " +
+            $"Grounded={IsGrounded} | " +
+            $"TargetVelocity={targetVelocity} | " +
+            $"HorizontalVelocity={horizontalVelocity} | " +
+            $"Speed={HorizontalSpeed:F2}"
+        );
     }
 
     private Vector3 GetCameraRelativeDirection(Vector2 input)

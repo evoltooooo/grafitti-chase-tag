@@ -17,7 +17,7 @@ MonoBehaviour:
   animationStateName: 
   motionType: 3
   holdToExecute: 0
-  duration: 0.5
+  duration: 0.7
   cooldown: 0
   staminaCost: 30
   movementSpeed: 0

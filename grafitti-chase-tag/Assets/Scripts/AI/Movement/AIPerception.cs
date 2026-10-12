@@ -87,11 +87,30 @@ public class AIPerception : MonoBehaviour
         bool inRange =
             IsOpponentInRange();
 
-        bool hasLineOfSight =
-            inRange && HasLineOfSight();
+        Collider blockingCollider = null;
 
-        OpponentVisible =
-            hasLineOfSight;
+        bool hasLineOfSight =
+            inRange && HasLineOfSight(out blockingCollider);
+
+        if (OpponentVisible != hasLineOfSight)
+        {
+            float distance = Vector3.Distance(
+                characterMotor.transform.position,
+                opponentTransform.position
+            );
+
+            Debug.Log(
+                $"AI PERCEPTION VISIBILITY CHANGE | " +
+                $"Visible={hasLineOfSight} | " +
+                $"InRange={inRange} | " +
+                $"Distance={distance:F2} | " +
+                $"Blocker={(blockingCollider != null ? blockingCollider.name : "None")} | " +
+                $"AI={characterMotor.transform.position} | " +
+                $"Player={opponentTransform.position}"
+            );
+        }
+
+        OpponentVisible = hasLineOfSight;
 
         if (OpponentVisible)
         {
@@ -131,8 +150,10 @@ public class AIPerception : MonoBehaviour
     // LINE OF SIGHT
     // =========================================================
 
-    private bool HasLineOfSight()
+    private bool HasLineOfSight(out Collider blockingCollider)
     {
+        blockingCollider = null;
+
         Vector3 origin =
             characterMotor.transform.position +
             Vector3.up * eyeHeight;
@@ -141,11 +162,9 @@ public class AIPerception : MonoBehaviour
             opponentTransform.position +
             Vector3.up * targetHeight;
 
-        Vector3 direction =
-            target - origin;
+        Vector3 direction = target - origin;
 
-        float distance =
-            direction.magnitude;
+        float distance = direction.magnitude;
 
         if (distance <= 0.001f)
             return true;
@@ -158,12 +177,18 @@ public class AIPerception : MonoBehaviour
             Color.green
         );
 
-        return !Physics.Raycast(
+        if (Physics.Raycast(
             origin,
             direction,
+            out RaycastHit hit,
             distance,
             visionBlockingLayers,
-            QueryTriggerInteraction.Ignore
-        );
+            QueryTriggerInteraction.Ignore))
+        {
+            blockingCollider = hit.collider;
+            return false;
+        }
+
+        return true;
     }
 }

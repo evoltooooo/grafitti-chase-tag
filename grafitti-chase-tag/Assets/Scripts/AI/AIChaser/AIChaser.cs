@@ -218,10 +218,27 @@ public class AIChaser
                 dropDirection.Normalize();
             }
 
+            Debug.Log(
+                $"AI DESCENT TRACE | " +
+                $"Position={context.Position} | " +
+                $"Destination={destination} | " +
+                $"Direction={dropDirection} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"HasLeftSurface={hasLeftPartialPathSurface}"
+            );
+
+            Debug.Log(
+                $"AI DESCENT INTENT | " +
+                $"Position={context.Position} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"HasLeftSurface={hasLeftPartialPathSurface} | " +
+                $"DropDirection={dropDirection}"
+            );
             actionController.SetMovementIntent(
                 new CharacterMovementIntent(
                     dropDirection,
-                    sprint
+                    sprint,
+                    Vector2.up
                 )
             );
 
@@ -370,7 +387,8 @@ public class AIChaser
                     CharacterMovementIntent dropIntent =
                         new CharacterMovementIntent(
                             dropDirection,
-                            sprint
+                            sprint,
+                            Vector2.up
                         );
 
                     actionController.SetMovementIntent(
