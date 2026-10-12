@@ -40,6 +40,7 @@ public class AIController : MonoBehaviour
 
     [Header("Slide")]
     [SerializeField] private float chaserSlideCooldown = 1.5f;
+    [SerializeField] private float evaderSlideCooldown = 1.5f;
 
     [Header("Slide Detection")]
     [SerializeField] private float slideDetectionDistance = 2f;
@@ -55,6 +56,7 @@ public class AIController : MonoBehaviour
     private AIContext context;
 
     private AIChaserController chaserController;
+    private AIEvaderController evaderController;
 
     // Future:
     // private AIEvaderController evaderController;
@@ -107,6 +109,17 @@ public class AIController : MonoBehaviour
                 minimumChaserStateTime,
                 chaserSlideCooldown,
                 parkourCheckInterval,
+                slideDetectionDistance,
+                slideLowDetectionHeight,
+                slideHighDetectionHeight,
+                slideObstacleMask
+            );
+        
+            evaderController = new AIEvaderController(
+                characterMotor,
+                destinationRepathDistance,
+                pathRetryInterval,
+                evaderSlideCooldown,
                 slideDetectionDistance,
                 slideLowDetectionHeight,
                 slideHighDetectionHeight,
@@ -180,15 +193,12 @@ public class AIController : MonoBehaviour
 
             case CharacterRoleType.Evader:
 
-                UpdateEvader();
+                evaderController.Update(
+                    context,
+                    actionController
+                );
 
                 break;
         }
-    }
-
-
-    private void UpdateEvader()
-    {
-        // Decision system will be added later.
     }
 }
