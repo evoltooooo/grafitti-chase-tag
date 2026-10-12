@@ -93,6 +93,8 @@ public class AIChaserTactics
         if (!isAscendingPartialPath)
         {
             upwardClimbHandled = false;
+            upwardClimbAttempt = false;
+            upwardClimbJumpRequested = false;
         }
 
         if (isAscendingPartialPath &&

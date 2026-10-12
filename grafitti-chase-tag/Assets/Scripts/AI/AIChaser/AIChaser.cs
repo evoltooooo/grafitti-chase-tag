@@ -287,8 +287,16 @@ public class AIChaser
                 lastPathDestination = destination;
                 hasPathDestination = true;
 
+                // A complete NavMesh path means the AI no longer
+                // needs the upward-climb recovery for a partial path.
+                if (!navigation.IsPartialPath)
+                {
+                    isAscendingPartialPath = false;
+                }
+
                 pathRetryTimer = 0f;
             }
+
             else
             {
                 pathRetryTimer =
