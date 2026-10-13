@@ -53,6 +53,9 @@ public class AIEvaderController
 
         evader.Update(context, actionController);
 
-        tactics.Update(context, actionController);
+        tactics.Update(
+            context,
+            actionController,
+            evader.WantsToSprint);
     }
 }

@@ -41,6 +41,11 @@ public class AIEvaderDestination
 
         NavMeshPath candidatePath = new NavMeshPath();
 
+        int sampleFailures = 0;
+        int pathCalculationFailures = 0;
+        int incompletePaths = 0;
+        int completePaths = 0;
+
         foreach (float angle in CandidateAngles)
         {
             Vector3 direction =
@@ -57,23 +62,118 @@ public class AIEvaderDestination
                 SampleRadius,
                 NavMesh.AllAreas))
             {
+                sampleFailures++;
+
+                Debug.Log(
+                    $"EVADER CANDIDATE SAMPLE FAILED | " +
+                    $"Angle={angle} | Candidate={candidate}");
+
                 continue;
             }
 
-            if (!NavMesh.CalculatePath(
+            Debug.Log(
+                $"EVADER PATH START CHECK | " +
+                $"Start={context.Position} | " +
+                $"StartOnNavMesh={NavMesh.SamplePosition(context.Position, out NavMeshHit startHit, 0.5f, NavMesh.AllAreas)} | " +
+                $"SampledStart={startHit.position} | " +
+                $"Destination={hit.position}"
+            );
+
+            bool pathCalculated = NavMesh.CalculatePath(
                 context.Position,
                 hit.position,
                 NavMesh.AllAreas,
-                candidatePath))
+                candidatePath);
+            
+            Debug.Log(
+                $"EVADER PATH COMPARISON | " +
+                $"RawStart={context.Position} | " +
+                $"RawDestination={hit.position} | " +
+                $"RawStatus={candidatePath.status} | " +
+                $"RawCorners={candidatePath.corners.Length}"
+            );
+
+            AINavigation testNavigation = new AINavigation();
+
+            bool sharedPathFound = testNavigation.TryBuildPath(
+                context.Position,
+                hit.position
+            );
+
+            if (!pathCalculated)
             {
+                pathCalculationFailures++;
+
+                Debug.Log(
+                    $"EVADER CANDIDATE PATH CALCULATION FAILED | " +
+                    $"Angle={angle} | Destination={hit.position}");
+
                 continue;
             }
 
-            if (candidatePath.status !=
-                NavMeshPathStatus.PathComplete)
+            if (candidatePath.status == NavMeshPathStatus.PathPartial)
             {
+                incompletePaths++;
+
+                Vector3[] partialCorners = candidatePath.corners;
+
+                if (partialCorners.Length < 2)
+                    continue;
+
+                Vector3 reachableDestination =
+                    partialCorners[partialCorners.Length - 1];
+
+                float currentDistanceFromThreat = Vector3.Distance(
+                    context.Position,
+                    threatPosition);
+
+                float reachableDistanceFromThreat = Vector3.Distance(
+                    reachableDestination,
+                    threatPosition);
+
+                // Don't choose a partial-path endpoint that brings the
+                // Evader closer to the threat.
+                if (reachableDistanceFromThreat <= currentDistanceFromThreat + 0.25f)
+                {
+                    Debug.Log(
+                        $"EVADER PARTIAL CANDIDATE REJECTED | " +
+                        $"Endpoint={reachableDestination} | " +
+                        $"CurrentThreatDistance={currentDistanceFromThreat:F2} | " +
+                        $"EndpointThreatDistance={reachableDistanceFromThreat:F2}");
+
+                    continue;
+                }
+
+                float partialPathLength = GetPathLength(candidatePath);
+
+                float partialDistanceFromThreat = Vector3.Distance(
+                    reachableDestination,
+                    threatPosition);
+
+                float partialScore =
+                    partialDistanceFromThreat -
+                    partialPathLength * PathLengthPenalty;
+
+                Debug.Log(
+                    $"EVADER PARTIAL CANDIDATE | " +
+                    $"Angle={angle} | " +
+                    $"ReachableDestination={reachableDestination} | " +
+                    $"Score={partialScore:F2}");
+
+                if (partialScore > bestScore)
+                {
+                    bestScore = partialScore;
+                    bestDestination = reachableDestination;
+                    foundCandidate = true;
+                }
+
                 continue;
             }
+
+            if (candidatePath.status != NavMeshPathStatus.PathComplete)
+                continue;
+
+            completePaths++;
 
             float pathLength = GetPathLength(candidatePath);
 
@@ -85,6 +185,13 @@ public class AIEvaderDestination
                 distanceFromThreat -
                 pathLength * PathLengthPenalty;
 
+            Debug.Log(
+                $"EVADER CANDIDATE VALID | " +
+                $"Angle={angle} | " +
+                $"Destination={hit.position} | " +
+                $"PathLength={pathLength:F2} | " +
+                $"Score={score:F2}");
+
             if (score > bestScore)
             {
                 bestScore = score;
@@ -92,6 +199,14 @@ public class AIEvaderDestination
                 foundCandidate = true;
             }
         }
+
+        Debug.Log(
+            $"EVADER CANDIDATE SUMMARY | " +
+            $"SampleFailures={sampleFailures} | " +
+            $"PathCalculationFailures={pathCalculationFailures} | " +
+            $"IncompletePaths={incompletePaths} | " +
+            $"CompletePaths={completePaths} | " +
+            $"FoundCandidate={foundCandidate}");
 
         return foundCandidate;
     }

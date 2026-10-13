@@ -6,10 +6,14 @@ public class AIEvader
     private readonly AIEvaderDecision decision;
     private readonly AIEvaderDestination destination;
     private readonly AIEvaderMovement movement;
+
     public AIEvaderState CurrentState { get; private set; } = AIEvaderState.Reposition;
+
+    public bool WantsToSprint { get; private set; }
 
     private const float ThreatRecheckInterval = 0.2f;
     private float threatRecheckTimer;
+    private bool wasExecutingAction;
 
     public AIEvader(
         AIEvaderDecision decision,
@@ -25,9 +29,23 @@ public class AIEvader
         AIContext context,
         CharacterActionController actionController)
     {
-        // Do not overwrite movement intent while a shared action runs.
+        // Preserve shared action movement, but remember that an action ran.
         if (context.IsExecutingAction)
+        {
+            wasExecutingAction = true;
             return;
+        }
+
+        // Once an action finishes, discard the old escape route.
+        if (wasExecutingAction)
+        {
+            movement.InvalidateDestination();
+            threatRecheckTimer = 0f;
+            wasExecutingAction = false;
+
+            Debug.Log(
+                "EVADER ACTION ENDED | Recalculating escape destination");
+        }
 
         AIEvaderState desiredState = decision.Decide(context);
 
@@ -61,17 +79,30 @@ public class AIEvader
                 threatPosition,
                 out Vector3 escapeDestination))
             {
+                Debug.Log(
+                    $"EVADER DESTINATION FOUND | " +
+                    $"Threat={threatPosition} | " +
+                    $"EscapeDestination={escapeDestination}");
+
                 if (movement.TrySetDestination(
                     context.Position,
                     escapeDestination))
                 {
+                    Debug.Log("EVADER DESTINATION ACCEPTED");
                     threatRecheckTimer = ThreatRecheckInterval;
+                }
+                else
+                {
+                    Debug.Log("EVADER DESTINATION REJECTED");
                 }
             }
             else
             {
-                // Keep the existing path if one is still valid.
-                // Retry sooner than the next threat recheck.
+                Debug.Log(
+                    $"EVADER DESTINATION FAILED | " +
+                    $"Position={context.Position} | " +
+                    $"Threat={threatPosition}");
+
                 if (movement.NeedsDestination)
                     movement.RegisterFailedAttempt();
 
@@ -79,7 +110,7 @@ public class AIEvader
             }
         }
 
-        bool sprint = decision.ShouldSprint(
+        WantsToSprint = decision.ShouldSprint(
             context,
             CurrentState,
             threatPosition);
@@ -87,6 +118,6 @@ public class AIEvader
         movement.Update(
             context,
             actionController,
-            sprint);
+            WantsToSprint);
     }
 }

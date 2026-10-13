@@ -81,6 +81,17 @@ public class AIEvaderMovement
         return true;
     }
 
+    public void InvalidateDestination()
+    {
+        navigation.ClearPath();
+
+        hasDestination = false;
+        lastDestination = Vector3.zero;
+        retryTimer = 0f;
+
+        Debug.Log("EVADER DESTINATION INVALIDATED");
+    }
+
     public void RegisterFailedAttempt()
     {
         hasDestination = false;
@@ -92,7 +103,23 @@ public class AIEvaderMovement
         CharacterActionController actionController,
         bool sprint)
     {
-        if (!navigation.UpdateWaypoint(context.Position))
+        Debug.Log(
+            $"EVADER NAV CHECK | " +
+            $"NeedsDestination={NeedsDestination} | " +
+            $"CanRetry={CanRetry} | " +
+            $"HasPath={navigation.HasPath} | " +
+            $"Position={context.Position} | " +
+            $"Destination={lastDestination}");
+
+        bool waypointUpdated =
+            navigation.UpdateWaypoint(context.Position);
+
+        Debug.Log(
+            $"EVADER WAYPOINT | " +
+            $"Updated={waypointUpdated} | " +
+            $"Waypoint={navigation.CurrentWaypoint}");
+
+        if (!waypointUpdated)
         {
             Stop(actionController);
             return;
@@ -103,6 +130,12 @@ public class AIEvaderMovement
                 context.Position,
                 navigation.CurrentWaypoint,
                 sprint);
+
+        Debug.Log(
+            $"EVADER INTENT | " +
+            $"WorldDirection={intent.WorldDirection} | " +
+            $"MovementInput={intent.MovementInput} | " +
+            $"Sprint={intent.Sprint}");
 
         actionController.SetMovementIntent(intent);
     }

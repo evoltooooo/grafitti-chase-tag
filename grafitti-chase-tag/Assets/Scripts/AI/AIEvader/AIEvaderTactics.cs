@@ -34,30 +34,34 @@ public class AIEvaderTactics
 
     public void Update(
         AIContext context,
-        CharacterActionController actionController)
+        CharacterActionController actionController,
+        bool wantsToSprint)
     {
+        // Slide is an Evade behavior, not a Reposition behavior.
+        if (!context.OpponentVisible)
+            return;
+
         if (context.IsExecutingAction)
             return;
 
-        if (!context.IsGrounded)
+        if (!context.IsGrounded || context.IsStaminaEmpty)
             return;
 
-        if (context.IsStaminaEmpty)
-            return;
-
-        if (slideCooldownTimer > 0f)
+        if (!wantsToSprint || slideCooldownTimer > 0f)
             return;
 
         if (!slideOpportunity.HasLowObstacleAhead(context))
             return;
 
-        // Only slide after the motor confirms actual sprinting.
+        // Keep the same actual-sprint validation used by the Chaser.
         if (!characterMotor.IsSprinting)
             return;
 
-        if (!actionController.RequestSlide())
+        bool slidePerformed = actionController.RequestSlide();
+
+        if (!slidePerformed)
         {
-            Debug.Log("AI EVADER SLIDE FAILED | Request rejected");
+            Debug.Log("AI EVADER SLIDE FAILED | Low obstacle");
             return;
         }
 
