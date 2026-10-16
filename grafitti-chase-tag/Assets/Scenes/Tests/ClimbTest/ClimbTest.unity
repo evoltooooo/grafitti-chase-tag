@@ -951,7 +951,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoleManagerTEMP
   playerRole: {fileID: 1565578980}
   aiRole: {fileID: 2050302524}
-  startingRole: 1
+  startingRole: 0
 --- !u!1001 &1361777495
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1564,7 +1564,7 @@ Transform:
   m_GameObject: {fileID: 1565578978}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 8.91}
+  m_LocalPosition: {x: 0, y: 0, z: 11.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2222,7 +2222,7 @@ Transform:
   m_GameObject: {fileID: 1571931328}
   serializedVersion: 2
   m_LocalRotation: {x: -0.034331445, y: -0.0029918724, z: -0.000102776365, w: 0.99940604}
-  m_LocalPosition: {x: 0, y: 0.9923292, z: 5.762734}
+  m_LocalPosition: {x: 0, y: 0.9923292, z: 8.572735}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2668,7 +2668,7 @@ Transform:
   m_GameObject: {fileID: 1789349098}
   serializedVersion: 2
   m_LocalRotation: {x: -0.03433145, y: -0.0029918726, z: -0.00010277635, w: 0.99940604}
-  m_LocalPosition: {x: 0, y: 0.9923292, z: 5.762734}
+  m_LocalPosition: {x: 0, y: 0.9923292, z: 8.572735}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3233,6 +3233,7 @@ MonoBehaviour:
   minimumChaserStateTime: 0.5
   parkourCheckInterval: 0.15
   chaserSlideCooldown: 1.5
+  evaderSlideCooldown: 1.5
   slideDetectionDistance: 2
   slideLowDetectionHeight: 0.1
   slideHighDetectionHeight: 1.8
@@ -3318,7 +3319,7 @@ Transform:
   m_GameObject: {fileID: 2050302523}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 3.13, z: -1.61}
+  m_LocalPosition: {x: 0, y: 0, z: 9.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

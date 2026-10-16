@@ -1717,7 +1717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoleManagerTEMP
   playerRole: {fileID: 440866905}
   aiRole: {fileID: 2050302524}
-  startingRole: 0
+  startingRole: 1
 --- !u!1001 &1453796260
 PrefabInstance:
   m_ObjectHideFlags: 0
