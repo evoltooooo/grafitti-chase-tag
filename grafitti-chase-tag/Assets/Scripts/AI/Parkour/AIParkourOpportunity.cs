@@ -22,7 +22,6 @@ public class AIParkourOpportunity
         );
     }
 
-
     public bool TryFindTicTac(
         CharacterActionController actionController,
         out ParkourTarget target)

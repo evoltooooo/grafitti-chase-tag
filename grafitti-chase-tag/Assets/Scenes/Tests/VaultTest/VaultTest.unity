@@ -630,7 +630,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.13333334
+  m_VoxelSize: 0.1
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 196c4fb9013f74d4f842e76de0d2e293, type: 2}
   m_BuildHeightMesh: 0
@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoleManagerTEMP
   playerRole: {fileID: 1183088060}
   aiRole: {fileID: 2050302524}
-  startingRole: 1
+  startingRole: 0
 --- !u!1 &1183088058
 GameObject:
   m_ObjectHideFlags: 0
@@ -3259,6 +3259,7 @@ MonoBehaviour:
   minimumChaserStateTime: 0.5
   parkourCheckInterval: 0.15
   chaserSlideCooldown: 1.5
+  evaderSlideCooldown: 1.5
   slideDetectionDistance: 2
   slideLowDetectionHeight: 0.55
   slideHighDetectionHeight: 1.2
@@ -3344,7 +3345,7 @@ Transform:
   m_GameObject: {fileID: 2050302523}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 12.67}
+  m_LocalPosition: {x: 0, y: 0, z: -1.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

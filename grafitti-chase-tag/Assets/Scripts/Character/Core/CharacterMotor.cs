@@ -10,6 +10,21 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private CharacterStateController stateController;
     [SerializeField] private CharacterActionRuntime actionRuntime;
 
+    public float ColliderRadius =>
+    characterController != null
+        ? characterController.radius
+        : 0f;
+
+    public float ColliderHeight =>
+        characterController != null
+            ? characterController.height
+            : 0f;
+
+    public Vector3 ColliderCenter =>
+        characterController != null
+            ? characterController.center
+            : Vector3.zero;
+
     [Header("Slide Collider")]
     [SerializeField] private float slideColliderHeight = 1.0f;
 

@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class AIEvader
@@ -10,6 +9,8 @@ public class AIEvader
     public AIEvaderState CurrentState { get; private set; } = AIEvaderState.Reposition;
 
     public bool WantsToSprint { get; private set; }
+
+    public bool IsApproachingFinalCorner { get; private set; }
 
     private const float ThreatRecheckInterval = 0.2f;
     private float threatRecheckTimer;
@@ -44,6 +45,14 @@ public class AIEvader
             wasExecutingAction = false;
 
             Debug.Log(
+                $"EVADER POST-ACTION | " +
+                $"Position={context.Position} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"Visible={context.OpponentVisible} | " +
+                $"Stamina={context.NormalizedStamina:F2}"
+            );
+
+            Debug.Log(
                 "EVADER ACTION ENDED | Recalculating escape destination");
         }
 
@@ -66,7 +75,8 @@ public class AIEvader
 
         bool shouldRecheckThreat =
             context.OpponentVisible &&
-            threatRecheckTimer <= 0f;
+            threatRecheckTimer <= 0f &&
+            movement.NeedsDestination;
 
         bool shouldFindDestination =
             movement.NeedsDestination &&
@@ -114,6 +124,9 @@ public class AIEvader
             context,
             CurrentState,
             threatPosition);
+        
+        IsApproachingFinalCorner =
+            movement.IsApproachingFinalCorner(context.Position);
 
         movement.Update(
             context,

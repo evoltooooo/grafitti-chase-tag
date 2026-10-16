@@ -13,11 +13,17 @@ public class AINavigation
 
     public bool HasPath { get; private set; }
     public bool IsPartialPath { get; private set; }
+    public Vector3 PartialPathEndpoint { get; private set; }
     public bool ReachedPartialPathEnd { get; private set; }
 
     public Vector3 CurrentWaypoint { get; private set; }
 
     public int CurrentCornerIndex => currentCornerIndex;
+
+    public bool IsFinalWaypoint =>
+        HasPath &&
+        corners != null &&
+        currentCornerIndex == corners.Length - 1;
 
     public Vector3 NextWaypoint
     {
@@ -38,8 +44,6 @@ public class AINavigation
         Vector3 startPosition,
         Vector3 destination)
     {
-        ReachedPartialPathEnd = false;
-
         if (!NavMesh.SamplePosition(
                 startPosition,
                 out NavMeshHit startHit,
@@ -99,6 +103,10 @@ public class AINavigation
 
         IsPartialPath =
             newPath.status == NavMeshPathStatus.PathPartial;
+        
+        PartialPathEndpoint = IsPartialPath
+            ? newPath.corners[newPath.corners.Length - 1]
+            : Vector3.zero;
 
         corners = newPath.corners;
         currentCornerIndex = 1;
@@ -117,13 +125,10 @@ public class AINavigation
         return true;
     }
 
-
     public bool UpdateWaypoint(
         Vector3 currentPosition,
         float waypointReachedDistance = 0.75f)
     {
-        ReachedPartialPathEnd = false;
-
         if (!HasPath ||
             corners == null ||
             corners.Length == 0)
@@ -204,10 +209,17 @@ public class AINavigation
         }
     }
 
+    public void ConsumeReachedPartialPathEnd()
+    {
+        ReachedPartialPathEnd = false;
+    }
+
     public void ClearPath()
     {
         HasPath = false;
         IsPartialPath = false;
+        ReachedPartialPathEnd = false;
+        PartialPathEndpoint = Vector3.zero;
         CurrentWaypoint = Vector3.zero;
 
         currentCornerIndex = 0;

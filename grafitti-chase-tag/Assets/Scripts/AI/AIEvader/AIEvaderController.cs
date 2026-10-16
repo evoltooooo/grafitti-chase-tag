@@ -1,4 +1,3 @@
-
 using UnityEngine;
 public class AIEvaderController
 {
@@ -38,6 +37,7 @@ public class AIEvaderController
 
         tactics = new AIEvaderTactics(
             characterMotor,
+            movement,
             evaderSlideCooldown,
             slideDetectionDistance,
             slideLowDetectionHeight,
@@ -56,6 +56,7 @@ public class AIEvaderController
         tactics.Update(
             context,
             actionController,
-            evader.WantsToSprint);
+            evader.WantsToSprint,
+            evader.IsApproachingFinalCorner);
     }
 }

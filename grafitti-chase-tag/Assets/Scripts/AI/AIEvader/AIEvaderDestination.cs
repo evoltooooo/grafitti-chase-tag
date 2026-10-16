@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,7 +9,8 @@ public class AIEvaderDestination
 
     private static readonly float[] CandidateAngles =
     {
-        0f, -45f, 45f, -90f, 90f, -135f, 135f, 180f
+        0f, -15f, 15f, -30f, 30f, -45f, 45f,
+        -90f, 90f, -135f, 135f, 180f
     };
 
     public bool TryCalculate(
@@ -93,13 +93,6 @@ public class AIEvaderDestination
                 $"RawCorners={candidatePath.corners.Length}"
             );
 
-            AINavigation testNavigation = new AINavigation();
-
-            bool sharedPathFound = testNavigation.TryBuildPath(
-                context.Position,
-                hit.position
-            );
-
             if (!pathCalculated)
             {
                 pathCalculationFailures++;
@@ -150,9 +143,24 @@ public class AIEvaderDestination
                     reachableDestination,
                     threatPosition);
 
+                Vector3 partialDirection =
+                    reachableDestination - context.Position;
+
+                partialDirection.y = 0f;
+
+                float partialAlignment = 0f;
+
+                if (partialDirection.sqrMagnitude > 0.001f)
+                {
+                    partialAlignment = Vector3.Dot(
+                        awayDirection,
+                        partialDirection.normalized);
+                }
+
                 float partialScore =
                     partialDistanceFromThreat -
-                    partialPathLength * PathLengthPenalty;
+                    partialPathLength * PathLengthPenalty +
+                    partialAlignment * 1.5f;
 
                 Debug.Log(
                     $"EVADER PARTIAL CANDIDATE | " +
@@ -181,9 +189,22 @@ public class AIEvaderDestination
                 hit.position,
                 threatPosition);
 
+            Vector3 candidateDirection = hit.position - context.Position;
+            candidateDirection.y = 0f;
+
+            float directionalAlignment = 0f;
+
+            if (candidateDirection.sqrMagnitude > 0.001f)
+            {
+                directionalAlignment = Vector3.Dot(
+                    awayDirection,
+                    candidateDirection.normalized);
+            }
+
             float score =
                 distanceFromThreat -
-                pathLength * PathLengthPenalty;
+                pathLength * PathLengthPenalty +
+                directionalAlignment * 1.5f;
 
             Debug.Log(
                 $"EVADER CANDIDATE VALID | " +
