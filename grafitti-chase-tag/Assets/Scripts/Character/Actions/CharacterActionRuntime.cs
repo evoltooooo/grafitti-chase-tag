@@ -221,6 +221,17 @@ public class CharacterActionRuntime : MonoBehaviour
             this
         );
 
+        // Handle leftover upward velocity only when Climb finishes.
+        if (CurrentParkourActionType == ParkourActionType.Climb)
+        {
+            CharacterMotor motor = GetComponent<CharacterMotor>();
+
+            if (motor != null)
+            {
+                motor.CompleteClimbMotion();
+            }
+        }
+
         ResetRuntime();
 
         ActionCompleted?.Invoke();

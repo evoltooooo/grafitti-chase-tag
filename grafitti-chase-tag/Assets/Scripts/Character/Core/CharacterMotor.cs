@@ -828,6 +828,16 @@ public class CharacterMotor : MonoBehaviour
         horizontalVelocity = Vector3.zero;
     }
 
+    public void CompleteClimbMotion()
+    {
+        // Discard leftover upward velocity from before Climb.
+        // Preserve downward velocity so gravity can continue.
+        if (verticalVelocity > 0f)
+        {
+            verticalVelocity = 0f;
+        }
+    }
+
     public void ApplyActionMotion(
         Vector3 deltaPosition,
         Quaternion deltaRotation)
