@@ -170,6 +170,16 @@ public class AIEvaderMovement
             $"MovementInput={intent.MovementInput} | " +
             $"Sprint={intent.Sprint}");
 
+        Debug.Log(
+            $"EVADER MOVEMENT DIAGNOSTIC | " +
+            $"Position={context.Position} | " +
+            $"Waypoint={navigation.CurrentWaypoint} | " +
+            $"HasPath={navigation.HasPath} | " +
+            $"Direction={intent.WorldDirection} | " +
+            $"Input={intent.MovementInput} | " +
+            $"Velocity={context.Velocity} | " +
+            $"Grounded={context.IsGrounded}");
+
         actionController.SetMovementIntent(intent);
     }
 
@@ -212,6 +222,10 @@ public class AIEvaderMovement
         CharacterActionController actionController)
     {
         hasDestination = false;
+        lastDestination = Vector3.zero;
+
+        // Allow AIEvader to retry destination calculation.
+        retryTimer = 0f;
 
         actionController.SetMovementIntent(
             new CharacterMovementIntent(

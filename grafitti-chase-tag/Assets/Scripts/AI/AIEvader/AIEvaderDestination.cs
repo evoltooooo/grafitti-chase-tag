@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class AIEvaderDestination
 {
-    private const float EscapeDistance = 8f;
+    private const float EscapeDistance = 4f;
     private const float SampleRadius = 2f;
     private const float PathLengthPenalty = 0.2f;
 
@@ -25,6 +25,18 @@ public class AIEvaderDestination
             out NavMeshHit startHit,
             1.0f,
             NavMesh.AllAreas);
+        
+        if (startOnNavMesh)
+        {
+            Vector3 difference = startHit.position - context.Position;
+
+            Debug.Log(
+                $"EVADER NAVMESH START OFFSET | " +
+                $"Actual={context.Position} | " +
+                $"Sampled={startHit.position} | " +
+                $"HorizontalOffset={new Vector2(difference.x, difference.z).magnitude:F2} | " +
+                $"VerticalOffset={difference.y:F2}");
+        }
 
         Debug.Log(
             $"EVADER DESTINATION START | " +
@@ -78,17 +90,38 @@ public class AIEvaderDestination
                 NavMesh.AllAreas))
             {
                 sampleFailures++;
+ 
+            float horizontalDistance = Vector2.Distance(
+                new Vector2(candidate.x, candidate.z),
+                new Vector2(context.Position.x, context.Position.z));
 
-                Debug.Log(
-                    $"EVADER CANDIDATE SAMPLE FAILED | " +
-                    $"Angle={angle} | " +
-                    $"Candidate={candidate} | " +
-                    $"Start={context.Position} | " +
-                    $"SampleRadius={SampleRadius} | " +
-                    $"EscapeDistance={EscapeDistance}");
+            Debug.Log(
+                $"EVADER CANDIDATE SAMPLE FAILED | " +
+                $"Angle={angle} | " +
+                $"Candidate={candidate} | " +
+                $"Start={context.Position} | " +
+                $"SampleRadius={SampleRadius} | " +
+                $"EscapeDistance={EscapeDistance} | " +
+                $"HorizontalDistance={horizontalDistance:F2}");
+
 
                 // ADD THIS LINE HERE
                 LogVerticalNavMeshSamples(candidate);
+
+                continue;
+            }
+
+            float verticalDifference =
+                Mathf.Abs(hit.position.y - context.Position.y);
+
+            if (verticalDifference > 1.0f)
+            {
+                Debug.Log(
+                    $"EVADER CANDIDATE REJECTED | " +
+                    $"Reason=DifferentFloor | " +
+                    $"CurrentY={context.Position.y:F2} | " +
+                    $"Candidate={hit.position} | " +
+                    $"VerticalDifference={verticalDifference:F2}");
 
                 continue;
             }

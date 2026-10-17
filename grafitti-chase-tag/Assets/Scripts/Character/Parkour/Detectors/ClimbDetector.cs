@@ -191,6 +191,19 @@ public class ClimbDetector : MonoBehaviour
             Quaternion.LookRotation(
                 -wallHit.normal,
                 Vector3.up);
+        
+        bool landingOnNavMesh = UnityEngine.AI.NavMesh.SamplePosition(
+            landingPosition,
+            out UnityEngine.AI.NavMeshHit navHit,
+            0.1f,
+            UnityEngine.AI.NavMesh.AllAreas);
+
+        Debug.Log(
+            $"CLIMB LANDING NAVMESH DEBUG | " +
+            $"Landing={landingPosition} | " +
+            $"Found={landingOnNavMesh} | " +
+            $"Sampled={(landingOnNavMesh ? navHit.position.ToString() : "NONE")} | " +
+            $"Distance={(landingOnNavMesh ? Vector3.Distance(landingPosition, navHit.position) : -1f):F2}");
 
         target = new ParkourTarget(
             ParkourActionType.Climb,

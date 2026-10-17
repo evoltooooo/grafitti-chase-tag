@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AIEvader
 {
@@ -109,6 +110,24 @@ public class AIEvader
 
                 return;
             }
+    
+            bool landingOnNavMesh = NavMesh.SamplePosition(
+                context.Position,
+                out NavMeshHit landingHit,
+                0.1f,
+                NavMesh.AllAreas);
+
+            float landingSampleDistance = landingOnNavMesh
+                ? Vector3.Distance(context.Position, landingHit.position)
+                : -1f;
+
+            Debug.Log(
+                $"EVADER LANDING NAVMESH CHECK | " +
+                $"Actual={context.Position} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"Found={landingOnNavMesh} | " +
+                $"Sampled={(landingOnNavMesh ? landingHit.position.ToString() : "NONE")} | " +
+                $"Distance={landingSampleDistance:F2}");
 
             postClimbRecoveryPending = false;
             postClimbRecoveryTimer = 0f;
@@ -170,6 +189,14 @@ public class AIEvader
                 bool destinationAccepted = movement.TrySetDestination(
                     context.Position,
                     escapeDestination);
+
+                Debug.Log(
+                    $"EVADER DESTINATION RESULT | " +
+                    $"Accepted={destinationAccepted} | " +
+                    $"Start={context.Position} | " +
+                    $"Target={escapeDestination} | " +
+                    $"HasPath={movement.HasNavigationPath} | " +
+                    $"NeedsDestination={movement.NeedsDestination}");
 
                 if (!destinationAccepted)
                 {
