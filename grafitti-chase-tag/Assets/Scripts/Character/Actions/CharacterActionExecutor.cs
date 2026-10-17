@@ -200,6 +200,14 @@ public class CharacterActionExecutor : MonoBehaviour
 
         if (!TryConsumeActionStamina(actionData))
             return false;
+        
+        Debug.Log(
+            $"JUMP REQUEST TRACE | " +
+            $"Character={name} | " +
+            $"Grounded={characterMotor.IsGrounded} | " +
+            $"HorizontalSpeed={characterMotor.HorizontalSpeed:F2}",
+            this
+        );
 
         bool jumped =
             characterMotor.PerformJump();

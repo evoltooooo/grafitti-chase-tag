@@ -17,7 +17,7 @@ public class AIEvaderTactics
     private float climbRetryLockoutTimer;
 
     private const float ClimbRetryLockoutDuration = 1.0f;
-    private const float ClimbCheckInterval = 0.15f;
+    private const float ClimbCheckInterval = 0.05f;
 
     private const float JumpAscentThreshold = 0.1f;
     private const float JumpStartTimeout = 1.5f;
@@ -27,6 +27,16 @@ public class AIEvaderTactics
 
     private bool climbRequestPending;
     private bool climbActionObservedExecuting;
+
+    private Vector3 climbApproachPosition;
+
+    private Vector3 climbTakeoffPosition;
+
+    private const float ClimbTakeoffDistance = 0.8f;
+    private const float ClimbTakeoffTolerance = 0.25f;
+
+    private float climbRequestAcceptedTime;
+    private const float ClimbRequestStartTimeout = 0.5f;
 
     public AIEvaderTactics(
         CharacterMotor characterMotor,
@@ -92,15 +102,87 @@ public class AIEvaderTactics
             $"Interaction={target.InteractionPosition} | " +
             $"Landing={target.LandingPosition} | " +
             $"VelocityY={context.Velocity.y:F2}");
+                
+        bool hasPartialEndpoint = movement.HasPartialPathEndpoint;
+        bool reachedPartialEnd = movement.ReachedPartialPathEnd;
+
+        Vector3 toClimbTarget =
+            target.InteractionPosition - context.Position;
+
+        Vector3 horizontalToClimbTarget = toClimbTarget;
+        horizontalToClimbTarget.y = 0f;
+
+        float distanceToPartialEndpoint = hasPartialEndpoint
+            ? Vector3.Distance(
+                context.Position,
+                movement.PartialPathEndpoint)
+            : -1f;
+
+        float distanceToWaypoint = movement.HasNavigationPath
+            ? Vector3.Distance(
+                context.Position,
+                movement.CurrentWaypoint)
+            : -1f;
 
         Debug.Log(
-            $"AI EVADER CLIMB JUMP REQUEST | " +
+            $"AI EVADER CLIMB JUMP DIAGNOSTIC | " +
             $"Position={context.Position} | " +
-            $"HasPartialEndpoint={movement.HasPartialPathEndpoint} | " +
-            $"ReachedPartialEnd={movement.ReachedPartialPathEnd} | " +
-            $"Target={target.InteractionPosition}");
+            $"Grounded={context.IsGrounded} | " +
+            $"VelocityY={context.Velocity.y:F2} | " +
+            $"HasPath={movement.HasNavigationPath} | " +
+            $"IsPartialPath={movement.IsPartialNavigationPath} | " +
+            $"HasPartialEndpoint={hasPartialEndpoint} | " +
+            $"PartialEndpoint={movement.PartialPathEndpoint} | " +
+            $"ReachedPartialEnd={reachedPartialEnd} | " +
+            $"DistanceToPartialEndpoint={distanceToPartialEndpoint:F2} | " +
+            $"CurrentWaypoint={movement.CurrentWaypoint} | " +
+            $"IsFinalWaypoint={movement.IsFinalWaypoint} | " +
+            $"DistanceToWaypoint={distanceToWaypoint:F2} | " +
+            $"ClimbTarget={target.InteractionPosition} | " +
+            $"DistanceToClimbTarget={toClimbTarget.magnitude:F2} | " +
+            $"HorizontalDirectionToClimbTarget=" +
+            $"{horizontalToClimbTarget.normalized} | " +
+            $"LandingTarget={target.LandingPosition}");
+                
+            Vector3 directionToWall =
+                target.InteractionPosition - context.Position;
 
-        bool jumpPerformed = actionController.RequestJump();
+            directionToWall.y = 0f;
+
+            if (directionToWall.sqrMagnitude < 0.001f)
+                return false;
+
+            directionToWall.Normalize();
+
+            climbTakeoffPosition =
+                target.InteractionPosition -
+                directionToWall * ClimbTakeoffDistance;
+
+            climbTakeoffPosition.y = context.Position.y;
+
+            float distanceToTakeoff = Vector3.Distance(
+                context.Position,
+                climbTakeoffPosition);
+
+            if (distanceToTakeoff > ClimbTakeoffTolerance)
+            {
+                movement.SetMovementTowardPosition(
+                    context.Position,
+                    climbTakeoffPosition,
+                    actionController);
+
+                Debug.Log(
+                    $"EVADER CLIMB TAKEOFF APPROACH | " +
+                    $"Position={context.Position} | " +
+                    $"Takeoff={climbTakeoffPosition} | " +
+                    $"Distance={distanceToTakeoff:F2}");
+
+                return true;
+            }
+
+            climbApproachPosition = target.InteractionPosition;
+
+            bool jumpPerformed = actionController.RequestJump();
 
         Debug.Log(
             $"AI EVADER CLIMB JUMP RESULT | Accepted={jumpPerformed}");
@@ -110,6 +192,7 @@ public class AIEvaderTactics
 
         climbTraversalArmed = true;
         climbTraversalStartTime = Time.time;
+        climbApproachPosition = target.InteractionPosition;
 
         // Prevent immediate repeated Jump requests if the attempt times out.
         climbRetryLockoutTimer = ClimbRetryLockoutDuration;
@@ -145,6 +228,13 @@ public class AIEvaderTactics
             Debug.Log("EVADER CLIMB BLOCKED | Request pending");
             return false;
         }
+
+        // Keep the jump directed toward the wall instead of
+        // following an unrelated escape-route waypoint.
+        movement.SetMovementTowardPosition(
+            context.Position,
+            climbApproachPosition,
+            actionController);
 
         if (context.IsGrounded ||
             context.Velocity.y <= JumpAscentThreshold)
@@ -193,6 +283,17 @@ public class AIEvaderTactics
             $"Interaction={target.InteractionPosition} | " +
             $"Landing={target.LandingPosition} | " +
             $"VelocityY={context.Velocity.y:F2}");
+        
+        Debug.Log(
+            $"EVADER CLIMB REQUEST TRACE | " +
+            $"Position={context.Position} | " +
+            $"Velocity={context.Velocity} | " +
+            $"Grounded={context.IsGrounded} | " +
+            $"Interaction={target.InteractionPosition} | " +
+            $"Landing={target.LandingPosition} | " +
+            $"DistanceToInteraction=" +
+            $"{Vector3.Distance(context.Position, target.InteractionPosition):F2}"
+        );
 
         bool performed = actionController.RequestParkourAction(
             ParkourActionType.Climb);
@@ -206,6 +307,7 @@ public class AIEvaderTactics
         climbRetryLockoutTimer = ClimbRetryLockoutDuration;
         climbRequestPending = true;
         climbActionObservedExecuting = false;
+        climbRequestAcceptedTime = Time.time;
 
         Debug.Log("EVADER CLIMB REQUEST ACCEPTED");
 
@@ -230,6 +332,22 @@ public class AIEvaderTactics
                 $"VerticalVelocity={context.Velocity.y:F2}");
 
             climbTraversalArmed = false;
+        }
+
+        if (climbRequestPending &&
+            !climbActionObservedExecuting &&
+            Time.time - climbRequestAcceptedTime >= ClimbRequestStartTimeout)
+        {
+            Debug.Log(
+                $"AI EVADER CLIMB REQUEST START TIMEOUT | " +
+                $"Position={context.Position} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"Action={context.CurrentActionType}");
+
+            climbRequestPending = false;
+            climbTraversalArmed = false;
+            climbActionObservedExecuting = false;
+            climbRetryLockoutTimer = ClimbRetryLockoutDuration;
         }
 
         if (climbRequestPending)

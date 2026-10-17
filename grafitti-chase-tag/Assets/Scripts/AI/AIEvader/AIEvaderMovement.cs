@@ -21,6 +21,18 @@ public class AIEvaderMovement
         navigation.IsPartialPath &&
         navigation.PartialPathEndpoint != Vector3.zero;
 
+    public bool HasNavigationPath =>
+        navigation.HasPath;
+
+    public bool IsPartialNavigationPath =>
+        navigation.IsPartialPath;
+
+    public Vector3 CurrentWaypoint =>
+        navigation.CurrentWaypoint;
+
+    public bool IsFinalWaypoint =>
+        navigation.IsFinalWaypoint;
+
     public Vector3 PartialPathEndpoint =>
         navigation.PartialPathEndpoint;
 
@@ -125,6 +137,16 @@ public class AIEvaderMovement
 
         if (!waypointUpdated)
         {
+            Debug.Log(
+                $"EVADER WAYPOINT LOST | " +
+                $"Position={context.Position} | " +
+                $"HasPath={navigation.HasPath} | " +
+                $"HasDestination={hasDestination} | " +
+                $"ReachedPartialPathEnd={navigation.ReachedPartialPathEnd} | " +
+                $"IsPartialPath={navigation.IsPartialPath} | " +
+                $"LastDestination={lastDestination} | " +
+                $"Waypoint={navigation.CurrentWaypoint}");
+
             Stop(actionController);
             return;
         }
@@ -160,6 +182,30 @@ public class AIEvaderMovement
             position,
             navigation.CurrentWaypoint
         ) <= FinalCornerApproachDistance;
+    }
+
+    public void SetMovementTowardPosition(
+        Vector3 currentPosition,
+        Vector3 targetPosition,
+        CharacterActionController actionController)
+    {
+        // Keep the approach direction horizontal.
+        targetPosition.y = currentPosition.y;
+
+        CharacterMovementIntent intent =
+            steering.CreateMoveTowardIntent(
+                currentPosition,
+                targetPosition,
+                false);
+
+        actionController.SetMovementIntent(intent);
+        
+        Debug.Log(
+            $"EVADER CLIMB APPROACH INTENT | " +
+            $"Position={currentPosition} | " +
+            $"Target={targetPosition} | " +
+            $"Direction={intent.WorldDirection} | " +
+            $"Input={intent.MovementInput}");
     }
 
     private void Stop(

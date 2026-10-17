@@ -187,12 +187,13 @@ public class CharacterMotor : MonoBehaviour
 
         Debug.Log(
             $"AI MOTOR SPRINT TRACE | " +
-            $"SprintHeld={sprintHeld} | " +
-            $"MovementInput={MovementInput} | " +
-            $"ActionExecuting={actionExecuting} | " +
-            $"Action={actionRuntime?.CurrentActionType} | " +
-            $"MotionType={actionRuntime?.CurrentMotionType} | " +
-            $"IsSprintingBeforeCheck={IsSprinting}"
+            $"Grounded={isGrounded} | " +
+            $"Jumping={isJumping} | " +
+            $"WorldDirection={worldDirection} | " +
+            $"MovementInput={movementInput} | " +
+            $"HorizontalVelocity={HorizontalVelocity} | " +
+            $"VerticalVelocity={verticalVelocity:F2}",
+            this
         );
 
         if (actionControlsNormalMovement)

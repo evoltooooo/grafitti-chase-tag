@@ -445,6 +445,7 @@ MonoBehaviour:
   climbableLayers:
     serializedVersion: 2
     m_Bits: 2048
+  characterMotor: {fileID: 0}
 --- !u!114 &271165741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3227,6 +3228,7 @@ MonoBehaviour:
   climbableLayers:
     serializedVersion: 2
     m_Bits: 2048
+  characterMotor: {fileID: 0}
 --- !u!114 &2050302540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3422,6 +3424,7 @@ MonoBehaviour:
   minimumChaserStateTime: 0.5
   parkourCheckInterval: 0.15
   chaserSlideCooldown: 1.5
+  evaderSlideCooldown: 1.5
   slideDetectionDistance: 2
   slideLowDetectionHeight: 0.55
   slideHighDetectionHeight: 1.2

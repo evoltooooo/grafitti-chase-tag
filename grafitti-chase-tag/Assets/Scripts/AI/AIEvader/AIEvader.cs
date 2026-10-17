@@ -6,15 +6,25 @@ public class AIEvader
     private readonly AIEvaderDestination destination;
     private readonly AIEvaderMovement movement;
 
-    public AIEvaderState CurrentState { get; private set; } = AIEvaderState.Reposition;
+    public AIEvaderState CurrentState { get; private set; } =
+        AIEvaderState.Reposition;
 
     public bool WantsToSprint { get; private set; }
 
     public bool IsApproachingFinalCorner { get; private set; }
 
     private const float ThreatRecheckInterval = 0.2f;
+    private const float EscapeReevaluationInterval = 0.75f;
+    private const float PostClimbRecoveryTimeout = 2.5f;
+
     private float threatRecheckTimer;
+    private float escapeReevaluationTimer;
+
+    private float postClimbRecoveryTimer;
+
     private bool wasExecutingAction;
+    private bool wasExecutingClimb;
+    private bool postClimbRecoveryPending;
 
     public AIEvader(
         AIEvaderDecision decision,
@@ -30,30 +40,87 @@ public class AIEvader
         AIContext context,
         CharacterActionController actionController)
     {
-        // Preserve shared action movement, but remember that an action ran.
+        // Actions retain control of movement while executing.
         if (context.IsExecutingAction)
         {
             wasExecutingAction = true;
+
+            if (context.CurrentActionType == CharacterActionType.Climb)
+                wasExecutingClimb = true;
+
             return;
         }
 
-        // Once an action finishes, discard the old escape route.
+        // If Climb ended in midair, postpone navigation recovery.
         if (wasExecutingAction)
         {
-            movement.InvalidateDestination();
-            threatRecheckTimer = 0f;
             wasExecutingAction = false;
 
-            Debug.Log(
-                $"EVADER POST-ACTION | " +
-                $"Position={context.Position} | " +
-                $"Grounded={context.IsGrounded} | " +
-                $"Visible={context.OpponentVisible} | " +
-                $"Stamina={context.NormalizedStamina:F2}"
-            );
+            bool climbEnded = wasExecutingClimb;
+            wasExecutingClimb = false;
+
+            if (climbEnded && !context.IsGrounded)
+            {
+                postClimbRecoveryPending = true;
+                postClimbRecoveryTimer = 0f;
+
+                actionController.SetMovementIntent(
+                    new CharacterMovementIntent(
+                        Vector3.zero,
+                        false,
+                        Vector2.zero));
+
+                Debug.Log(
+                    $"EVADER CLIMB RECOVERY DEFERRED | " +
+                    $"Position={context.Position} | " +
+                    $"VelocityY={context.Velocity.y:F2} | " +
+                    $"Grounded={context.IsGrounded}");
+
+                return;
+            }
+
+            // The action ended while grounded, or it was not Climb.
+            movement.InvalidateDestination();
+            threatRecheckTimer = 0f;
 
             Debug.Log(
-                "EVADER ACTION ENDED | Recalculating escape destination");
+                $"EVADER ACTION ENDED | " +
+                $"Position={context.Position} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"Recalculating escape destination");
+        }
+
+        // Do not let normal navigation compete with recovery.
+        if (postClimbRecoveryPending)
+        {
+            postClimbRecoveryTimer += Time.deltaTime;
+
+            bool recoveryGrounded = context.IsGrounded;
+            bool recoveryTimedOut =
+                postClimbRecoveryTimer >= PostClimbRecoveryTimeout;
+
+            if (!recoveryGrounded && !recoveryTimedOut)
+            {
+                actionController.SetMovementIntent(
+                    new CharacterMovementIntent(
+                        Vector3.zero,
+                        false,
+                        Vector2.zero));
+
+                return;
+            }
+
+            postClimbRecoveryPending = false;
+            postClimbRecoveryTimer = 0f;
+
+            movement.InvalidateDestination();
+            threatRecheckTimer = 0f;
+
+            Debug.Log(
+                $"EVADER CLIMB RECOVERY RESUMED | " +
+                $"Position={context.Position} | " +
+                $"Grounded={context.IsGrounded} | " +
+                $"TimedOut={recoveryTimedOut}");
         }
 
         AIEvaderState desiredState = decision.Decide(context);
@@ -71,7 +138,9 @@ public class AIEvader
             decision.GetThreatReference(context);
 
         movement.UpdateTimer();
+
         threatRecheckTimer -= Time.deltaTime;
+        escapeReevaluationTimer -= Time.deltaTime;
 
         bool shouldRecheckThreat =
             context.OpponentVisible &&
@@ -82,28 +151,37 @@ public class AIEvader
             movement.NeedsDestination &&
             movement.CanRetry;
 
-        if (shouldRecheckThreat || shouldFindDestination)
+        bool shouldReevaluateEscape =
+            context.OpponentVisible &&
+            movement.HasNavigationPath &&
+            escapeReevaluationTimer <= 0f;
+
+        if (shouldRecheckThreat ||
+            shouldFindDestination ||
+            shouldReevaluateEscape)
         {
-            if (destination.TryCalculate(
+            bool foundDestination = destination.TryCalculate(
                 context,
                 threatPosition,
-                out Vector3 escapeDestination))
-            {
-                Debug.Log(
-                    $"EVADER DESTINATION FOUND | " +
-                    $"Threat={threatPosition} | " +
-                    $"EscapeDestination={escapeDestination}");
+                out Vector3 escapeDestination);
 
-                if (movement.TrySetDestination(
+            if (foundDestination)
+            {
+                bool destinationAccepted = movement.TrySetDestination(
                     context.Position,
-                    escapeDestination))
-                {
-                    Debug.Log("EVADER DESTINATION ACCEPTED");
-                    threatRecheckTimer = ThreatRecheckInterval;
-                }
-                else
+                    escapeDestination);
+
+                if (!destinationAccepted)
                 {
                     Debug.Log("EVADER DESTINATION REJECTED");
+                }
+
+                threatRecheckTimer = ThreatRecheckInterval;
+
+                if (context.OpponentVisible)
+                {
+                    escapeReevaluationTimer =
+                        EscapeReevaluationInterval;
                 }
             }
             else
@@ -114,9 +192,17 @@ public class AIEvader
                     $"Threat={threatPosition}");
 
                 if (movement.NeedsDestination)
+                {
                     movement.RegisterFailedAttempt();
+                }
 
                 threatRecheckTimer = 0.1f;
+
+                if (context.OpponentVisible &&
+                    movement.HasNavigationPath)
+                {
+                    escapeReevaluationTimer = 0.2f;
+                }
             }
         }
 
@@ -124,7 +210,7 @@ public class AIEvader
             context,
             CurrentState,
             threatPosition);
-        
+
         IsApproachingFinalCorner =
             movement.IsApproachingFinalCorner(context.Position);
 

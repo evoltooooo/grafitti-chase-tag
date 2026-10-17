@@ -50,7 +50,7 @@ public class AINavigation
                 2f,
                 NavMesh.AllAreas))
         {
-            IsPartialPath = false;
+            ResetPathState();
 
             Debug.Log(
                 $"AI NAV DEBUG | Start Sample FAILED | " +
@@ -59,13 +59,14 @@ public class AINavigation
 
             return false;
         }
-
         if (!NavMesh.SamplePosition(
             destination,
             out NavMeshHit destinationHit,
             2f,
             NavMesh.AllAreas))
         {
+            ResetPathState();
+
             Debug.Log(
                 $"AI NAV DEBUG | Destination Sample FAILED | " +
                 $"Destination={destination}"
@@ -97,7 +98,14 @@ public class AINavigation
         if (!pathFound ||
             newPath.corners.Length < 2)
         {
-            IsPartialPath = false;
+            ResetPathState();
+
+            Debug.Log(
+                $"AI NAV DEBUG | Path Build FAILED | " +
+                $"PathFound={pathFound} | " +
+                $"Status={newPath.status} | " +
+                $"Corners={newPath.corners.Length}");
+
             return false;
         }
 
@@ -161,6 +169,20 @@ public class AINavigation
                 $"{Vector3.Distance(currentPosition, corners[corners.Length - 1]):F2}"
             );
 
+            float distanceToFinalCorner = Vector3.Distance(
+                currentPosition,
+                corners[corners.Length - 1]);
+
+            Debug.Log(
+                $"AI NAV COMPLETE PATH ENDED | " +
+                $"Position={currentPosition} | " +
+                $"FinalCorner={corners[corners.Length - 1]} | " +
+                $"DistanceToFinalCorner={distanceToFinalCorner:F2} | " +
+                $"ReachedDistance={waypointReachedDistance} | " +
+                $"CornerIndex={currentCornerIndex} | " +
+                $"CornerCount={corners.Length} | " +
+                $"Partial={IsPartialPath}");
+
             // The current path has no more waypoints.
             // Keep the partial-path result available to the caller.
             HasPath = false;
@@ -168,8 +190,6 @@ public class AINavigation
 
             return false;
         }
-
-
 
         CurrentWaypoint =
             corners[currentCornerIndex];
@@ -214,7 +234,7 @@ public class AINavigation
         ReachedPartialPathEnd = false;
     }
 
-    public void ClearPath()
+    private void ResetPathState()
     {
         HasPath = false;
         IsPartialPath = false;
@@ -224,5 +244,10 @@ public class AINavigation
 
         currentCornerIndex = 0;
         corners = new Vector3[0];
+    }
+
+    public void ClearPath()
+    {
+        ResetPathState();
     }
 }

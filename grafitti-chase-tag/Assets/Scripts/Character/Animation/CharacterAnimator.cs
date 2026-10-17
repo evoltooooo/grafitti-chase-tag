@@ -175,6 +175,17 @@ public class CharacterAnimator : MonoBehaviour
                 ActionTypeHash,
                 actionValue
             );
+            
+            if (actionRuntime.CurrentParkourActionType ==
+                ParkourActionType.Climb)
+            {
+                Debug.Log(
+                    $"CLIMB ACTION PARAMETER | " +
+                    $"RuntimeAction={actionRuntime.CurrentActionType} | " +
+                    $"ActionTypeValue={actionValue} | " +
+                    $"AnimatorValue={animator.GetInteger(ActionTypeHash)}"
+                );
+            }
         }
         else
         {

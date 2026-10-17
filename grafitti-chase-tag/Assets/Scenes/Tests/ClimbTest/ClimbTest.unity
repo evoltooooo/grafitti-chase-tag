@@ -160,9 +160,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 292911187}
+  - component: {fileID: 292911184}
   - component: {fileID: 292911186}
   - component: {fileID: 292911185}
-  - component: {fileID: 292911184}
   m_Layer: 11
   m_Name: Cube (6)
   m_TagString: Untagged
@@ -216,7 +216,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a544372628e8e22448f43fe882af29e5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -308,7 +308,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.1
+  m_VoxelSize: 0.13333334
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f378df27a8c6e26408068fe45e251a7b, type: 2}
   m_BuildHeightMesh: 0
@@ -1521,6 +1521,7 @@ GameObject:
   - component: {fileID: 1565579009}
   - component: {fileID: 1565579008}
   - component: {fileID: 1565579007}
+  - component: {fileID: 1565579010}
   - component: {fileID: 1565579006}
   - component: {fileID: 1565579005}
   - component: {fileID: 1565579004}
@@ -1814,6 +1815,7 @@ MonoBehaviour:
   climbableLayers:
     serializedVersion: 2
     m_Bits: 2048
+  characterMotor: {fileID: 0}
 --- !u!114 &1565578996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2058,6 +2060,22 @@ CharacterController:
   m_SkinWidth: 0.03
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &1565579010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565578978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3441b3ff8ecb148888248611b2cd95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClimbAnimationEntry
+  animator: {fileID: 0}
+  actionRuntime: {fileID: 0}
+  transitionDuration: 0.05
+  logTransitions: 1
 --- !u!1 &1571931328
 GameObject:
   m_ObjectHideFlags: 0
@@ -2776,6 +2794,7 @@ GameObject:
   - component: {fileID: 2050302553}
   - component: {fileID: 2050302552}
   - component: {fileID: 2050302551}
+  - component: {fileID: 2050302555}
   - component: {fileID: 2050302550}
   - component: {fileID: 2050302549}
   - component: {fileID: 2050302548}
@@ -3038,6 +3057,7 @@ MonoBehaviour:
   climbableLayers:
     serializedVersion: 2
     m_Bits: 2048
+  characterMotor: {fileID: 0}
 --- !u!114 &2050302540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3326,6 +3346,22 @@ Transform:
   - {fileID: 2016925910}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &2050302555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050302523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3441b3ff8ecb148888248611b2cd95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClimbAnimationEntry
+  animator: {fileID: 0}
+  actionRuntime: {fileID: 0}
+  transitionDuration: 0.05
+  logTransitions: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

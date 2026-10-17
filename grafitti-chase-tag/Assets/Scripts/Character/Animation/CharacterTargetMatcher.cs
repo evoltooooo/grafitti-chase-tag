@@ -46,6 +46,31 @@ public class CharacterTargetMatcher : MonoBehaviour
             return;
         }
 
+        // TEMPORARY CLIMB DIAGNOSTIC
+        if (actionRuntime.IsExecuting &&
+            actionRuntime.CurrentParkourActionType ==
+                ParkourActionType.Climb)
+        {
+            AnimatorStateInfo state =
+                animator.GetCurrentAnimatorStateInfo(0);
+
+            CharacterMotor motor =
+                GetComponent<CharacterMotor>();
+
+            Debug.Log(
+                $"CLIMB FRAME TRACE | " +
+                $"Time={actionRuntime.ActionTime:F3} | " +
+                $"Normalized={state.normalizedTime:F3} | " +
+                $"StateHash={state.shortNameHash} | " +
+                $"Transition={animator.IsInTransition(0)} | " +
+                $"Matching={animator.isMatchingTarget} | " +
+                $"RootMotion={animator.applyRootMotion} | " +
+                $"Position={transform.position} | " +
+                $"Velocity={(motor != null ? motor.Velocity.ToString() : "No Motor")} | " +
+                $"Grounded={(motor != null && motor.IsGrounded)}"
+            );
+        }
+
         // -------------------------------------------------
         // ACTION RESET
         // -------------------------------------------------
@@ -174,8 +199,79 @@ public class CharacterTargetMatcher : MonoBehaviour
             return;
         }
 
+        
         AnimatorStateInfo stateInfo =
             animator.GetCurrentAnimatorStateInfo(0);
+
+        // TEMPORARY: inspect the current and next Animator states.
+        if (actionRuntime.CurrentParkourActionType ==
+            ParkourActionType.Climb)
+        {
+            bool inTransition = animator.IsInTransition(0);
+
+            AnimatorStateInfo nextState =
+                animator.GetNextAnimatorStateInfo(0);
+
+            Debug.Log(
+                $"CLIMB TRANSITION DIAGNOSTIC | " +
+                $"CurrentHash={stateInfo.fullPathHash} | " +
+                $"InTransition={inTransition} | " +
+                $"NextHash={(inTransition ? nextState.fullPathHash : 0)}"
+            );
+        }
+
+        // Keep your existing CLIMB ACTIVE CLIP diagnostic below.
+
+        
+        if (actionRuntime.CurrentParkourActionType ==
+            ParkourActionType.Climb)
+        {
+            AnimatorClipInfo[] clips =
+                animator.GetCurrentAnimatorClipInfo(0);
+
+            string clipNames = "";
+
+            foreach (AnimatorClipInfo clip in clips)
+            {
+                clipNames +=
+                    clip.clip.name + " (" +
+                    clip.weight.ToString("F2") + ") ";
+            }
+
+            Debug.Log(
+                $"CLIMB ACTIVE CLIP | " +
+                $"ActionTime={actionRuntime.ActionTime:F3} | " +
+                $"Clips=[{clipNames}] | " +
+                $"ConfiguredAnimation=" +
+                $"{actionRuntime.CurrentParkourActionData.animationStateName}"
+            );
+        }
+        
+        if (actionRuntime.CurrentParkourActionType == ParkourActionType.Climb)
+        {
+            Debug.Log(
+                $"CLIMB STATE DIAGNOSTIC | " +
+                $"Layer={animator.GetLayerName(0)} | " +
+                $"FullPathHash={stateInfo.fullPathHash} | " +
+                $"ShortNameHash={stateInfo.shortNameHash} | " +
+                $"ConfiguredPhase=[{phases[0].animationStateName}] | " +
+                $"IsConfiguredState={stateInfo.IsName(phases[0].animationStateName)} | " +
+                $"IsTransition={animator.IsInTransition(0)}"
+            );
+        }
+
+        if (actionRuntime.CurrentParkourActionType ==
+                ParkourActionType.Climb)
+        {
+            Debug.Log(
+                $"CLIMB MATCH CHECK | " +
+                $"ActionTime={actionRuntime.ActionTime:F3} | " +
+                $"StateName={stateInfo.fullPathHash} | " +
+                $"Normalized={stateInfo.normalizedTime:F3} | " +
+                $"PhaseFound={FindMatchingPhase(phases, stateInfo)} | " +
+                $"Matching={animator.isMatchingTarget}"
+            );
+        }
 
         int phaseIndex =
             FindMatchingPhase(phases, stateInfo);

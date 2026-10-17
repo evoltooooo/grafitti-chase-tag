@@ -82,6 +82,24 @@ public class CharacterActionRuntime : MonoBehaviour
         // They end when the hold is released.
         if (IsHoldControlled)
             return;
+        
+        if (ActionDuration > 0f &&
+            ActionTime >= ActionDuration)
+        {
+            Debug.Log(
+                $"ACTION TIMER EXPIRED | " +
+                $"Action={CurrentActionType} | " +
+                $"Parkour={CurrentParkourActionType} | " +
+                $"Time={ActionTime:F3} | " +
+                $"Duration={ActionDuration:F3} | " +
+                $"Grounded={GetComponent<CharacterMotor>()?.IsGrounded} | " +
+                $"Position={transform.position} | " +
+                $"Velocity={GetComponent<CharacterMotor>()?.Velocity}",
+                this
+            );
+
+            CompleteAction();
+        }
 
         // Normal actions remain duration-controlled.
         if (ActionDuration > 0f &&

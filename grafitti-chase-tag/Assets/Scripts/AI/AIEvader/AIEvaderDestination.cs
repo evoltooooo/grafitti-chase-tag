@@ -20,6 +20,21 @@ public class AIEvaderDestination
     {
         bestDestination = context.Position;
 
+        bool startOnNavMesh = NavMesh.SamplePosition(
+            context.Position,
+            out NavMeshHit startHit,
+            1.0f,
+            NavMesh.AllAreas);
+
+        Debug.Log(
+            $"EVADER DESTINATION START | " +
+            $"Position={context.Position} | " +
+            $"StartOnNavMesh={startOnNavMesh} | " +
+            $"SampledPosition={(startOnNavMesh ? startHit.position.ToString() : "NONE")} | " +
+            $"SampleDistance={(startOnNavMesh ? Vector3.Distance(context.Position, startHit.position) : -1f):F2}");
+        
+        LogVerticalNavMeshSamples(context.Position);
+
         Vector3 awayDirection =
             context.Position - threatPosition;
 
@@ -66,16 +81,41 @@ public class AIEvaderDestination
 
                 Debug.Log(
                     $"EVADER CANDIDATE SAMPLE FAILED | " +
-                    $"Angle={angle} | Candidate={candidate}");
+                    $"Angle={angle} | " +
+                    $"Candidate={candidate} | " +
+                    $"Start={context.Position} | " +
+                    $"SampleRadius={SampleRadius} | " +
+                    $"EscapeDistance={EscapeDistance}");
+
+                // ADD THIS LINE HERE
+                LogVerticalNavMeshSamples(candidate);
 
                 continue;
             }
 
+            Vector3 sameHeightCandidate = new Vector3(
+                candidate.x,
+                context.Position.y,
+                candidate.z);
+
+            bool sameHeightFound = NavMesh.SamplePosition(
+                sameHeightCandidate,
+                out NavMeshHit sameHeightHit,
+                0.5f,
+                NavMesh.AllAreas);
+
+            Debug.Log(
+                $"EVADER SAME-HEIGHT SAMPLE | " +
+                $"Candidate={sameHeightCandidate} | " +
+                $"Found={sameHeightFound} | " +
+                $"Hit={(sameHeightFound ? sameHeightHit.position.ToString() : "NONE")} | " +
+                $"VerticalDifference={(sameHeightFound ? Mathf.Abs(sameHeightHit.position.y - context.Position.y) : -1f):F2}");
+
             Debug.Log(
                 $"EVADER PATH START CHECK | " +
                 $"Start={context.Position} | " +
-                $"StartOnNavMesh={NavMesh.SamplePosition(context.Position, out NavMeshHit startHit, 0.5f, NavMesh.AllAreas)} | " +
-                $"SampledStart={startHit.position} | " +
+                $"StartOnNavMesh={NavMesh.SamplePosition(context.Position, out NavMeshHit candidateStartHit, 0.5f, NavMesh.AllAreas)} | " +
+                $"SampledStart={candidateStartHit.position} | " +
                 $"Destination={hit.position}"
             );
 
@@ -229,6 +269,14 @@ public class AIEvaderDestination
             $"CompletePaths={completePaths} | " +
             $"FoundCandidate={foundCandidate}");
 
+        Debug.Log(
+            $"EVADER DESTINATION SELECTED | " +
+            $"Threat={threatPosition} | " +
+            $"Position={context.Position} | " +
+            $"BestDestination={bestDestination} | " +
+            $"BestScore={bestScore:F2} | " +
+            $"FoundCandidate={foundCandidate}");
+
         return foundCandidate;
     }
 
@@ -245,5 +293,29 @@ public class AIEvaderDestination
         }
 
         return length;
+    }
+
+    private void LogVerticalNavMeshSamples(Vector3 candidate)
+    {
+        float[] verticalOffsets = { 0f, 2f, 5f, 10f };
+
+        foreach (float offset in verticalOffsets)
+        {
+            Vector3 samplePosition =
+                candidate + Vector3.down * offset;
+
+            bool found = NavMesh.SamplePosition(
+                samplePosition,
+                out NavMeshHit hit,
+                2f,
+                NavMesh.AllAreas);
+
+            Debug.Log(
+                $"EVADER VERTICAL NAVMESH SAMPLE | " +
+                $"Candidate={candidate} | " +
+                $"Offset={offset:F1} | " +
+                $"Found={found} | " +
+                $"HitPosition={(found ? hit.position.ToString() : "NONE")}");
+        }
     }
 }
