@@ -112,19 +112,20 @@ public class AIEvaderDestination
             }
 
             float verticalDifference =
-                Mathf.Abs(hit.position.y - context.Position.y);
+                hit.position.y - context.Position.y;
 
-            if (verticalDifference > 1.0f)
-            {
-                Debug.Log(
-                    $"EVADER CANDIDATE REJECTED | " +
-                    $"Reason=DifferentFloor | " +
-                    $"CurrentY={context.Position.y:F2} | " +
-                    $"Candidate={hit.position} | " +
-                    $"VerticalDifference={verticalDifference:F2}");
+            string floorType = verticalDifference < -1.0f
+                ? "Lower"
+                : verticalDifference > 1.0f
+                    ? "Higher"
+                    : "SameFloor";
 
-                continue;
-            }
+            Debug.Log(
+                $"EVADER CANDIDATE FLOOR CHECK | " +
+                $"CurrentPosition={context.Position} | " +
+                $"Candidate={hit.position} | " +
+                $"VerticalDifference={verticalDifference:F2} | " +
+                $"FloorType={floorType}");
 
             Vector3 sameHeightCandidate = new Vector3(
                 candidate.x,
@@ -153,7 +154,7 @@ public class AIEvaderDestination
             );
 
             bool pathCalculated = NavMesh.CalculatePath(
-                context.Position,
+                startHit.position,
                 hit.position,
                 NavMesh.AllAreas,
                 candidatePath);

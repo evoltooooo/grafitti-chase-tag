@@ -17,92 +17,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'F_Armature|Backward' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'F_pelvis' has translation animation that
-      will be discarded.\n\t'F_pelvis' is inbetween humanoid transforms and has rotation
-      animation that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|Idle' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|Jump_End' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|Jump_Loop' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|Jump_Start' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|PoleSpin_End' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_clavicle_r'
-      has translation animation that will be discarded.\n\t'F_upperarm_r' has translation
-      animation that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'F_calf_l' has scale
-      animation that will be discarded.\n\t'F_foot_l' has scale animation that will
-      be discarded.\n\t'F_calf_r' has scale animation that will be discarded.\n\t'F_foot_r'
-      has scale animation that will be discarded.\n\nClip 'F_Armature|PoleSpin_Loop'
-      has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|PoleSpin_Start' has import animation warnings that might lower
-      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
-      quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
-      has scale animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      has scale animation that will be discarded.\n\t'F_hand_l' has scale animation
-      that will be discarded.\n\t'F_clavicle_r' has translation animation that will
-      be discarded.\n\t'F_upperarm_r' has translation animation that will be discarded.\n\t'F_lowerarm_r'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'F_Armature|Sprint' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_l'
-      has scale animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_r'
-      has scale animation that will be discarded.\n\nClip 'F_Armature|Strafing_L'
-      has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_l'
-      has scale animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_r'
-      has scale animation that will be discarded.\n\t'F_calf_l' has scale animation
-      that will be discarded.\n\t'F_foot_l' has scale animation that will be discarded.\n\t'F_calf_r'
-      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
-      that will be discarded.\n\nClip 'F_Armature|Strafing_R' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'F_pelvis' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_l'
-      has scale animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_r'
-      has scale animation that will be discarded.\n\t'F_calf_l' has scale animation
-      that will be discarded.\n\t'F_foot_l' has scale animation that will be discarded.\n\t'F_calf_r'
-      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
-      that will be discarded.\n\nClip 'F_Armature|Walking' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'F_pelvis' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_l'
-      has scale animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thumb_01_r'
-      has scale animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -129,7 +44,7 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 1
-      loopBlendOrientation: 1
+      loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
@@ -475,8 +390,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
