@@ -13,6 +13,11 @@ public class CharacterActionController : MonoBehaviour
     [Header("Interaction")]
     [SerializeField] private CharacterInteractionResolver interactionResolver;
 
+    [Header("Round Control")]
+    [SerializeField] private RoundManager roundManager;
+    private bool IsRoundLocked => 
+        roundManager != null && !roundManager.IsRoundActive;
+
     private void Awake()
     {
 
@@ -72,6 +77,9 @@ public class CharacterActionController : MonoBehaviour
     public bool RequestAction(
         CharacterActionRequest request)
     {
+        if (IsRoundLocked)
+            return false;
+
         if (request.ActionType == CharacterActionType.None)
         {
             Debug.LogWarning(
@@ -102,6 +110,9 @@ public class CharacterActionController : MonoBehaviour
     public bool RequestParkourAction(
         ParkourActionType parkourActionType)
     {
+        if (IsRoundLocked)
+            return false;
+
         if (actionResolver == null ||
             parkourActionResolver == null ||
             actionExecutor == null)
@@ -139,6 +150,9 @@ public class CharacterActionController : MonoBehaviour
 
     public void RequestInteraction()
     {
+        if (IsRoundLocked)
+            return;
+
         if (interactionResolver == null)
         {
             Debug.LogError(
@@ -250,6 +264,23 @@ public class CharacterActionController : MonoBehaviour
 
     public void TickMovement()
     {
+        if (characterMotor == null)
+            return;
+
+        if (IsRoundLocked)
+        {
+            characterMotor.TickWorldDirection(
+                Vector3.zero,
+                false,
+                Vector2.zero,
+                false,
+                Vector3.zero,
+                false
+            );
+
+            return;
+        }
+
         characterMotor.TickWorldDirection(
             movementIntent.WorldDirection,
             movementIntent.Sprint,
@@ -258,7 +289,7 @@ public class CharacterActionController : MonoBehaviour
             movementIntent.LookDirection,
             movementIntent.HasLookDirection
         );
-}
+    }
     public bool TryFindParkourTarget(
         ParkourActionType parkourActionType,
         out ParkourTarget target)

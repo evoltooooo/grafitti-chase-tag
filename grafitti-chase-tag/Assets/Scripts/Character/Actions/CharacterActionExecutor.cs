@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CharacterActionExecutor : MonoBehaviour
@@ -8,6 +9,7 @@ public class CharacterActionExecutor : MonoBehaviour
     [SerializeField] private CharacterStamina stamina;
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private CharacterTagDetector tagDetector;
+    public event Action<Collider> TagSucceeded;
 
     private void Awake()
     {
@@ -283,9 +285,10 @@ public class CharacterActionExecutor : MonoBehaviour
         actionRuntime.StartAction(actionData);
         SetActionState(actionData);
 
-        Debug.Log(
-            $"TAG ACTION EXECUTED | Target: {target.name}"
-        );
+        Debug.Log($"TAG ACTION EXECUTED | Target: {target.name}");
+
+        // Notify RoundManager that a tag was detected successfully.
+        TagSucceeded?.Invoke(target);
 
         return true;
     }
