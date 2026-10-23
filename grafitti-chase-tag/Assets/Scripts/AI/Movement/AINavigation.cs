@@ -144,6 +144,14 @@ public class AINavigation
             return false;
         }
 
+        Debug.Log(
+            $"AI NAV WAYPOINT DEBUG | " +
+            $"Position={currentPosition} | " +
+            $"CornerIndex={currentCornerIndex} | " +
+            $"CornerCount={(corners == null ? 0 : corners.Length)} | " +
+            $"HasPath={HasPath} | " +
+            $"Waypoint={(currentCornerIndex < corners.Length ? corners[currentCornerIndex].ToString() : "NONE")}");
+
         while (
             currentCornerIndex < corners.Length &&
             Vector3.Distance(
@@ -158,6 +166,14 @@ public class AINavigation
         if (currentCornerIndex >= corners.Length)
         {
             ReachedPartialPathEnd = IsPartialPath;
+
+            Debug.LogWarning(
+                $"AI NAV FINAL WAYPOINT REACHED | " +
+                $"Position={currentPosition} | " +
+                $"FinalCorner={corners[corners.Length - 1]} | " +
+                $"Distance={Vector3.Distance(currentPosition, corners[corners.Length - 1]):F2} | " +
+                $"Partial={IsPartialPath} | " +
+                $"ReachedDistance={waypointReachedDistance}");
 
             Debug.Log(
                 $"AI NAV PATH ENDED | " +

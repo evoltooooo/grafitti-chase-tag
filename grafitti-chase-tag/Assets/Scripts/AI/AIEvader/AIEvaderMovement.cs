@@ -7,12 +7,15 @@ public class AIEvaderMovement
 
     private readonly float destinationRepathDistance;
     private readonly float pathRetryInterval;
+    private int consecutiveWaypointLosses;
+    private const int WaypointLossWarningThreshold = 3;
 
     private Vector3 lastDestination;
     private bool hasDestination;
     private float retryTimer;
 
     private const float FinalCornerApproachDistance = 1.5f;
+    private const float MinimumDestinationDistance = 1.25f;
 
     public bool NeedsDestination =>
         !hasDestination || !navigation.HasPath;
@@ -67,6 +70,28 @@ public class AIEvaderMovement
         Vector3 startPosition,
         Vector3 destination)
     {
+        Vector3 horizontalStart = startPosition;
+        horizontalStart.y = 0f;
+
+        Vector3 horizontalDestination = destination;
+        horizontalDestination.y = 0f;
+
+        float distanceToDestination = Vector3.Distance(
+            horizontalStart,
+            horizontalDestination);
+
+        if (distanceToDestination < MinimumDestinationDistance)
+        {
+            Debug.Log(
+                $"EVADER DESTINATION TOO CLOSE | " +
+                $"Start={startPosition} | " +
+                $"Destination={destination} | " +
+                $"Distance={distanceToDestination:F2}");
+
+            InvalidateDestination();
+            return false;
+        }
+
         bool destinationChanged =
             !hasDestination ||
             Vector3.Distance(
@@ -135,7 +160,7 @@ public class AIEvaderMovement
             $"Updated={waypointUpdated} | " +
             $"Waypoint={navigation.CurrentWaypoint}");
 
-        if (!waypointUpdated)
+    if (!waypointUpdated)
         {
             Debug.Log(
                 $"EVADER WAYPOINT LOST | " +
@@ -147,9 +172,57 @@ public class AIEvaderMovement
                 $"LastDestination={lastDestination} | " +
                 $"Waypoint={navigation.CurrentWaypoint}");
 
+            // A partial path needs its existing recovery handling.
+            if (navigation.ReachedPartialPathEnd)
+            {
+                consecutiveWaypointLosses = 0;
+                Stop(actionController);
+                return;
+            }
+
+            // A complete path has ended normally.
+            // Clear the old destination so AIEvader can select another.
+            if (!navigation.IsPartialPath && !navigation.HasPath)
+            {
+                consecutiveWaypointLosses = 0;
+
+                navigation.ClearPath();
+                hasDestination = false;
+                lastDestination = Vector3.zero;
+                retryTimer = 0f;
+
+                actionController.SetMovementIntent(
+                    new CharacterMovementIntent(
+                        Vector3.zero,
+                        false,
+                        Vector2.zero));
+
+                Debug.Log(
+                    "EVADER COMPLETE PATH ENDED | " +
+                    "Ready to select a new destination");
+
+                return;
+            }
+
+            consecutiveWaypointLosses++;
+
+            if (consecutiveWaypointLosses >= WaypointLossWarningThreshold)
+            {
+                Debug.LogWarning(
+                    $"EVADER REPEATED WAYPOINT LOSS | " +
+                    $"Count={consecutiveWaypointLosses} | " +
+                    $"Position={context.Position} | " +
+                    $"Destination={lastDestination} | " +
+                    $"HasPath={navigation.HasPath}");
+
+                consecutiveWaypointLosses = 0;
+            }
+
             Stop(actionController);
             return;
         }
+
+        consecutiveWaypointLosses = 0;
 
         Debug.Log(
             $"EVADER APPROACH DEBUG | " +
@@ -221,10 +294,13 @@ public class AIEvaderMovement
     private void Stop(
         CharacterActionController actionController)
     {
+        navigation.ClearPath();
+
         hasDestination = false;
         lastDestination = Vector3.zero;
 
-        // Allow AIEvader to retry destination calculation.
+        // Allow the existing Evader destination-selection
+        // loop to calculate a fresh route immediately.
         retryTimer = 0f;
 
         actionController.SetMovementIntent(
@@ -232,5 +308,9 @@ public class AIEvaderMovement
                 Vector3.zero,
                 false,
                 Vector2.zero));
+
+        Debug.Log(
+            "EVADER MOVEMENT STOPPED | " +
+            "Path cleared; destination retry enabled");
     }
 }

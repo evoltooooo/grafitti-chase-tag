@@ -79,9 +79,24 @@ public class AIEvaderDestination
                 Quaternion.Euler(0f, angle, 0f) *
                 awayDirection;
 
-            Vector3 candidate =
-                context.Position +
-                direction * EscapeDistance;
+            Vector3 candidate = context.Position + direction * EscapeDistance;
+
+            Vector3 flatStart = startHit.position;
+            Vector3 flatCandidate = candidate;
+
+            flatStart.y = 0f;
+            flatCandidate.y = 0f;
+
+            float candidateDistance = Vector3.Distance(flatStart, flatCandidate);
+
+            if (candidateDistance < 1.25f)
+            {
+                Debug.Log(
+                    $"EVADER CANDIDATE REJECTED | Reason=TooClose | " +
+                    $"Candidate={candidate} | Distance={candidateDistance:F2}");
+
+                continue;
+            }
 
             if (!NavMesh.SamplePosition(
                 candidate,
@@ -107,6 +122,24 @@ public class AIEvaderDestination
 
                 // ADD THIS LINE HERE
                 LogVerticalNavMeshSamples(candidate);
+
+                continue;
+            }
+
+            Vector3 flatSampledDestination = hit.position;
+            flatSampledDestination.y = 0f;
+
+            float sampledDestinationDistance = Vector3.Distance(
+                flatStart,
+                flatSampledDestination);
+
+            if (sampledDestinationDistance < 1.25f)
+            {
+                Debug.Log(
+                    $"EVADER CANDIDATE REJECTED | " +
+                    $"Reason=SampledDestinationTooClose | " +
+                    $"Distance={sampledDestinationDistance:F2} | " +
+                    $"SampledDestination={hit.position}");
 
                 continue;
             }
@@ -275,6 +308,27 @@ public class AIEvaderDestination
                     candidateDirection.normalized);
             }
 
+            Vector3 flatSampledStart = startHit.position;
+            Vector3 flatValidDestination = hit.position;
+
+            flatSampledStart.y = 0f;
+            flatValidDestination.y = 0f;
+
+            float validDestinationDistance = Vector3.Distance(
+                flatSampledStart,
+                flatValidDestination);
+
+            if (validDestinationDistance < 1.25f)
+            {
+                Debug.Log(
+                    $"EVADER CANDIDATE REJECTED | " +
+                    $"Reason=CompletePathDestinationTooClose | " +
+                    $"Distance={validDestinationDistance:F2} | " +
+                    $"Destination={hit.position}");
+
+                continue;
+            }
+
             float score =
                 distanceFromThreat -
                 pathLength * PathLengthPenalty +
@@ -310,6 +364,30 @@ public class AIEvaderDestination
             $"BestDestination={bestDestination} | " +
             $"BestScore={bestScore:F2} | " +
             $"FoundCandidate={foundCandidate}");
+
+        if (foundCandidate)
+        {
+            Vector3 flatStart = context.Position;
+            Vector3 flatDestination = bestDestination;
+
+            flatStart.y = 0f;
+            flatDestination.y = 0f;
+
+            float selectedDistance =
+                Vector3.Distance(flatStart, flatDestination);
+
+            if (selectedDistance < 1.25f)
+            {
+                Debug.LogWarning(
+                    $"EVADER DESTINATION REJECTED | " +
+                    $"Reason=SelectedDestinationTooClose | " +
+                    $"Distance={selectedDistance:F2} | " +
+                    $"Destination={bestDestination}");
+
+                foundCandidate = false;
+                bestDestination = context.Position;
+            }
+        }
 
         return foundCandidate;
     }

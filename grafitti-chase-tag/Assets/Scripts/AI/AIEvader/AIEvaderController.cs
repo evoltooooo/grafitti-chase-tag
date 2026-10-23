@@ -3,6 +3,7 @@ public class AIEvaderController
 {
     private readonly AIEvader evader;
     private readonly AIEvaderTactics tactics;
+    private readonly AIEvaderDropPlanner dropPlanner;
 
     public AIEvaderController(
         CharacterMotor characterMotor,
@@ -12,7 +13,11 @@ public class AIEvaderController
         float slideDetectionDistance,
         float slideLowDetectionHeight,
         float slideHighDetectionHeight,
-        LayerMask slideObstacleMask)
+        LayerMask slideObstacleMask,
+        Transform selfTransform,
+        LayerMask dropLandingMask,
+        float maximumDropHeight,
+        float dropApproachDistance)
     {
         AISteering steering = new AISteering();
         AINavigation navigation = new AINavigation();
@@ -29,11 +34,19 @@ public class AIEvaderController
                 navigation,
                 destinationRepathDistance,
                 pathRetryInterval);
+        
+        dropPlanner = new AIEvaderDropPlanner();
 
         evader = new AIEvader(
             decision,
             destination,
-            movement);
+            movement,
+            dropPlanner,
+            selfTransform,
+            dropLandingMask,
+            maximumDropHeight,
+            dropApproachDistance
+        );
 
         tactics = new AIEvaderTactics(
             characterMotor,

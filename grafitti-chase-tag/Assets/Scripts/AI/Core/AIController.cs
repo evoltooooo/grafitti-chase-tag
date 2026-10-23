@@ -48,6 +48,11 @@ public class AIController : MonoBehaviour
     [SerializeField] private float slideHighDetectionHeight = 1.2f;
     [SerializeField] private LayerMask slideObstacleMask;
 
+    [Header("Evader Drop")]
+    [SerializeField] private LayerMask dropLandingMask;
+    [SerializeField] private float maximumEvaderDropHeight = 6f;
+    [SerializeField] private float dropApproachDistance = 0.6f;
+
 
     // =========================================================
     // AI
@@ -123,7 +128,11 @@ public class AIController : MonoBehaviour
                 slideDetectionDistance,
                 slideLowDetectionHeight,
                 slideHighDetectionHeight,
-                slideObstacleMask
+                slideObstacleMask,
+                transform,
+                dropLandingMask,
+                maximumEvaderDropHeight,
+                dropApproachDistance
             );
     }
 
