@@ -8,6 +8,9 @@ public class AIChaserController
     private readonly AIChaserCommitment chaserCommitment;
     private readonly AIChaserTactics tactics;
 
+    private const float TagAttemptInterval = 0.2f;
+    private float tagAttemptTimer;
+
     public AIChaserController(
         CharacterMotor characterMotor,
         float destinationRepathDistance,
@@ -112,6 +115,8 @@ public class AIChaserController
             context,
             actionController
         );
+
+        TryTagOpponent(context, actionController);
     }
 
     private void UpdateState(
@@ -205,6 +210,53 @@ public class AIChaserController
         chaserCommitment.ResetForNewRound();
         tactics.ResetForNewRound();
 
+        tagAttemptTimer = 0f;
+
         Debug.Log("AI CHASER CONTROLLER RESET | New round");
+    }
+
+    private void TryTagOpponent(
+        AIContext context,
+        CharacterActionController actionController)
+    {
+        tagAttemptTimer -= Time.deltaTime;
+
+        if (context.Role != CharacterRoleType.Chaser)
+            return;
+
+        if (!context.OpponentVisible)
+            return;
+
+        if (context.IsExecutingAction)
+            return;
+
+        if (!context.IsGrounded)
+            return;
+
+        if (tagAttemptTimer > 0f)
+            return;
+
+        // Throttle attempts so the AI does not request Tag every frame.
+        tagAttemptTimer = TagAttemptInterval;
+
+        Vector3 toOpponent =
+            context.OpponentPosition - context.Position;
+
+        toOpponent.y = 0f;
+
+        Debug.Log(
+            $"AI TAG CHECK | " +
+            $"Distance={toOpponent.magnitude:F2} | " +
+            $"Visible={context.OpponentVisible} | " +
+            $"Grounded={context.IsGrounded} | " +
+            $"Forward={context.Forward}"
+        );
+
+        bool tagPerformed = actionController.RequestTag();
+
+        Debug.Log(
+            $"AI TAG ATTEMPT | Performed={tagPerformed} | " +
+            $"Distance={toOpponent.magnitude:F2}"
+        );
     }
 }
