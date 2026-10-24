@@ -72,4 +72,12 @@ public class AIEvaderController
             evader.WantsToSprint,
             evader.IsApproachingFinalCorner);
     }
+
+    public void ResetForNewRound()
+    {
+        evader.ResetForNewRound();
+        tactics.ResetForNewRound();
+
+        Debug.Log("AI EVADER CONTROLLER RESET | New round");
+    }
 }

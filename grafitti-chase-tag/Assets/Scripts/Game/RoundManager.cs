@@ -1,4 +1,3 @@
-
 using System;
 using UnityEngine;
 
@@ -7,6 +6,7 @@ public class RoundManager : MonoBehaviour
     public enum RoundState
     {
         WaitingToStart,
+        Countdown,
         Active,
         Intermission
     }
@@ -18,18 +18,37 @@ public class RoundManager : MonoBehaviour
         Random
     }
 
-    [Header("References")]
+    [Header("Character Executors")]
     [SerializeField] private CharacterActionExecutor playerActionExecutor;
     [SerializeField] private CharacterActionExecutor aiActionExecutor;
+
+    [Header("Character Controllers")]
+    [SerializeField] private CharacterActionController playerActionController;
+    [SerializeField] private CharacterActionController aiActionController;
 
     [Header("Characters")]
     [SerializeField] private CharacterRole playerRole;
     [SerializeField] private CharacterRole aiRole;
 
+    [Header("AI")]
+    [SerializeField] private AIController aiController;
+
+    [Header("Arena Spawn Points")]
+    [SerializeField] private Transform spawnWest;
+    [SerializeField] private Transform spawnEast;
+    [SerializeField] private Transform spawnNorth;
+    [SerializeField] private Transform spawnSouth;
+
     [Header("Round Settings")]
     [SerializeField, Min(1f)] private float roundDuration = 90f;
     [SerializeField, Min(0f)] private float intermissionDuration = 3f;
     [SerializeField, Min(1)] private int pointsPerRound = 1;
+    [SerializeField, Min(0f)]
+
+    private float countdownDuration = 3f;
+    public float CountdownRemaining => countdownTimer;
+
+    private float countdownTimer;
     [SerializeField] private StartingRole startingRole =
         StartingRole.PlayerChaser;
 
@@ -45,6 +64,7 @@ public class RoundManager : MonoBehaviour
     public event Action<int, float> RoundStarted;
     public event Action<float> TimerUpdated;
     public event Action<int, CharacterRoleType, int, int> RoundEnded;
+    public event Action<float> CountdownUpdated;
 
     private float intermissionTimer;
 
@@ -69,6 +89,13 @@ public class RoundManager : MonoBehaviour
     {
         switch (CurrentState)
         {
+            case RoundState.WaitingToStart:
+                break;
+
+            case RoundState.Countdown:
+                UpdateCountdown();
+                break;
+
             case RoundState.Active:
                 UpdateRoundTimer();
                 break;
@@ -108,6 +135,72 @@ public class RoundManager : MonoBehaviour
             return false;
         }
 
+        if (spawnWest == null ||
+            spawnEast == null ||
+            spawnNorth == null ||
+            spawnSouth == null)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | One or more spawn points are missing.",
+                this
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool PositionCharactersForNewRound()
+    {
+        Transform firstSpawn;
+        Transform secondSpawn;
+
+        // Choose an opposing pair.
+        if (UnityEngine.Random.value < 0.5f)
+        {
+            firstSpawn = spawnWest;
+            secondSpawn = spawnEast;
+        }
+        else
+        {
+            firstSpawn = spawnNorth;
+            secondSpawn = spawnSouth;
+        }
+
+        // Randomize which character occupies each end.
+        Transform playerSpawn = firstSpawn;
+        Transform aiSpawn = secondSpawn;
+
+        if (UnityEngine.Random.value < 0.5f)
+        {
+            playerSpawn = secondSpawn;
+            aiSpawn = firstSpawn;
+        }
+
+        bool playerPlaced =
+            playerActionController != null &&
+            playerActionController.ResetForRoundStart(playerSpawn);
+
+        bool aiPlaced =
+            aiActionController != null &&
+            aiActionController.ResetForRoundStart(aiSpawn);
+
+        if (!playerPlaced || !aiPlaced)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | Failed to position both characters. " +
+                "The round will not start."
+            );
+
+            return false;
+        }
+
+        Debug.Log(
+            $"ROUND SPAWNS | Player={playerSpawn.name} | " +
+            $"AI={aiSpawn.name}"
+        );
+
         return true;
     }
 
@@ -142,20 +235,73 @@ public class RoundManager : MonoBehaviour
         aiRole.SetRole(aiAssignedRole);
     }
 
-    private void BeginRound()
+    private void UpdateCountdown()
     {
-        CurrentRound++;
-        TimeRemaining = roundDuration;
+        countdownTimer = Mathf.Max(
+            0f,
+            countdownTimer - Time.deltaTime
+        );
+
+        CountdownUpdated?.Invoke(countdownTimer);
+
+        if (countdownTimer <= 0f)
+        {
+            ActivateRound();
+        }
+    }
+
+    private void ActivateRound()
+    {
+        if (CurrentState != RoundState.Countdown)
+            return;
+
+        // Clear any decisions or movement intent accumulated
+        // by the AI while movement was locked.
+        if (aiController != null)
+            aiController.ResetForNewRound();
+
         CurrentState = RoundState.Active;
 
         Debug.Log(
             $"ROUND STARTED | Round={CurrentRound} | " +
             $"PlayerRole={playerRole.CurrentRole} | " +
             $"AIRole={aiRole.CurrentRole} | " +
-            $"Time={TimeRemaining:F1}");
+            $"Time={TimeRemaining:F1}"
+        );
 
+        CountdownUpdated?.Invoke(0f);
         RoundStarted?.Invoke(CurrentRound, TimeRemaining);
         TimerUpdated?.Invoke(TimeRemaining);
+    }
+
+    private void BeginRound()
+    {
+        // Keep gameplay locked while preparing the characters.
+        CurrentState = RoundState.WaitingToStart;
+
+        if (!PositionCharactersForNewRound())
+            return;
+
+        if (aiController != null)
+            aiController.ResetForNewRound();
+
+        CurrentRound++;
+
+        // Reset the round timer as soon as the countdown begins.
+        TimeRemaining = roundDuration;
+        TimerUpdated?.Invoke(TimeRemaining);
+
+        // Start the pre-round countdown.
+        countdownTimer = countdownDuration;
+        CurrentState = RoundState.Countdown;
+
+        Debug.Log(
+            $"ROUND COUNTDOWN | Round={CurrentRound} | " +
+            $"Duration={countdownTimer:F1} | " +
+            $"RoundTime={TimeRemaining:F1}"
+        );
+
+        CountdownUpdated?.Invoke(countdownTimer);
     }
 
     private void UpdateRoundTimer()
@@ -221,6 +367,15 @@ public class RoundManager : MonoBehaviour
             return;
 
         CurrentState = RoundState.Intermission;
+
+        if (playerActionController != null)
+            playerActionController.StopForRoundTransition();
+
+        if (aiActionController != null)
+            aiActionController.StopForRoundTransition();
+        
+        if (aiController != null)
+            aiController.ResetForNewRound();
 
         AwardPoints(winningRole);
 

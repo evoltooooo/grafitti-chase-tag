@@ -550,4 +550,31 @@ public class AIChaserTactics
         Debug.Log("AI TICTAC EXECUTION | TicTac");
     }
 
+    public void ResetForNewRound()
+    {
+        // General checks
+        parkourCheckTimer = 0f;
+
+        // Vault
+        vaultCooldownTimer = 0f;
+        vaultWaitingForOpportunityToClear = false;
+        vaultStartPosition = Vector3.zero;
+
+        // Slide
+        slideCooldownTimer = 0f;
+        lowObstacleAhead = false;
+
+        // Climb
+        climbCheckTimer = 0f;
+        upwardClimbAttempt = false;
+        upwardClimbHandled = false;
+        upwardClimbJumpRequested = false;
+
+        // TicTac
+        ticTacCooldownTimer = 0f;
+        ticTacApproachActive = false;
+        ticTacJumpCooldownTimer = 0f;
+
+        Debug.Log("AI CHASER TACTICS RESET | New round");
+    }
 }

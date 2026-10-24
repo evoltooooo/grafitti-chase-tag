@@ -10,7 +10,6 @@ public class AIEvaderTactics
     private float slideCooldownTimer;
 
     private readonly AIParkourOpportunity parkourOpportunity = new AIParkourOpportunity();
-    private bool partialPathJumpRequested;
 
     private float climbCheckTimer;
     private float climbDebugTimer;
@@ -410,5 +409,29 @@ public class AIEvaderTactics
         slideCooldownTimer = slideCooldown;
 
         Debug.Log("AI EVADER SLIDE | Executed");
+    }
+
+    public void ResetForNewRound()
+    {
+        // Slide
+        slideCooldownTimer = 0f;
+
+        // Climb checks and retry timers
+        climbCheckTimer = 0f;
+        climbDebugTimer = 0f;
+        climbRetryLockoutTimer = 0f;
+
+        // Climb traversal state
+        climbTraversalArmed = false;
+        climbTraversalStartTime = 0f;
+
+        climbRequestPending = false;
+        climbActionObservedExecuting = false;
+
+        climbApproachPosition = Vector3.zero;
+        climbTakeoffPosition = Vector3.zero;
+        climbRequestAcceptedTime = 0f;
+
+        Debug.Log("AI EVADER TACTICS RESET | New round");
     }
 }

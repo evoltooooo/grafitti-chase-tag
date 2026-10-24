@@ -318,4 +318,66 @@ public class CharacterActionController : MonoBehaviour
 
         return target.IsValid;
     }
+
+    public bool ResetForRoundStart(Transform spawnPoint)
+    {
+        if (spawnPoint == null)
+        {
+            Debug.LogError(
+                "ROUND SPAWN FAILED | Spawn point is missing.",
+                this
+            );
+
+            return false;
+        }
+
+        // Cancel stale actions and movement before repositioning.
+        StopForRoundTransition();
+
+        if (characterMotor == null)
+            return false;
+
+        bool success = characterMotor.ResetPositionForNewRound(
+            spawnPoint.position,
+            spawnPoint.rotation
+        );
+
+        if (!success)
+        {
+            Debug.LogError(
+                $"ROUND SPAWN FAILED | Character={name}",
+                this
+            );
+
+            return false;
+        }
+
+        // Clear any movement intent left by the previous round.
+        movementIntent = default;
+
+        Debug.Log(
+            $"ROUND SPAWN COMPLETE | Character={name} | " +
+            $"Position={transform.position}",
+            this
+        );
+
+        return true;
+    }
+
+    public void StopForRoundTransition()
+    {
+        movementIntent = default;
+
+        if (actionRuntime != null)
+            actionRuntime.CancelAction();
+
+        if (characterMotor != null)
+            characterMotor.StopForRoundTransition();
+
+        CharacterStateController stateController =
+            GetComponent<CharacterStateController>();
+
+        if (stateController != null)
+            stateController.ResetForRoundTransition();
+    }
 }

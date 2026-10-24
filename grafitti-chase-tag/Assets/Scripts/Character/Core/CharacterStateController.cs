@@ -100,4 +100,9 @@ public class CharacterStateController : MonoBehaviour
 
         SetState(CharacterState.Locomotion);
     }
+
+    public void ResetForRoundTransition()
+    {
+        SetState(CharacterState.Locomotion);
+    }
 }

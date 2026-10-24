@@ -58,4 +58,9 @@ public class AIChaserCommitment
         commitmentTimer =
             minimumCommitmentTime;
     }
+
+    public void ResetForNewRound()
+    {
+        ForceState(AIChaserState.Pursue);
+    }
 }

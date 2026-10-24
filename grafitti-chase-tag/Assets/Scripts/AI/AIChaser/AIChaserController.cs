@@ -198,5 +198,13 @@ public class AIChaserController
             chaser.IsAscendingPartialPath()
         );
     }
-    
+
+    public void ResetForNewRound()
+    {
+        chaser.ResetForNewRound();
+        chaserCommitment.ResetForNewRound();
+        tactics.ResetForNewRound();
+
+        Debug.Log("AI CHASER CONTROLLER RESET | New round");
+    }
 }

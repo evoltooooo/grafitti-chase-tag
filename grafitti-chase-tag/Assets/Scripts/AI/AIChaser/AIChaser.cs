@@ -507,4 +507,21 @@ public class AIChaser
             )
         );
     }
+
+    public void ResetForNewRound()
+    {
+        state = AIChaserState.Pursue;
+
+        lastPathDestination = Vector3.zero;
+        hasPathDestination = false;
+        pathRetryTimer = 0f;
+
+        isDescendingPartialPath = false;
+        hasLeftPartialPathSurface = false;
+        isAscendingPartialPath = false;
+
+        navigation.ClearPath();
+
+        Debug.Log("AI CHASER RESET | Ready for new round");
+    }
 }

@@ -136,7 +136,6 @@ public class AIController : MonoBehaviour
             );
     }
 
-
     private void Update()
     {
         UpdateContext();
@@ -209,5 +208,19 @@ public class AIController : MonoBehaviour
 
                 break;
         }
+    }
+
+    public void ResetForNewRound()
+    {
+        if (chaserController != null)
+            chaserController.ResetForNewRound();
+
+        if (evaderController != null)
+            evaderController.ResetForNewRound();
+
+        if (actionController != null)
+            actionController.SetMovementIntent(default);
+
+        Debug.Log("AI CONTROLLER RESET | New round");
     }
 }

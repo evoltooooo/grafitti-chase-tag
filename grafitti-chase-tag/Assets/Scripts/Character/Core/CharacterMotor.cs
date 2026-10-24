@@ -828,6 +828,27 @@ public class CharacterMotor : MonoBehaviour
         horizontalVelocity = Vector3.zero;
     }
 
+    public void StopForRoundTransition()
+    {
+        // Cancel any remaining horizontal and vertical movement.
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+
+        MovementInput = Vector2.zero;
+        IsSprinting = false;
+        LocomotionAnimationValue = 0f;
+
+        isJumping = false;
+        jumpDebugActive = false;
+
+        // Restore the standing collider if Slide was interrupted.
+        if (IsSliding)
+        {
+            TryEndSlide();
+        }
+
+        StopHorizontalMovement();
+    }
     public void CompleteClimbMotion()
     {
         // Discard leftover upward velocity from before Climb.
@@ -877,5 +898,53 @@ public class CharacterMotor : MonoBehaviour
                     Time.deltaTime
                 );
         }
+    }
+
+    public bool ResetPositionForNewRound(
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (characterController == null)
+            return false;
+
+        // Remember the controller's previous enabled state.
+        bool wasEnabled = characterController.enabled;
+
+        characterController.enabled = false;
+
+        transform.SetPositionAndRotation(position, rotation);
+
+        characterController.enabled = wasEnabled;
+
+        // Clear movement carried over from the previous round.
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+
+        MovementInput = Vector2.zero;
+        IsSprinting = false;
+        LocomotionAnimationValue = 0f;
+
+        isJumping = false;
+        jumpDebugActive = false;
+        jumpStartHorizontalSpeed = 0f;
+
+        hasWallContact = false;
+        lastWallNormal = Vector3.zero;
+        lastWallReboundTime = -Mathf.Infinity;
+
+        // Restore the standing collider at the new spawn position.
+        if (IsSliding)
+            TryEndSlide();
+
+        isGrounded = characterController.enabled &&
+                    characterController.isGrounded;
+
+        Debug.Log(
+            $"MOTOR ROUND RESET | Position={transform.position} | " +
+            $"Grounded={isGrounded} | Sliding={IsSliding}",
+            this
+        );
+
+        return true;
     }
 }

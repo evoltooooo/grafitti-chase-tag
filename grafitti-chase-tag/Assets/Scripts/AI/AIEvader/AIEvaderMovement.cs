@@ -129,6 +129,7 @@ public class AIEvaderMovement
         hasDestination = false;
         lastDestination = Vector3.zero;
         retryTimer = 0f;
+        consecutiveWaypointLosses = 0;
 
         Debug.Log("EVADER DESTINATION INVALIDATED");
     }

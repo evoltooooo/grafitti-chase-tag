@@ -625,4 +625,33 @@ public class AIEvader
         threatRecheckTimer = 0f;
         escapeReevaluationTimer = 0f;
     }
+
+    public void ResetForNewRound()
+    {
+        CurrentState = AIEvaderState.Reposition;
+
+        WantsToSprint = false;
+        IsApproachingFinalCorner = false;
+
+        dropPhase = DropPhase.None;
+        dropApproachPoint = Vector3.zero;
+        dropLandingPoint = Vector3.zero;
+        dropDirection = Vector3.zero;
+
+        dropStartHeight = 0f;
+        dropPhaseTimer = 0f;
+        dropCooldownTimer = 0f;
+
+        threatRecheckTimer = 0f;
+        escapeReevaluationTimer = 0f;
+        postClimbRecoveryTimer = 0f;
+
+        wasExecutingAction = false;
+        wasExecutingClimb = false;
+        postClimbRecoveryPending = false;
+
+        movement.InvalidateDestination();
+
+        Debug.Log("AI EVADER RESET | New round");
+    }
 }

@@ -112,18 +112,4 @@ public class CharacterStamina : MonoBehaviour
                 settings.maxStamina
             );
     }
-
-    private void OnGUI()
-    {
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-
-        style.fontSize = 30;
-        style.fontStyle = FontStyle.Bold;
-
-        GUI.Label(
-            new Rect(20f, 20f, 400f, 50f),
-            $"Stamina: {CurrentStamina:0.0} / {MaxStamina:0.0}",
-            style
-        );
-    }
 }
