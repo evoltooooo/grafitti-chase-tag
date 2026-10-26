@@ -6,6 +6,7 @@ public class RoundManager : MonoBehaviour
     public enum RoundState
     {
         WaitingToStart,
+        RoleShuffle,
         Countdown,
         Active,
         Intermission
@@ -43,7 +44,9 @@ public class RoundManager : MonoBehaviour
     [SerializeField, Min(1f)] private float roundDuration = 90f;
     [SerializeField, Min(0f)] private float intermissionDuration = 3f;
     [SerializeField, Min(1)] private int pointsPerRound = 1;
-    [SerializeField, Min(0f)]
+
+    [Header("Role Shuffle")]
+    [SerializeField] private RoleShuffleController roleShuffleController;
 
     private float countdownDuration = 3f;
     public float CountdownRemaining => countdownTimer;
@@ -90,6 +93,9 @@ public class RoundManager : MonoBehaviour
         switch (CurrentState)
         {
             case RoundState.WaitingToStart:
+                break;
+            
+            case RoundState.RoleShuffle:
                 break;
 
             case RoundState.Countdown:
@@ -273,36 +279,72 @@ public class RoundManager : MonoBehaviour
         RoundStarted?.Invoke(CurrentRound, TimeRemaining);
         TimerUpdated?.Invoke(TimeRemaining);
     }
-
+    
     private void BeginRound()
     {
-        // Keep gameplay locked while preparing the characters.
+        // Keep gameplay locked while preparing the round.
+        GameplayInputLock.SetLocked(true);
         CurrentState = RoundState.WaitingToStart;
 
         if (!PositionCharactersForNewRound())
+        {
+            GameplayInputLock.SetLocked(false);
             return;
+        }
 
         if (aiController != null)
             aiController.ResetForNewRound();
 
         CurrentRound++;
 
-        // Reset the round timer as soon as the countdown begins.
+        // Prepare the timer, but do not count it down yet.
         TimeRemaining = roundDuration;
         TimerUpdated?.Invoke(TimeRemaining);
 
-        // Start the pre-round countdown.
+        // Show the role shuffle before starting the countdown.
+        if (roleShuffleController != null)
+        {
+            CurrentState = RoundState.RoleShuffle;
+
+            roleShuffleController.Play(
+                playerRole.CurrentRole,
+                BeginCountdown);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "ROUND MANAGER | RoleShuffleController is missing. " +
+                "Starting countdown without the role shuffle.",
+                this);
+
+            BeginCountdown();
+        }
+    }
+
+    private void BeginCountdown()
+    {
+        // Prevent duplicate or late callbacks from starting a round
+        // after the session has moved into another state.
+        if (CurrentState != RoundState.RoleShuffle &&
+            CurrentState != RoundState.WaitingToStart)
+        {
+            return;
+        }
+
+        if (aiController != null)
+            aiController.ResetForNewRound();
+
         countdownTimer = countdownDuration;
         CurrentState = RoundState.Countdown;
 
         Debug.Log(
             $"ROUND COUNTDOWN | Round={CurrentRound} | " +
             $"Duration={countdownTimer:F1} | " +
-            $"RoundTime={TimeRemaining:F1}"
-        );
+            $"RoundTime={TimeRemaining:F1}");
 
         CountdownUpdated?.Invoke(countdownTimer);
     }
+
 
     private void UpdateRoundTimer()
     {

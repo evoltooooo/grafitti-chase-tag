@@ -138,6 +138,14 @@ public class AIController : MonoBehaviour
 
     private void Update()
     {
+        if (GameplayInputLock.IsLocked)
+        {
+            if (actionController != null)
+                actionController.SetMovementIntent(default);
+
+            return;
+        }
+        
         UpdateContext();
 
         UpdateAI();
