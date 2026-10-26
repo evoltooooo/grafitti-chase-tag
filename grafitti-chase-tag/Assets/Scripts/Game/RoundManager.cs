@@ -45,11 +45,26 @@ public class RoundManager : MonoBehaviour
     [SerializeField, Min(0f)] private float intermissionDuration = 3f;
     [SerializeField, Min(1)] private int pointsPerRound = 1;
 
+    [Header("Session Settings")]
+    [SerializeField, Min(1)] private int winsRequired = 3;
+    [SerializeField, Min(1)] private int maximumRounds = 5;
+    [SerializeField, Min(0f)] private float roundResultDuration = 5f;
+
+    private bool sessionTimerStarted;
+    public float SessionElapsedTime { get; private set; }
+    public bool IsSessionComplete { get; private set; }
+
+    private float roundElapsedTime;
+    private float roundResultTimer;
+    public float RoundResultDuration => roundResultDuration;
+
     [Header("Role Shuffle")]
     [SerializeField] private RoleShuffleController roleShuffleController;
 
     private float countdownDuration = 3f;
     public float CountdownRemaining => countdownTimer;
+
+    public float LastRoundElapsedTime { get; private set; }
 
     private float countdownTimer;
     [SerializeField] private StartingRole startingRole =
@@ -69,9 +84,8 @@ public class RoundManager : MonoBehaviour
     public event Action<int, CharacterRoleType, int, int> RoundEnded;
     public event Action<float> CountdownUpdated;
 
-    private float intermissionTimer;
-
     public bool IsRoundActive => CurrentState == RoundState.Active;
+    public float IntermissionDuration => intermissionDuration;
 
     private void Start()
     {
@@ -90,6 +104,9 @@ public class RoundManager : MonoBehaviour
 
     private void Update()
     {
+        if (sessionTimerStarted && !IsSessionComplete)
+            SessionElapsedTime += Time.deltaTime;
+
         switch (CurrentState)
         {
             case RoundState.WaitingToStart:
@@ -258,6 +275,7 @@ public class RoundManager : MonoBehaviour
 
     private void ActivateRound()
     {
+
         if (CurrentState != RoundState.Countdown)
             return;
 
@@ -265,6 +283,11 @@ public class RoundManager : MonoBehaviour
         // by the AI while movement was locked.
         if (aiController != null)
             aiController.ResetForNewRound();
+
+        roundElapsedTime = 0f;
+
+        if (!sessionTimerStarted)
+            sessionTimerStarted = true;
 
         CurrentState = RoundState.Active;
 
@@ -348,6 +371,8 @@ public class RoundManager : MonoBehaviour
 
     private void UpdateRoundTimer()
     {
+        roundElapsedTime += Time.deltaTime;
+
         TimeRemaining = Mathf.Max(
             0f,
             TimeRemaining - Time.deltaTime);
@@ -363,13 +388,43 @@ public class RoundManager : MonoBehaviour
 
     private void UpdateIntermission()
     {
-        intermissionTimer -= Time.deltaTime;
+        roundResultTimer -= Time.deltaTime;
 
-        if (intermissionTimer > 0f)
+        if (roundResultTimer > 0f)
             return;
+
+        // Stop the session if either side has enough wins,
+        // or the maximum number of rounds has been completed.
+        if (PlayerScore >= winsRequired ||
+            AIScore >= winsRequired ||
+            CurrentRound >= maximumRounds)
+        {
+            EndSession();
+            return;
+        }
 
         SwapRoles();
         BeginRound();
+    }
+
+    private void EndSession()
+    {
+        if (IsSessionComplete)
+            return;
+
+        IsSessionComplete = true;
+        CurrentState = RoundState.WaitingToStart;
+
+        GameplayInputLock.SetLocked(true);
+
+        Debug.Log(
+            $"SESSION ENDED | PlayerScore={PlayerScore} | " +
+            $"AIScore={AIScore} | " +
+            $"Rounds={CurrentRound} | " +
+            $"Elapsed={SessionElapsedTime:F2}s"
+        );
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Game End");
     }
 
     /// <summary>
@@ -419,6 +474,8 @@ public class RoundManager : MonoBehaviour
         if (aiController != null)
             aiController.ResetForNewRound();
 
+        LastRoundElapsedTime = roundElapsedTime;
+
         AwardPoints(winningRole);
 
         Debug.Log(
@@ -432,7 +489,7 @@ public class RoundManager : MonoBehaviour
             PlayerScore,
             AIScore);
 
-        intermissionTimer = intermissionDuration;
+        roundResultTimer = roundResultDuration;
     }
 
     private void AwardPoints(CharacterRoleType winningRole)

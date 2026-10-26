@@ -1,4 +1,4 @@
-
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
 
@@ -9,15 +9,21 @@ public class RoundUIManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text playerScoreText;
     [SerializeField] private TMP_Text aiScoreText;
+    [SerializeField] private GameObject taggedDisplayRoot;
     [SerializeField] private TMP_Text taggedText;
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text roundResultText;
 
-    [Header("Character Roles")]
+    [Header("Character Role Images")]
     [SerializeField] private CharacterRole playerRole;
     [SerializeField] private CharacterRole aiRole;
-    [SerializeField] private TMP_Text playerRoleText;
-    [SerializeField] private TMP_Text aiRoleText;
+
+    [SerializeField] private Image playerRoleImage;
+    [SerializeField] private Image aiRoleImage;
+
+    [Header("Role Sprites")]
+    [SerializeField] private Sprite chaserSprite;
+    [SerializeField] private Sprite evaderSprite;
     
     private void OnEnable()
     {
@@ -95,7 +101,10 @@ public class RoundUIManager : MonoBehaviour
 
         if (taggedText != null)
             taggedText.gameObject.SetActive(false);
-        
+
+        if (taggedDisplayRoot != null)
+            taggedDisplayRoot.SetActive(false);
+
         if (roundResultText != null)
             roundResultText.gameObject.SetActive(false);
     }
@@ -139,32 +148,22 @@ public class RoundUIManager : MonoBehaviour
     {
         UpdateScores();
 
-        bool playerWon =
-            playerRole != null &&
-            playerRole.CurrentRole == winningRole;
+        // Make sure the parent and message are both enabled.
+        if (taggedDisplayRoot != null)
+            taggedDisplayRoot.SetActive(true);
 
-        bool aiWon =
-            aiRole != null &&
-            aiRole.CurrentRole == winningRole;
+        if (taggedText != null)
+        {
+            taggedText.text =
+                winningRole == CharacterRoleType.Chaser
+                    ? "TAGGED!"
+                    : "ESCAPED!";
+
+            taggedText.gameObject.SetActive(true);
+        }
 
         if (roundResultText != null)
-        {
-            if (playerWon)
-                roundResultText.text = "PLAYER WINS!";
-            else if (aiWon)
-                roundResultText.text = "AI WINS!";
-            else
-                roundResultText.text = $"{winningRole} WINS!";
-
-            roundResultText.gameObject.SetActive(true);
-        }
-
-        // Preserve the existing successful-tag popup.
-        if (winningRole == CharacterRoleType.Chaser)
-        {
-            if (taggedText != null)
-                taggedText.gameObject.SetActive(true);
-        }
+            roundResultText.gameObject.SetActive(false);
     }
 
     private void OnCountdownUpdated(float timeRemaining)
@@ -203,15 +202,22 @@ public class RoundUIManager : MonoBehaviour
             OnAIRoleChanged(aiRole.CurrentRole);
     }
 
+    private Sprite GetRoleSprite(CharacterRoleType role)
+    {
+        return role == CharacterRoleType.Chaser
+            ? chaserSprite
+            : evaderSprite;
+    }
+
     private void OnPlayerRoleChanged(CharacterRoleType role)
     {
-        if (playerRoleText != null)
-            playerRoleText.text = $"{role}";
+        if (playerRoleImage != null)
+            playerRoleImage.sprite = GetRoleSprite(role);
     }
 
     private void OnAIRoleChanged(CharacterRoleType role)
     {
-        if (aiRoleText != null)
-            aiRoleText.text = $"{role}";
+        if (aiRoleImage != null)
+            aiRoleImage.sprite = GetRoleSprite(role);
     }
 }

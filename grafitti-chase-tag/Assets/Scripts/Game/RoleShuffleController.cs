@@ -33,6 +33,7 @@ public class RoleShuffleController : MonoBehaviour
 
         SetVisible(false);
     }
+    
 
     public void Play(
         CharacterRoleType playerRole,
