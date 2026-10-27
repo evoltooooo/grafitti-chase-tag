@@ -368,7 +368,6 @@ public class RoundManager : MonoBehaviour
         CountdownUpdated?.Invoke(countdownTimer);
     }
 
-
     private void UpdateRoundTimer()
     {
         roundElapsedTime += Time.deltaTime;
@@ -406,7 +405,7 @@ public class RoundManager : MonoBehaviour
         SwapRoles();
         BeginRound();
     }
-
+    
     private void EndSession()
     {
         if (IsSessionComplete)
@@ -417,10 +416,16 @@ public class RoundManager : MonoBehaviour
 
         GameplayInputLock.SetLocked(true);
 
+        // Save the final session data before changing scenes.
+        SessionResults.SetResults(
+            PlayerScore,
+            AIScore,
+            SessionElapsedTime
+        );
+
         Debug.Log(
             $"SESSION ENDED | PlayerScore={PlayerScore} | " +
-            $"AIScore={AIScore} | " +
-            $"Rounds={CurrentRound} | " +
+            $"AIScore={AIScore} | Rounds={CurrentRound} | " +
             $"Elapsed={SessionElapsedTime:F2}s"
         );
 
