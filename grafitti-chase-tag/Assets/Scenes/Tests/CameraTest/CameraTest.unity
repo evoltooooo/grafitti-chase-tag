@@ -738,7 +738,7 @@ MonoBehaviour:
   IgnoreTag: Player
   TransparentLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 16512
   MinimumDistanceFromTarget: 0.3
   AvoidObstacles:
     Enabled: 1
@@ -771,14 +771,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bed1e3938a28ce419454e32ffa6d0dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraCollisionFraming
-  cinemachineCamera: {fileID: 647429826}
-  deoccluder: {fileID: 647429828}
-  rotationComposer: {fileID: 647429824}
-  collisionAimHeight: 1
-  blendSpeed: 5
-  originalTargetOffset: {x: 0, y: 0, z: 0}
-  currentOffset: 0
-  initialized: 0
 --- !u!1 &872047057
 GameObject:
   m_ObjectHideFlags: 0
@@ -978,7 +970,7 @@ MonoBehaviour:
   - {fileID: 1215122663}
   fadeObstacleLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 16512
   targetHeight: 1.4
   raycastRadius: 0.12
   fadeInSpeed: 8
@@ -1252,35 +1244,13 @@ GameObject:
   - component: {fileID: 1501187048}
   - component: {fileID: 1501187047}
   - component: {fileID: 1501187046}
-  - component: {fileID: 1501187045}
-  m_Layer: 7
+  m_Layer: 14
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1501187045
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1501187044}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1501187046
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2029,6 +1999,74 @@ Transform:
   - {fileID: 1468830838}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2053595850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2053595853}
+  - component: {fileID: 2053595852}
+  - component: {fileID: 2053595851}
+  m_Layer: 7
+  m_Name: Cube (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2053595851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053595850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c8f4b1d0b1b0e4c8865dc0973e6b0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFadeTarget
+  targetRenderers:
+  - {fileID: 1501187046}
+--- !u!65 &2053595852
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053595850}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &2053595853
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053595850}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.27, y: 2.33, z: 0}
+  m_LocalScale: {x: 1.535685, y: 5.824168, z: 3.0109997}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2042,3 +2080,4 @@ SceneRoots:
   - {fileID: 988734274}
   - {fileID: 168720102}
   - {fileID: 1501187048}
+  - {fileID: 2053595853}

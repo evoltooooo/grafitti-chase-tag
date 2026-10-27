@@ -96,8 +96,39 @@ public class CameraOcclusionFade : MonoBehaviour
                 if (hit.collider == null)
                     continue;
 
-                Renderer[] renderers =
-                    hit.collider.GetComponentsInChildren<Renderer>();
+                CameraFadeTarget fadeTarget =
+                    hit.collider.GetComponent<CameraFadeTarget>();
+
+                Renderer[] renderers;
+
+                if (fadeTarget != null)
+                {
+                    // Use explicitly assigned visual renderers.
+                    renderers = fadeTarget.TargetRenderers;
+                }
+                else
+                {
+                    // Keep the existing behavior for objects
+                    // whose renderers are on the collider or its children.
+                    renderers = hit.collider.GetComponentsInChildren<Renderer>();
+                }
+
+                foreach (Renderer rend in renderers)
+                {
+                    if (rend == null || !rend.enabled)
+                        continue;
+
+                    if (!obstacleStates.TryGetValue(rend, out FadeState state))
+                    {
+                        state = CreateState(rend);
+                        if (state == null)
+                            continue;
+
+                        obstacleStates.Add(rend, state);
+                    }
+
+                    hitThisFrame.Add(rend);
+                }
 
                 foreach (Renderer rend in renderers)
                 {
