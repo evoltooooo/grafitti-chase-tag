@@ -4,14 +4,18 @@ using UnityEngine;
 public class CharacterTagDetector : MonoBehaviour
 {
     [Header("Cone Detection")]
-    [SerializeField, Min(0.1f)] private float tagDistance = 2.5f;
+    [SerializeField, Min(0.1f)]
+    private float tagDistance = 2.5f;
 
-    [Tooltip("Half-angle of the cone. 35 means 70 degrees total.")]
+    [Tooltip("Base half-angle of the cone. 35 means 70 degrees total.")]
     [SerializeField, Range(1f, 85f)]
     private float tagHalfAngle = 35f;
 
     [SerializeField] private float originHeight = 1f;
     [SerializeField] private LayerMask tagLayers;
+
+    [Header("Buff / Nerf")]
+    [SerializeField] private CharacterBuffNerf buffNerf;
 
     [Header("Debug Visualization")]
     [SerializeField] private bool showDebugGizmos = true;
@@ -25,13 +29,60 @@ public class CharacterTagDetector : MonoBehaviour
     [SerializeField, Range(4, 48)]
     private int debugConeSegments = 24;
 
-    public float TagDistance => tagDistance;
-    public float TagHalfAngle => tagHalfAngle;
+    // Base geometry
+    public float BaseTagDistance => tagDistance;
+
+    public float BaseTagRadius =>
+        tagDistance * Mathf.Tan(tagHalfAngle * Mathf.Deg2Rad);
+
+    // Effective geometry after Buff/Nerf modifiers
+    public float EffectiveTagDistance =>
+        tagDistance * GetRangeMultiplier();
+
+    public float EffectiveTagRadius =>
+        BaseTagRadius * GetRadiusMultiplier();
+
+    public float EffectiveTagHalfAngle =>
+        Mathf.Atan2(
+            EffectiveTagRadius,
+            EffectiveTagDistance
+        ) * Mathf.Rad2Deg;
+
+    // Compatibility properties
+    public float TagDistance => EffectiveTagDistance;
+    public float TagHalfAngle => EffectiveTagHalfAngle;
     public float OriginHeight => originHeight;
+
+    private void Awake()
+    {
+        if (buffNerf == null)
+        {
+            buffNerf = GetComponent<CharacterBuffNerf>();
+        }
+    }
+
+    private float GetRangeMultiplier()
+    {
+        return buffNerf != null
+            ? buffNerf.GetMultiplier(
+                BuffNerfEffectType.TagSprayRangeMultiplier)
+            : 1f;
+    }
+
+    private float GetRadiusMultiplier()
+    {
+        return buffNerf != null
+            ? buffNerf.GetMultiplier(
+                BuffNerfEffectType.TagSprayRadiusMultiplier)
+            : 1f;
+    }
 
     public bool TryDetectTag(out Collider target)
     {
         target = null;
+
+        float effectiveDistance = EffectiveTagDistance;
+        float effectiveHalfAngle = EffectiveTagHalfAngle;
 
         Vector3 origin =
             transform.position + Vector3.up * originHeight;
@@ -42,7 +93,12 @@ public class CharacterTagDetector : MonoBehaviour
             Vector3.up
         ).normalized;
 
-        DrawDebugCone(origin, forward);
+        DrawDebugCone(
+            origin,
+            forward,
+            effectiveDistance,
+            effectiveHalfAngle
+        );
 
         if (forward.sqrMagnitude < 0.001f)
         {
@@ -50,12 +106,13 @@ public class CharacterTagDetector : MonoBehaviour
                 $"TAG CONE FAILED | {name} has no horizontal forward direction.",
                 this
             );
+
             return false;
         }
 
         Collider[] candidates = Physics.OverlapSphere(
             origin,
-            tagDistance,
+            effectiveDistance,
             tagLayers,
             QueryTriggerInteraction.Ignore
         );
@@ -69,10 +126,12 @@ public class CharacterTagDetector : MonoBehaviour
 
             Vector3 closestPoint = candidate.ClosestPoint(origin);
             Vector3 toTarget = closestPoint - origin;
+
             Vector3 horizontalToTarget =
                 Vector3.ProjectOnPlane(toTarget, Vector3.up);
 
-            float horizontalDistance = horizontalToTarget.magnitude;
+            float horizontalDistance =
+                horizontalToTarget.magnitude;
 
             float angle = horizontalDistance > 0.001f
                 ? Vector3.Angle(forward, horizontalToTarget)
@@ -89,12 +148,13 @@ public class CharacterTagDetector : MonoBehaviour
                 $"ClosestPoint={closestPoint} | " +
                 $"HorizontalDistance={horizontalDistance:F2} | " +
                 $"Angle={angle:F1} | " +
-                $"Range={tagDistance:F2}",
+                $"Range={effectiveDistance:F2} | " +
+                $"Radius={EffectiveTagRadius:F2} | " +
+                $"HalfAngle={effectiveHalfAngle:F1}",
                 this
             );
 
-            // Ignore colliders belonging to this character, but not
-            // colliders belonging to another character under a shared parent.
+            // Ignore colliders belonging to this character.
             if (candidate.transform == transform ||
                 candidate.transform.IsChildOf(transform))
             {
@@ -102,23 +162,37 @@ public class CharacterTagDetector : MonoBehaviour
                     $"TAG DEBUG REJECTED | Own character collider: {candidate.name}",
                     this
                 );
+
                 continue;
             }
+
             if (horizontalDistance < 0.001f)
             {
-                Debug.Log("TAG DEBUG REJECTED | Horizontal distance is near zero.", this);
+                Debug.Log(
+                    "TAG DEBUG REJECTED | Horizontal distance is near zero.",
+                    this
+                );
+
                 continue;
             }
 
-            if (horizontalDistance > tagDistance)
+            if (horizontalDistance > effectiveDistance)
             {
-                Debug.Log("TAG DEBUG REJECTED | Outside horizontal range.", this);
+                Debug.Log(
+                    "TAG DEBUG REJECTED | Outside horizontal range.",
+                    this
+                );
+
                 continue;
             }
 
-            if (angle > tagHalfAngle)
+            if (angle > effectiveHalfAngle)
             {
-                Debug.Log("TAG DEBUG REJECTED | Outside forward cone.", this);
+                Debug.Log(
+                    "TAG DEBUG REJECTED | Outside forward cone.",
+                    this
+                );
+
                 continue;
             }
 
@@ -136,8 +210,9 @@ public class CharacterTagDetector : MonoBehaviour
                 $"OverlapCandidates={candidates.Length} | " +
                 $"TagLayers={tagLayers.value} | " +
                 $"Origin={origin} | Forward={forward} | " +
-                $"Range={tagDistance:F2} | " +
-                $"HalfAngle={tagHalfAngle:F1}",
+                $"Range={effectiveDistance:F2} | " +
+                $"Radius={EffectiveTagRadius:F2} | " +
+                $"HalfAngle={effectiveHalfAngle:F1}",
                 this
             );
 
@@ -158,105 +233,115 @@ public class CharacterTagDetector : MonoBehaviour
         if (!showDebugGizmos)
             return;
 
+        float effectiveDistance = EffectiveTagDistance;
+        float effectiveHalfAngle = EffectiveTagHalfAngle;
+
         Vector3 origin =
             transform.position + Vector3.up * originHeight;
 
-        Vector3 forward = transform.forward.normalized;
+        Vector3 forward = Vector3.ProjectOnPlane(
+            transform.forward,
+            Vector3.up
+        ).normalized;
 
-        float halfAngle = tagHalfAngle * Mathf.Deg2Rad;
+        if (forward.sqrMagnitude < 0.001f)
+            return;
 
         Vector3 leftBoundary =
-            Quaternion.AngleAxis(-tagHalfAngle, transform.up)
+            Quaternion.AngleAxis(-effectiveHalfAngle, Vector3.up)
             * forward;
 
         Vector3 rightBoundary =
-            Quaternion.AngleAxis(tagHalfAngle, transform.up)
+            Quaternion.AngleAxis(effectiveHalfAngle, Vector3.up)
             * forward;
 
         Gizmos.color = Color.cyan;
 
-        Gizmos.DrawRay(origin, forward * tagDistance);
-        Gizmos.DrawRay(origin, leftBoundary * tagDistance);
-        Gizmos.DrawRay(origin, rightBoundary * tagDistance);
+        Gizmos.DrawRay(origin, forward * effectiveDistance);
+        Gizmos.DrawRay(origin, leftBoundary * effectiveDistance);
+        Gizmos.DrawRay(origin, rightBoundary * effectiveDistance);
 
-        // Draw the cone's outer arc.
         Vector3 previousPoint =
-            origin + leftBoundary * tagDistance;
+            origin + leftBoundary * effectiveDistance;
 
         const int segments = 24;
 
         for (int i = 1; i <= segments; i++)
         {
             float angle = Mathf.Lerp(
-                -tagHalfAngle,
-                tagHalfAngle,
+                -effectiveHalfAngle,
+                effectiveHalfAngle,
                 i / (float)segments
             );
 
             Vector3 direction =
-                Quaternion.AngleAxis(
-                    angle * Mathf.Rad2Deg,
-                    transform.up
-                ) * forward;
+                Quaternion.AngleAxis(angle, Vector3.up)
+                * forward;
 
             Vector3 nextPoint =
-                origin + direction * tagDistance;
+                origin + direction * effectiveDistance;
 
             Gizmos.DrawLine(previousPoint, nextPoint);
             previousPoint = nextPoint;
         }
     }
 
-    private void DrawDebugCone(Vector3 origin, Vector3 forward)
+    private void DrawDebugCone(
+        Vector3 origin,
+        Vector3 forward,
+        float effectiveDistance,
+        float effectiveHalfAngle)
     {
         if (!showConeOnTagAttempt)
             return;
 
-        forward = Vector3.ProjectOnPlane(forward, Vector3.up).normalized;
+        forward = Vector3.ProjectOnPlane(
+            forward,
+            Vector3.up
+        ).normalized;
 
         if (forward.sqrMagnitude < 0.001f)
             return;
 
-        Vector3 previousPoint = origin +
-            Quaternion.AngleAxis(-tagHalfAngle, Vector3.up)
-            * forward * tagDistance;
-
-        // Draw both cone boundaries.
         Vector3 leftBoundary =
-            Quaternion.AngleAxis(-tagHalfAngle, Vector3.up)
+            Quaternion.AngleAxis(-effectiveHalfAngle, Vector3.up)
             * forward;
 
         Vector3 rightBoundary =
-            Quaternion.AngleAxis(tagHalfAngle, Vector3.up)
+            Quaternion.AngleAxis(effectiveHalfAngle, Vector3.up)
             * forward;
 
+        Vector3 previousPoint =
+            origin + leftBoundary * effectiveDistance;
+
         Debug.DrawRay(
             origin,
-            leftBoundary * tagDistance,
+            leftBoundary * effectiveDistance,
             Color.yellow,
             debugConeDuration
         );
 
         Debug.DrawRay(
             origin,
-            rightBoundary * tagDistance,
+            rightBoundary * effectiveDistance,
             Color.yellow,
             debugConeDuration
         );
 
-        // Draw the outer arc and radial lines to reveal cone width.
         for (int i = 1; i <= debugConeSegments; i++)
         {
             float angle = Mathf.Lerp(
-                -tagHalfAngle,
-                tagHalfAngle,
+                -effectiveHalfAngle,
+                effectiveHalfAngle,
                 i / (float)debugConeSegments
             );
 
             Vector3 direction =
-                Quaternion.AngleAxis(angle, Vector3.up) * forward;
+                Quaternion.AngleAxis(angle, Vector3.up)
+                * forward;
 
-            Vector3 nextPoint = origin + direction * tagDistance;
+            Vector3 nextPoint =
+                origin + direction * effectiveDistance;
 
             Debug.DrawLine(
                 previousPoint,
@@ -265,7 +350,6 @@ public class CharacterTagDetector : MonoBehaviour
                 debugConeDuration
             );
 
-            // Radial lines make the cone easier to judge.
             if (i % 3 == 0)
             {
                 Debug.DrawLine(
@@ -279,10 +363,9 @@ public class CharacterTagDetector : MonoBehaviour
             previousPoint = nextPoint;
         }
 
-        // Highlight the center direction.
         Debug.DrawRay(
             origin,
-            forward * tagDistance,
+            forward * effectiveDistance,
             Color.green,
             debugConeDuration
         );

@@ -282,12 +282,33 @@ public class CharacterActionExecutor : MonoBehaviour
         if (!TryConsumeActionStamina(actionData))
             return false;
 
+        Debug.Log(
+            $"TAG DEBUG BEFORE START | " +
+            $"Executor={name} | " +
+            $"RuntimeID={actionRuntime.GetInstanceID()} | " +
+            $"Duration={actionData.duration:F3}"
+        );
+
         actionRuntime.StartAction(actionData);
+
+        Debug.Log(
+            $"TAG DEBUG AFTER START | " +
+            $"Executing={actionRuntime.IsExecuting} | " +
+            $"Action={actionRuntime.CurrentActionType} | " +
+            $"RuntimeID={actionRuntime.GetInstanceID()}"
+        );
+
         SetActionState(actionData);
+
+        Debug.Log(
+            $"TAG DEBUG AFTER STATE | " +
+            $"Executing={actionRuntime.IsExecuting} | " +
+            $"Action={actionRuntime.CurrentActionType} | " +
+            $"RuntimeID={actionRuntime.GetInstanceID()}"
+        );
 
         Debug.Log($"TAG ACTION EXECUTED | Target: {target.name}");
 
-        // Notify RoundManager that a tag was detected successfully.
         TagSucceeded?.Invoke(target);
 
         return true;

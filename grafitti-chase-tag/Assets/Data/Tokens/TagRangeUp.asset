@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 543abb99d20d1774a90b15945c5c4569, type: 3}
+  m_Name: TagRangeUp
+  m_EditorClassIdentifier: Assembly-CSharp::BuffNerfTokenData
+  tokenId: 6
+  displayName: Token_TagRangeUp
+  category: 0
+  effectType: 3
+  effectMultiplier: 1.25
+  duration: 5
+  roleRestriction: 1
+  icon: {fileID: 0}
+  worldPrefab: {fileID: 4672041145720092352, guid: bf8f721cb0cee614983e1cbcfdc77e31, type: 3}
+  pickupVfxPrefab: {fileID: 0}

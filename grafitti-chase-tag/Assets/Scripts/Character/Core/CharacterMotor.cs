@@ -10,6 +10,8 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private CharacterStateController stateController;
     [SerializeField] private CharacterActionRuntime actionRuntime;
 
+    [SerializeField] private CharacterBuffNerf buffNerf;
+
     public float ColliderRadius =>
     characterController != null
         ? characterController.radius
@@ -74,7 +76,14 @@ public class CharacterMotor : MonoBehaviour
     public float HorizontalSpeed => horizontalVelocity.magnitude;
     public float VerticalVelocity => verticalVelocity;
     public float Gravity => settings != null ? settings.gravity : 0f;
-    public float MaxMovementSpeed => settings != null ? settings.sprintSpeed : 0f;
+    public float MaxMovementSpeed =>
+        settings != null
+            ? settings.sprintSpeed *
+            (buffNerf != null
+                ? buffNerf.GetMultiplier(
+                        BuffNerfEffectType.SpeedMultiplier)
+                : 1f)
+            : 0f;
     public bool IsGrounded => isGrounded;
     public bool IsJumping => isJumping;
     public float JumpStaminaCost => settings != null ? settings.jumpStaminaCost : 0f;
@@ -117,6 +126,11 @@ public class CharacterMotor : MonoBehaviour
         currentSprintSpeed = settings != null
             ? settings.runSpeed
             : 0f;
+        
+        if (buffNerf == null)
+        {
+            buffNerf = GetComponent<CharacterBuffNerf>();
+        }
     }
 
     public void Tick(Vector2 movementInput, bool sprintHeld)
@@ -387,6 +401,13 @@ public class CharacterMotor : MonoBehaviour
             targetSpeed = 0f;
             LocomotionAnimationValue = 0f;
         }
+
+        float speedMultiplier = buffNerf != null
+            ? buffNerf.GetMultiplier(
+                BuffNerfEffectType.SpeedMultiplier)
+            : 1f;
+
+        targetSpeed *= speedMultiplier;
 
         float controlMultiplier =
             isGrounded

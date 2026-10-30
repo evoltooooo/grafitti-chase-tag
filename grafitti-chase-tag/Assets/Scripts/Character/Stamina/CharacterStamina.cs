@@ -4,6 +4,7 @@ public class CharacterStamina : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private StaminaSettings settings;
+    [SerializeField] private CharacterBuffNerf buffNerf;
 
     private float currentStamina;
     private float regenerationTimer;
@@ -41,6 +42,11 @@ public class CharacterStamina : MonoBehaviour
 
         currentStamina =
             settings.maxStamina;
+        
+        if (buffNerf == null)
+        {
+            buffNerf = GetComponent<CharacterBuffNerf>();
+        }
     }
 
     private void Update()
@@ -53,7 +59,14 @@ public class CharacterStamina : MonoBehaviour
         if (amount <= 0f)
             return true;
 
-        return currentStamina >= amount;
+        float costMultiplier = buffNerf != null
+            ? buffNerf.GetMultiplier(
+                BuffNerfEffectType.StaminaCostMultiplier)
+            : 1f;
+
+        float modifiedCost = amount * costMultiplier;
+
+        return currentStamina >= modifiedCost;
     }
 
     public bool TryConsume(float amount)
@@ -61,7 +74,15 @@ public class CharacterStamina : MonoBehaviour
         if (!CanConsume(amount))
             return false;
 
-        currentStamina -= amount;
+        float costMultiplier = buffNerf != null
+            ? buffNerf.GetMultiplier(
+                BuffNerfEffectType.StaminaCostMultiplier)
+            : 1f;
+
+        float modifiedCost = amount * costMultiplier;
+
+        currentStamina -= modifiedCost;
+
         currentStamina =
             Mathf.Max(0f, currentStamina);
 
@@ -102,8 +123,14 @@ public class CharacterStamina : MonoBehaviour
             return;
         }
 
+        float regenerationMultiplier = buffNerf != null
+            ? buffNerf.GetMultiplier(
+                BuffNerfEffectType.StaminaRegenMultiplier)
+            : 1f;
+
         currentStamina +=
             settings.regenerationRate *
+            regenerationMultiplier *
             Time.deltaTime;
 
         currentStamina =
