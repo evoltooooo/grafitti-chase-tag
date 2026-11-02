@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
@@ -40,6 +39,11 @@ public class BuffNerfManager : MonoBehaviour
 
     private float spawnTimer;
     private bool isSpawning;
+    public float TimeUntilNextWave => spawnTimer;
+
+    public bool IsSpawning => isSpawning;
+
+    public event System.Action TokensSpawned;
 
     private void Awake()
     {
@@ -247,6 +251,8 @@ public class BuffNerfManager : MonoBehaviour
         }
 
         spawnTimer = spawnInterval;
+
+        TokensSpawned?.Invoke();
 
         Debug.Log(
             $"BUFF NERF WAVE SPAWNED | " +
