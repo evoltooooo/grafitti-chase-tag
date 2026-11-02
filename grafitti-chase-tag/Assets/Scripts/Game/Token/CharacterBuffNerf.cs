@@ -15,12 +15,37 @@ public class CharacterBuffNerf : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterRole characterRole;
 
+    private const int MaxActiveEffects = 3;
+
     private readonly List<ActiveEffect> activeEffects =
         new List<ActiveEffect>();
 
     public event Action EffectsChanged;
 
     public int ActiveEffectCount => activeEffects.Count;
+
+    public BuffNerfTokenData GetActiveTokenDataAt(int index)
+    {
+        if (index < 0 || index >= activeEffects.Count)
+            return null;
+
+        return activeEffects[index].data;
+    }
+
+    public float GetNormalizedRemainingDurationAt(int index)
+    {
+        if (index < 0 || index >= activeEffects.Count)
+            return 0f;
+
+        ActiveEffect effect = activeEffects[index];
+
+        if (effect.data == null || effect.data.Duration <= 0f)
+            return 0f;
+
+        return Mathf.Clamp01(
+            effect.remainingDuration / effect.data.Duration
+        );
+    }
 
     private void Awake()
     {
@@ -71,10 +96,14 @@ public class CharacterBuffNerf : MonoBehaviour
 
         if (existingEffect != null)
         {
-            // Refresh duration without stacking its multiplier.
+            // Refresh duration and move the effect to newest position.
+            activeEffects.Remove(existingEffect);
+
             existingEffect.data = tokenData;
             existingEffect.remainingDuration =
                 tokenData.Duration;
+
+            activeEffects.Add(existingEffect);
 
             Debug.Log(
                 $"BUFF NERF REFRESHED | Character={name} | " +
@@ -85,7 +114,20 @@ public class CharacterBuffNerf : MonoBehaviour
         }
         else
         {
-            // A different token type gets its own duration.
+            // Ignore new effects when the maximum is reached.
+            if (activeEffects.Count >= MaxActiveEffects)
+            {
+                Debug.Log(
+                    $"BUFF NERF IGNORED | Character={name} | " +
+                    $"Token={tokenData.DisplayName} | " +
+                    $"Reason=Maximum active effects reached.",
+                    this
+                );
+
+                return false;
+            }
+
+            // Add the new effect as the newest.
             activeEffects.Add(new ActiveEffect
             {
                 data = tokenData,

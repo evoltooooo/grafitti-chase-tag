@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -7,6 +6,7 @@ public class BuffNerfToken : MonoBehaviour
 {
     [Header("Token Configuration")]
     [SerializeField] private BuffNerfTokenData tokenData;
+    [SerializeField] private GameObject tokenPrefabRoot;
 
     private bool hasBeenCollected;
 
@@ -90,8 +90,18 @@ public class BuffNerfToken : MonoBehaviour
             );
         }
 
-        // Remove the token from the arena.
-        Destroy(gameObject);
+        // Remove the entire token prefab from the arena.
+        if (tokenPrefabRoot != null)
+        {
+            Destroy(tokenPrefabRoot);
+        }
+        else
+        {
+            Debug.LogError(
+                $"{name}: Token prefab root reference is missing.",
+                this
+            );
+        }
     }
 
     private void Reset()

@@ -166,7 +166,7 @@ public class BuffNerfManager : MonoBehaviour
                 return false;
             }
 
-            if (data.WorldPrefab.GetComponent<BuffNerfToken>() == null)
+            if (data.WorldPrefab.GetComponentInChildren<BuffNerfToken>(true) == null)
             {
                 Debug.LogError(
                     $"BUFF NERF MANAGER | {data.WorldPrefab.name} " +
@@ -202,13 +202,12 @@ public class BuffNerfManager : MonoBehaviour
 
         isSpawning = true;
 
-        // Wait 20 seconds before spawning the first wave.
-        spawnTimer = spawnInterval;
-
         Debug.Log(
-            $"BUFF NERF MANAGER | Token spawning started. " +
-            $"First wave in {spawnInterval:F1}s."
+            "BUFF NERF MANAGER | Token spawning started. " +
+            "First wave spawning immediately."
         );
+
+        SpawnNewWave();
     }
 
     private void StopSpawning()
@@ -359,7 +358,7 @@ public class BuffNerfManager : MonoBehaviour
         );
 
         BuffNerfToken token =
-            tokenObject.GetComponent<BuffNerfToken>();
+            tokenObject.GetComponentInChildren<BuffNerfToken>(true);
 
         if (token == null)
         {
