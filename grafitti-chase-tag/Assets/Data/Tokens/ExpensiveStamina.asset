@@ -19,6 +19,6 @@ MonoBehaviour:
   effectMultiplier: 1.1
   duration: 10
   roleRestriction: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 507d1d2e2c198634e97e15adb4709622, type: 3}
   worldPrefab: {fileID: 7226126545323133797, guid: e3545d1a0072c3743b9a12c937ad546b, type: 3}
   pickupVfxPrefab: {fileID: 0}
