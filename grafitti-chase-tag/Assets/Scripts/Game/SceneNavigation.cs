@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 public class SceneNavigation : MonoBehaviour
 {
     [Header("Optional Scene Transition")]
-    [SerializeField]
-    private MainMenuTransitionController mainMenuTransition;
+    [SerializeField] private MainMenuTransitionController mainMenuTransition;
+    [SerializeField] private GameEndTransitionController gameEndTransition;
 
     public void OpenMainMenu()
     {
@@ -46,7 +46,7 @@ public class SceneNavigation : MonoBehaviour
             QuitApplication();
         }
     }
-
+    
     private void LoadScene(string sceneName)
     {
         if (!Application.CanStreamedLevelBeLoaded(sceneName))
@@ -63,6 +63,13 @@ public class SceneNavigation : MonoBehaviour
         if (mainMenuTransition != null)
         {
             mainMenuTransition.PlayExitAnimation(() =>
+            {
+                SceneManager.LoadScene(sceneName);
+            });
+        }
+        else if (gameEndTransition != null)
+        {
+            gameEndTransition.PlayExitAnimation(() =>
             {
                 SceneManager.LoadScene(sceneName);
             });

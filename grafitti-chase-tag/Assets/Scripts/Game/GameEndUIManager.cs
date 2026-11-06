@@ -28,7 +28,7 @@ public class GameEndUIManager : MonoBehaviour
             int seconds = totalSeconds % 60;
 
             elapsedTimeText.text =
-                $"SESSION TIME  {minutes:00}:{seconds:00}";
+                $"{minutes:00}:{seconds:00}";
         }
     }
 }

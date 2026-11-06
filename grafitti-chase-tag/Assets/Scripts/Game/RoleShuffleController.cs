@@ -1,9 +1,10 @@
+
 using System;
-using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using Unity.Cinemachine;
+using DG.Tweening;
 
 public class RoleShuffleController : MonoBehaviour
 {
@@ -18,38 +19,54 @@ public class RoleShuffleController : MonoBehaviour
     [SerializeField] private CinemachineInputAxisController cameraInput;
 
     [Header("Timing")]
-    [SerializeField] private float totalDuration = 3f;
-    [SerializeField] private float fadeInDuration = 0.25f;
-    [SerializeField] private float revealHoldDuration = 0.35f;
-    [SerializeField] private float fadeOutDuration = 0.3f;
-    [SerializeField] private float shuffleInterval = 0.12f;
+    [SerializeField, Min(0f)] private float totalDuration = 3f;
+    [SerializeField, Min(0f)] private float fadeInDuration = 0.25f;
+    [SerializeField, Min(0f)] private float revealHoldDuration = 0.35f;
+    [SerializeField, Min(0f)] private float fadeOutDuration = 0.3f;
+    [SerializeField, Min(0.01f)] private float shuffleInterval = 0.12f;
 
-    private Coroutine shuffleRoutine;
+    [Header("Title Pop Animation")]
+    [SerializeField, Min(0f)] private float titlePopDuration = 0.1f;
+    [SerializeField, Range(0.1f, 1f)] private float titlePopStartScale = 0.75f;
+    [SerializeField] private Ease titlePopEase = Ease.OutCubic;
+
+    [Header("Overlay Easing")]
+    [SerializeField] private Ease fadeInEase = Ease.OutQuad;
+    [SerializeField] private Ease fadeOutEase = Ease.InQuad;
+
+    private Sequence shuffleSequence;
+
+    private bool isPlaying;
 
     private void Awake()
     {
         if (overlayGroup == null)
             overlayGroup = GetComponent<CanvasGroup>();
 
+        if (overlayGroup == null)
+        {
+            Debug.LogError(
+                "ROLE SHUFFLE | CanvasGroup reference is missing.",
+                this
+            );
+
+            enabled = false;
+            return;
+        }
+
         SetVisible(false);
     }
-    
 
     public void Play(
         CharacterRoleType playerRole,
         Action onComplete)
     {
-        if (shuffleRoutine != null)
-            StopCoroutine(shuffleRoutine);
+        // Stop an existing shuffle if Play is called again.
+        KillShuffleSequence();
 
-        shuffleRoutine = StartCoroutine(
-            PlayRoutine(playerRole, onComplete));
-    }
+        isPlaying = true;
 
-    private IEnumerator PlayRoutine(
-        CharacterRoleType playerRole,
-        Action onComplete)
-    {
+        // Lock gameplay input.
         GameplayInputLock.SetLocked(true);
 
         if (cameraInput != null)
@@ -59,124 +76,149 @@ public class RoleShuffleController : MonoBehaviour
             gameplayUIRoot.SetActive(false);
 
         SetVisible(true);
-        
+
+        // Start with a transparent overlay.
+        overlayGroup.alpha = 0f;
+
         if (infoText != null)
             infoText.text = "This round you are...";
 
         SetTitle(null);
 
-        float elapsed = 0f;
-
-        while (elapsed < fadeInDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            overlayGroup.alpha = Mathf.Clamp01(
-                elapsed / fadeInDuration);
-
-            yield return null;
-        }
-
-        overlayGroup.alpha = 1f;
-
+        // Calculate the shuffle duration.
         float shuffleDuration = Mathf.Max(
             0f,
             totalDuration -
             fadeInDuration -
             revealHoldDuration -
-            fadeOutDuration);
+            fadeOutDuration
+        );
 
-        float shuffleElapsed = 0f;
-        float switchTimer = 0f;
+        // Prepare the selected role title.
+        Image selectedTitleImage =
+            playerRole == CharacterRoleType.Chaser
+                ? chaserTitle
+                : evaderTitle;
+
+        Transform selectedTitleTransform =
+            selectedTitleImage != null
+                ? selectedTitleImage.transform
+                : null;
+
+        Vector3 originalTitleScale =
+            selectedTitleTransform != null
+                ? selectedTitleTransform.localScale
+                : Vector3.one;
+
         bool showChaser = true;
 
-        while (shuffleElapsed < shuffleDuration)
-        {
-            shuffleElapsed += Time.deltaTime;
-            switchTimer += Time.deltaTime;
+        shuffleSequence = DOTween.Sequence();
 
-            if (switchTimer >= shuffleInterval)
+        // Fade overlay in.
+        if (fadeInDuration > 0f)
+        {
+            shuffleSequence.Append(
+                overlayGroup.DOFade(1f, fadeInDuration)
+                    .SetEase(fadeInEase)
+            );
+        }
+        else
+        {
+            shuffleSequence.AppendCallback(() =>
             {
-                switchTimer = 0f;
+                overlayGroup.alpha = 1f;
+            });
+        }
+
+        // Alternate between Chaser and Evader titles.
+        int switchCount = Mathf.FloorToInt(
+            shuffleDuration / shuffleInterval
+        );
+
+        for (int i = 0; i < switchCount; i++)
+        {
+            shuffleSequence.AppendInterval(shuffleInterval);
+
+            shuffleSequence.AppendCallback(() =>
+            {
                 showChaser = !showChaser;
 
                 SetTitle(
                     showChaser
                         ? CharacterRoleType.Chaser
-                        : CharacterRoleType.Evader);
+                        : CharacterRoleType.Evader
+                );
+            });
+        }
+
+        // Preserve the remaining shuffle time.
+        float remainingShuffleTime =
+            shuffleDuration - (switchCount * shuffleInterval);
+
+        if (remainingShuffleTime > 0f)
+            shuffleSequence.AppendInterval(remainingShuffleTime);
+
+        // Reveal the actual player role.
+        shuffleSequence.AppendCallback(() =>
+        {
+            SetTitle(playerRole);
+
+            if (selectedTitleTransform != null)
+            {
+                selectedTitleTransform.localScale =
+                    originalTitleScale * titlePopStartScale;
             }
+        });
 
-            yield return null;
-        }
-
-        SetTitle(playerRole);
-
-        Transform titleTransform =
-            playerRole == CharacterRoleType.Chaser
-                ? chaserTitle.transform
-                : evaderTitle.transform;
-
-        // Save the title's actual size before animating it.
-        Vector3 originalScale = titleTransform.localScale;
-
-        // Start slightly smaller than its normal size.
-        titleTransform.localScale = originalScale * 0.75f;
-
-        float popElapsed = 0f;
-        const float popDuration = 0.1f;
-
-        while (popElapsed < popDuration)
+        // Animate the selected title popping into place.
+        if (selectedTitleTransform != null && titlePopDuration > 0f)
         {
-            popElapsed += Time.deltaTime;
-
-            float t = Mathf.Clamp01(popElapsed / popDuration);
-
-            // Ease-out animation: fast at first, then slows down.
-            float easedT = 1f - Mathf.Pow(1f - t, 3f);
-
-            titleTransform.localScale = Vector3.Lerp(
-                originalScale * 0.75f,
-                originalScale,
-                easedT
+            shuffleSequence.Append(
+                selectedTitleTransform.DOScale(
+                    originalTitleScale,
+                    titlePopDuration
+                ).SetEase(titlePopEase)
             );
-
-            yield return null;
         }
-
-        // Restore the exact original size.
-        titleTransform.localScale = originalScale;
-
-        yield return new WaitForSeconds(
-            revealHoldDuration);
-
-        float fadeElapsed = 0f;
-        float fadeStartAlpha = overlayGroup.alpha;
-
-        while (fadeElapsed < fadeOutDuration)
+        else if (selectedTitleTransform != null)
         {
-            fadeElapsed += Time.deltaTime;
-
-            overlayGroup.alpha = Mathf.Lerp(
-                fadeStartAlpha,
-                0f,
-                Mathf.Clamp01(
-                    fadeElapsed / fadeOutDuration));
-
-            yield return null;
+            shuffleSequence.AppendCallback(() =>
+            {
+                selectedTitleTransform.localScale = originalTitleScale;
+            });
         }
 
-        SetVisible(false);
+        // Hold the revealed role.
+        if (revealHoldDuration > 0f)
+            shuffleSequence.AppendInterval(revealHoldDuration);
 
-        if (gameplayUIRoot != null)
-            gameplayUIRoot.SetActive(true);
+        // Fade overlay out.
+        if (fadeOutDuration > 0f)
+        {
+            shuffleSequence.Append(
+                overlayGroup.DOFade(0f, fadeOutDuration)
+                    .SetEase(fadeOutEase)
+            );
+        }
+        else
+        {
+            shuffleSequence.AppendCallback(() =>
+            {
+                overlayGroup.alpha = 0f;
+            });
+        }
 
-        if (cameraInput != null)
-            cameraInput.enabled = true;
+        // Restore gameplay after the complete sequence.
+        shuffleSequence.OnComplete(() =>
+        {
+            isPlaying = false;
 
-        GameplayInputLock.SetLocked(false);
+            RestoreGameplayState();
 
-        shuffleRoutine = null;
-        onComplete?.Invoke();
+            shuffleSequence = null;
+
+            onComplete?.Invoke();
+        });
     }
 
     private void SetTitle(CharacterRoleType? role)
@@ -184,13 +226,15 @@ public class RoleShuffleController : MonoBehaviour
         if (chaserTitle != null)
         {
             chaserTitle.gameObject.SetActive(
-                role == CharacterRoleType.Chaser);
+                role == CharacterRoleType.Chaser
+            );
         }
 
         if (evaderTitle != null)
         {
             evaderTitle.gameObject.SetActive(
-                role == CharacterRoleType.Evader);
+                role == CharacterRoleType.Evader
+            );
         }
     }
 
@@ -202,5 +246,37 @@ public class RoleShuffleController : MonoBehaviour
         overlayGroup.alpha = visible ? 1f : 0f;
         overlayGroup.interactable = visible;
         overlayGroup.blocksRaycasts = visible;
+    }
+
+    private void RestoreGameplayState()
+    {
+        SetVisible(false);
+
+        if (gameplayUIRoot != null)
+            gameplayUIRoot.SetActive(true);
+
+        if (cameraInput != null)
+            cameraInput.enabled = true;
+
+        GameplayInputLock.SetLocked(false);
+    }
+
+    private void KillShuffleSequence()
+    {
+        if (shuffleSequence != null && shuffleSequence.IsActive())
+            shuffleSequence.Kill();
+
+        shuffleSequence = null;
+    }
+
+    private void OnDisable()
+    {
+        KillShuffleSequence();
+
+        if (isPlaying)
+        {
+            isPlaying = false;
+            RestoreGameplayState();
+        }
     }
 }

@@ -1,7 +1,6 @@
-
-using System.Collections;
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class RoundEndUIManager : MonoBehaviour
 {
@@ -33,7 +32,11 @@ public class RoundEndUIManager : MonoBehaviour
     [SerializeField, Min(0f)]
     private float fadeOutDuration = 0.3f;
 
-    private Coroutine displayRoutine;
+    [Header("Animation Easing")]
+    [SerializeField] private Ease fadeInEase = Ease.OutQuad;
+    [SerializeField] private Ease fadeOutEase = Ease.InQuad;
+
+    private Sequence displaySequence;
 
     private void Awake()
     {
@@ -52,7 +55,10 @@ public class RoundEndUIManager : MonoBehaviour
         if (roundManager == null)
         {
             Debug.LogError(
-                "ROUND END UI | RoundManager is missing.", this);
+                "ROUND END UI | RoundManager is missing.",
+                this
+            );
+
             return;
         }
 
@@ -64,11 +70,7 @@ public class RoundEndUIManager : MonoBehaviour
         if (roundManager != null)
             roundManager.RoundEnded -= OnRoundEnded;
 
-        if (displayRoutine != null)
-        {
-            StopCoroutine(displayRoutine);
-            displayRoutine = null;
-        }
+        KillDisplaySequence();
     }
 
     private void OnRoundEnded(
@@ -80,8 +82,7 @@ public class RoundEndUIManager : MonoBehaviour
         if (roundManager == null || roundEndRoot == null)
             return;
 
-        if (displayRoutine != null)
-            StopCoroutine(displayRoutine);
+        KillDisplaySequence();
 
         if (roundEndTitle != null)
             roundEndTitle.text = $"ROUND {roundNumber} ENDED";
@@ -89,7 +90,8 @@ public class RoundEndUIManager : MonoBehaviour
         if (elapsedTimeText != null)
         {
             int seconds = Mathf.FloorToInt(
-                roundManager.LastRoundElapsedTime);
+                roundManager.LastRoundElapsedTime
+            );
 
             elapsedTimeText.text =
                 $"{seconds / 60:00}:{seconds % 60:00}";
@@ -103,84 +105,121 @@ public class RoundEndUIManager : MonoBehaviour
 
         roundEndRoot.SetActive(false);
 
-        displayRoutine = StartCoroutine(DisplayRoundEnd());
+        PlayRoundEndSequence();
     }
 
-    private IEnumerator DisplayRoundEnd()
+    private void PlayRoundEndSequence()
     {
         float intermission = roundManager.RoundResultDuration;
 
         // Keep TAGGED!/ESCAPED! visible first.
         float messageTime = Mathf.Min(
-            immediateMessageDuration, intermission);
-
-        yield return new WaitForSeconds(messageTime);
-
-        if (taggedDisplay != null)
-            taggedDisplay.SetActive(false);
+            immediateMessageDuration,
+            intermission
+        );
 
         // Reserve time for the next role shuffle.
-        float availableTime =
-            intermission - messageTime - roleShuffleLeadTime;
+        float availableTime = Mathf.Max(
+            0f,
+            intermission - messageTime - roleShuffleLeadTime
+        );
 
-        float fadeIn = Mathf.Min(fadeInDuration, availableTime);
+        float fadeIn = Mathf.Min(
+            fadeInDuration,
+            availableTime
+        );
+
         float fadeOut = Mathf.Min(
             fadeOutDuration,
-            Mathf.Max(0f, availableTime - fadeIn));
+            Mathf.Max(0f, availableTime - fadeIn)
+        );
 
         float holdTime = Mathf.Max(
-            0f, availableTime - fadeIn - fadeOut);
+            0f,
+            availableTime - fadeIn - fadeOut
+        );
+
+        displaySequence = DOTween.Sequence();
+
+        // Keep immediate round feedback visible.
+        displaySequence.AppendInterval(messageTime);
+
+        displaySequence.AppendCallback(() =>
+        {
+            if (taggedDisplay != null)
+                taggedDisplay.SetActive(false);
+        });
 
         if (availableTime > 0f)
         {
-            // First hide the immediate message's parent HUD.
-            SetGameplayUIVisible(false);
+            displaySequence.AppendCallback(() =>
+            {
+                // Hide gameplay HUD first.
+                SetGameplayUIVisible(false);
 
-            // Then reveal the round-end screen.
-            roundEndRoot.SetActive(true);
+                // Reveal the round-end panel.
+                roundEndRoot.SetActive(true);
 
-            if (roundEndCanvasGroup != null)
-                roundEndCanvasGroup.alpha = 0f;
+                if (roundEndCanvasGroup != null)
+                    roundEndCanvasGroup.alpha = 0f;
+            });
 
             // Fade in.
-            yield return FadeCanvasGroup(0f, 1f, fadeIn);
+            if (roundEndCanvasGroup != null)
+            {
+                if (fadeIn > 0f)
+                {
+                    displaySequence.Append(
+                        roundEndCanvasGroup.DOFade(1f, fadeIn)
+                            .SetEase(fadeInEase)
+                    );
+                }
+                else
+                {
+                    displaySequence.AppendCallback(() =>
+                    {
+                        roundEndCanvasGroup.alpha = 1f;
+                    });
+                }
+            }
 
             // Hold the result screen.
             if (holdTime > 0f)
-                yield return new WaitForSeconds(holdTime);
+                displaySequence.AppendInterval(holdTime);
 
             // Fade out.
-            yield return FadeCanvasGroup(1f, 0f, fadeOut);
+            if (roundEndCanvasGroup != null)
+            {
+                if (fadeOut > 0f)
+                {
+                    displaySequence.Append(
+                        roundEndCanvasGroup.DOFade(0f, fadeOut)
+                            .SetEase(fadeOutEase)
+                    );
+                }
+                else
+                {
+                    displaySequence.AppendCallback(() =>
+                    {
+                        roundEndCanvasGroup.alpha = 0f;
+                    });
+                }
+            }
         }
 
-        roundEndRoot.SetActive(false);
-        displayRoutine = null;
+        // Hide the result panel after the sequence.
+        displaySequence.OnComplete(() =>
+        {
+            roundEndRoot.SetActive(false);
+            displaySequence = null;
+        });
     }
 
-    private IEnumerator FadeCanvasGroup(
-        float from, float to, float duration)
+    private void KillDisplaySequence()
     {
-        if (roundEndCanvasGroup == null)
-            yield break;
+        if (displaySequence != null && displaySequence.IsActive())
+            displaySequence.Kill();
 
-        if (duration <= 0f)
-        {
-            roundEndCanvasGroup.alpha = to;
-            yield break;
-        }
-
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-
-            roundEndCanvasGroup.alpha = Mathf.Lerp(
-                from, to, Mathf.Clamp01(elapsed / duration));
-
-            yield return null;
-        }
-
-        roundEndCanvasGroup.alpha = to;
+        displaySequence = null;
     }
 }
