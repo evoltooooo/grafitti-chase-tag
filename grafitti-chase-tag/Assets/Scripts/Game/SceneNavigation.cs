@@ -4,6 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class SceneNavigation : MonoBehaviour
 {
+    [Header("Optional Scene Transition")]
+    [SerializeField]
+    private MainMenuTransitionController mainMenuTransition;
+
     public void OpenMainMenu()
     {
         LoadScene("Main Menu");
@@ -31,11 +35,16 @@ public class SceneNavigation : MonoBehaviour
 
     public void ExitGame()
     {
-#if UNITY_EDITOR
-        Debug.Log("EXIT GAME | Exit is available in a built game.");
-#else
-        Application.Quit();
-#endif
+        if (mainMenuTransition != null)
+        {
+            mainMenuTransition.PlayExitAnimation(
+                QuitApplication
+            );
+        }
+        else
+        {
+            QuitApplication();
+        }
     }
 
     private void LoadScene(string sceneName)
@@ -51,6 +60,25 @@ public class SceneNavigation : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(sceneName);
+        if (mainMenuTransition != null)
+        {
+            mainMenuTransition.PlayExitAnimation(() =>
+            {
+                SceneManager.LoadScene(sceneName);
+            });
+        }
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+        }
+    }
+
+    private void QuitApplication()
+    {
+#if UNITY_EDITOR
+        Debug.Log("EXIT GAME | Exit is available in a built game.");
+#else
+        Application.Quit();
+#endif
     }
 }
