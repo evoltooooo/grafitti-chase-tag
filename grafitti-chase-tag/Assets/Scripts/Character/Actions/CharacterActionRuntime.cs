@@ -9,6 +9,7 @@ public class CharacterActionRuntime : MonoBehaviour
     public bool IsReleasing { get; private set; }
 
     public event System.Action ActionCompleted;
+    public event System.Action ActionStarted;
 
     public CharacterActionType CurrentActionType
     {
@@ -152,6 +153,8 @@ public class CharacterActionRuntime : MonoBehaviour
             $"State: {actionData.actionState}",
             this
         );
+
+        ActionStarted?.Invoke();
     }
 
     public void StartParkourAction(

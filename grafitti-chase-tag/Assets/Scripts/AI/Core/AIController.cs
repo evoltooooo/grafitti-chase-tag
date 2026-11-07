@@ -12,6 +12,7 @@ public class AIController : MonoBehaviour
     [SerializeField] private CharacterStamina characterStamina;
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private CharacterActionController actionController;
+    [SerializeField] private CharacterTagDetector tagDetector;
 
     [Header("Opponent")]
     [SerializeField] private Transform opponentTransform;
@@ -97,6 +98,9 @@ public class AIController : MonoBehaviour
             perception =
                 GetComponent<AIPerception>();
 
+        if (tagDetector == null)
+            tagDetector = GetComponent<CharacterTagDetector>();
+
 
         context =
             new AIContext();
@@ -105,6 +109,7 @@ public class AIController : MonoBehaviour
         chaserController =
             new AIChaserController(
                 characterMotor,
+                tagDetector,
                 destinationRepathDistance,
                 pathRetryInterval,
                 minPredictionTime,

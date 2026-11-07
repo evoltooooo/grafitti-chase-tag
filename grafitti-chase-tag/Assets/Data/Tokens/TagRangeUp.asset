@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Token_TagRangeUp
   category: 0
   effectType: 3
-  effectMultiplier: 1.25
+  effectMultiplier: 1.2
   duration: 5
   roleRestriction: 1
   icon: {fileID: 21300000, guid: 5dadfb5ec4862054fb149f87bf481c25, type: 3}

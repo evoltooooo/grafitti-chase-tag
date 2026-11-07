@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Token_TagRadiusUp
   category: 0
   effectType: 4
-  effectMultiplier: 1.25
+  effectMultiplier: 1.2
   duration: 5
   roleRestriction: 1
   icon: {fileID: 21300000, guid: 48dd0646903fbdf4c9579ebf4cd07b01, type: 3}

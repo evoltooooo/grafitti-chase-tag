@@ -3,6 +3,7 @@ using UnityEngine;
 public class AIChaserController
 {
     private readonly CharacterMotor characterMotor;
+    private readonly CharacterTagDetector tagDetector;
     private readonly AIChaser chaser;
     private readonly AIChaserDecision chaserDecision;
     private readonly AIChaserCommitment chaserCommitment;
@@ -13,6 +14,7 @@ public class AIChaserController
 
     public AIChaserController(
         CharacterMotor characterMotor,
+        CharacterTagDetector tagDetector,
         float destinationRepathDistance,
         float pathRetryInterval,
         float minPredictionTime,
@@ -28,6 +30,7 @@ public class AIChaserController
         LayerMask slideObstacleMask)
     {
         this.characterMotor = characterMotor;
+        this.tagDetector = tagDetector;
 
         AISteering steering =
             new AISteering();
@@ -233,30 +236,47 @@ public class AIChaserController
         if (!context.IsGrounded)
             return;
 
-        if (tagAttemptTimer > 0f)
+        if (tagDetector == null)
             return;
 
-        // Throttle attempts so the AI does not request Tag every frame.
-        tagAttemptTimer = TagAttemptInterval;
+        // Wait until the Tag attempt cooldown expires.
+        if (tagAttemptTimer > 0f)
+            return;
 
         Vector3 toOpponent =
             context.OpponentPosition - context.Position;
 
         toOpponent.y = 0f;
 
+        float distance = toOpponent.magnitude;
+
+        // Use the actual effective Tag range.
+        float maximumTagDistance =
+            tagDetector.EffectiveTagDistance;
+
+        // Do not attempt Tag while the opponent is too far away.
+        if (distance > maximumTagDistance)
+            return;
+
+        // Throttle attempts so the AI does not request Tag every frame.
+        tagAttemptTimer = TagAttemptInterval;
+
         Debug.Log(
             $"AI TAG CHECK | " +
-            $"Distance={toOpponent.magnitude:F2} | " +
+            $"Distance={distance:F2} | " +
+            $"MaxDistance={maximumTagDistance:F2} | " +
             $"Visible={context.OpponentVisible} | " +
-            $"Grounded={context.IsGrounded} | " +
-            $"Forward={context.Forward}"
+            $"Grounded={context.IsGrounded}"
         );
 
-        bool tagPerformed = actionController.RequestTag();
+        bool tagPerformed =
+            actionController.RequestTag();
 
         Debug.Log(
-            $"AI TAG ATTEMPT | Performed={tagPerformed} | " +
-            $"Distance={toOpponent.magnitude:F2}"
+            $"AI TAG ATTEMPT | " +
+            $"Performed={tagPerformed} | " +
+            $"Distance={distance:F2} | " +
+            $"MaxDistance={maximumTagDistance:F2}"
         );
     }
 }

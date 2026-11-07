@@ -9,6 +9,12 @@ public class CharacterActionExecutor : MonoBehaviour
     [SerializeField] private CharacterStamina stamina;
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private CharacterTagDetector tagDetector;
+    [SerializeField] private CharacterRole characterRole;
+
+    [Header("Debug Settings")]
+    [SerializeField]
+    private bool allowTagForNonChasersForDebug = false;
+    
     public event Action<Collider> TagSucceeded;
 
     private void Awake()
@@ -80,6 +86,11 @@ public class CharacterActionExecutor : MonoBehaviour
                 "CharacterActionExecutor: CharacterTagDetector is missing.",
                 this
             );
+        }
+
+        if (characterRole == null)
+        {
+            characterRole = GetComponent<CharacterRole>();
         }
     }
 
@@ -268,48 +279,51 @@ public class CharacterActionExecutor : MonoBehaviour
         return true;
     }
 
+    private bool CanPerformTag()
+    {
+        if (allowTagForNonChasersForDebug)
+            return true;
+
+        return characterRole != null &&
+            characterRole.IsChaser;
+    }
+
     private bool ExecuteTag(CharacterActionData actionData)
     {
+        if (!CanPerformTag())
+            return false;
+
         if (stateController.IsBusy)
             return false;
 
         if (tagDetector == null)
             return false;
 
-        if (!tagDetector.TryDetectTag(out Collider target))
-            return false;
+        // Detection determines whether the Tag succeeds,
+        // not whether the Tag action can be performed.
+        bool hasTarget =
+            tagDetector.TryDetectTag(out Collider target);
 
         if (!TryConsumeActionStamina(actionData))
             return false;
 
-        Debug.Log(
-            $"TAG DEBUG BEFORE START | " +
-            $"Executor={name} | " +
-            $"RuntimeID={actionRuntime.GetInstanceID()} | " +
-            $"Duration={actionData.duration:F3}"
-        );
-
+        // Start the Tag action regardless of detection result.
         actionRuntime.StartAction(actionData);
-
-        Debug.Log(
-            $"TAG DEBUG AFTER START | " +
-            $"Executing={actionRuntime.IsExecuting} | " +
-            $"Action={actionRuntime.CurrentActionType} | " +
-            $"RuntimeID={actionRuntime.GetInstanceID()}"
-        );
 
         SetActionState(actionData);
 
         Debug.Log(
-            $"TAG DEBUG AFTER STATE | " +
-            $"Executing={actionRuntime.IsExecuting} | " +
-            $"Action={actionRuntime.CurrentActionType} | " +
-            $"RuntimeID={actionRuntime.GetInstanceID()}"
+            $"TAG ACTION STARTED | " +
+            $"Character={name} | " +
+            $"Hit={hasTarget} | " +
+            $"Target={(hasTarget ? target.name : "None")}"
         );
 
-        Debug.Log($"TAG ACTION EXECUTED | Target: {target.name}");
-
-        TagSucceeded?.Invoke(target);
+        // Only successful detection triggers gameplay tagging.
+        if (hasTarget)
+        {
+            TagSucceeded?.Invoke(target);
+        }
 
         return true;
     }
