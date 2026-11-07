@@ -77,7 +77,5 @@ public class AIEvaderController
     {
         evader.ResetForNewRound();
         tactics.ResetForNewRound();
-
-        Debug.Log("AI EVADER CONTROLLER RESET | New round");
     }
 }

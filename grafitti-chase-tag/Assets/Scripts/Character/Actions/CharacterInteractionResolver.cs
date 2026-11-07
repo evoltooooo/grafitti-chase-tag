@@ -30,8 +30,6 @@ public class CharacterInteractionResolver : MonoBehaviour
 
     public void TryResolveInteraction()
     {
-        Debug.Log("=== INTERACTION RESOLUTION STARTED ===");
-
         interactionBufferTimer = interactionBufferTime;
 
         ResolveBufferedInteraction();
@@ -41,15 +39,6 @@ public class CharacterInteractionResolver : MonoBehaviour
     {
         if (!ValidateReferences())
             return;
-            
-
-        Debug.Log(
-            $"Interaction context | " +
-            $"Speed: {characterMotor.HorizontalSpeed:0.00} | " +
-            $"Sprinting: {characterMotor.IsSprinting} | " +
-            $"Grounded: {characterMotor.IsGrounded} | " +
-            $"Jumping: {characterMotor.IsJumping}"
-        );
         
 
         // ---------------------------------------------
@@ -78,17 +67,9 @@ public class CharacterInteractionResolver : MonoBehaviour
 
         if (characterMotor.CanAttemptClimb)
         {
-            Debug.Log(
-                "CLIMB ATTEMPT WINDOW ACTIVE"
-            );
-
             if (TryResolveParkourAction(
                     ParkourActionType.Climb))
             {
-                Debug.Log(
-                    "INTERACTION RESOLVED → CLIMB"
-                );
-
                 interactionBufferTimer = 0f;
                 return;
             }
@@ -116,10 +97,6 @@ public class CharacterInteractionResolver : MonoBehaviour
 
         if (actionController.RequestAction(request))
         {
-            Debug.Log(
-                "INTERACTION RESOLVED → SLIDE"
-            );
-
             interactionBufferTimer = 0f;
         }
     }
@@ -141,17 +118,11 @@ public class CharacterInteractionResolver : MonoBehaviour
     {
         if (actionController == null)
         {
-            Debug.LogError(
-                "InteractionResolver: CharacterActionController missing."
-            );
             return false;
         }
 
         if (characterMotor == null)
         {
-            Debug.LogError(
-                "InteractionResolver: CharacterMotor missing."
-            );
             return false;
         }
 

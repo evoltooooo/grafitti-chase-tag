@@ -52,11 +52,6 @@ public class AINavigation
         {
             ResetPathState();
 
-            Debug.Log(
-                $"AI NAV DEBUG | Start Sample FAILED | " +
-                $"Position={startPosition}"
-            );
-
             return false;
         }
         if (!NavMesh.SamplePosition(
@@ -66,11 +61,6 @@ public class AINavigation
             NavMesh.AllAreas))
         {
             ResetPathState();
-
-            Debug.Log(
-                $"AI NAV DEBUG | Destination Sample FAILED | " +
-                $"Destination={destination}"
-            );
 
             return false;
         }
@@ -86,25 +76,10 @@ public class AINavigation
                 newPath
             );
 
-        Debug.Log(
-            $"AI NAV DEBUG | " +
-            $"StartHit={startHit.position} | " +
-            $"DestinationHit={destinationHit.position} | " +
-            $"PathFound={pathFound} | " +
-            $"Status={newPath.status} | " +
-            $"Corners={newPath.corners.Length}"
-        );
-
         if (!pathFound ||
             newPath.corners.Length < 2)
         {
             ResetPathState();
-
-            Debug.Log(
-                $"AI NAV DEBUG | Path Build FAILED | " +
-                $"PathFound={pathFound} | " +
-                $"Status={newPath.status} | " +
-                $"Corners={newPath.corners.Length}");
 
             return false;
         }
@@ -124,12 +99,6 @@ public class AINavigation
 
         HasPath = true;
 
-        Debug.Log(
-            $"AI NAV PATH ACCEPTED | " +
-            $"Status={newPath.status} | " +
-            $"Waypoint={CurrentWaypoint}"
-        );
-
         return true;
     }
 
@@ -143,14 +112,6 @@ public class AINavigation
         {
             return false;
         }
-
-        Debug.Log(
-            $"AI NAV WAYPOINT DEBUG | " +
-            $"Position={currentPosition} | " +
-            $"CornerIndex={currentCornerIndex} | " +
-            $"CornerCount={(corners == null ? 0 : corners.Length)} | " +
-            $"HasPath={HasPath} | " +
-            $"Waypoint={(currentCornerIndex < corners.Length ? corners[currentCornerIndex].ToString() : "NONE")}");
 
         while (
             currentCornerIndex < corners.Length &&
@@ -167,37 +128,9 @@ public class AINavigation
         {
             ReachedPartialPathEnd = IsPartialPath;
 
-            Debug.LogWarning(
-                $"AI NAV FINAL WAYPOINT REACHED | " +
-                $"Position={currentPosition} | " +
-                $"FinalCorner={corners[corners.Length - 1]} | " +
-                $"Distance={Vector3.Distance(currentPosition, corners[corners.Length - 1]):F2} | " +
-                $"Partial={IsPartialPath} | " +
-                $"ReachedDistance={waypointReachedDistance}");
-
-            Debug.Log(
-                $"AI NAV PATH ENDED | " +
-                $"Partial={IsPartialPath} | " +
-                $"Corners={corners.Length} | " +
-                $"LastCorner={corners[corners.Length - 1]} | " +
-                $"Position={currentPosition} | " +
-                $"DistanceToLastCorner=" +
-                $"{Vector3.Distance(currentPosition, corners[corners.Length - 1]):F2}"
-            );
-
             float distanceToFinalCorner = Vector3.Distance(
                 currentPosition,
                 corners[corners.Length - 1]);
-
-            Debug.Log(
-                $"AI NAV COMPLETE PATH ENDED | " +
-                $"Position={currentPosition} | " +
-                $"FinalCorner={corners[corners.Length - 1]} | " +
-                $"DistanceToFinalCorner={distanceToFinalCorner:F2} | " +
-                $"ReachedDistance={waypointReachedDistance} | " +
-                $"CornerIndex={currentCornerIndex} | " +
-                $"CornerCount={corners.Length} | " +
-                $"Partial={IsPartialPath}");
 
             // The current path has no more waypoints.
             // Keep the partial-path result available to the caller.

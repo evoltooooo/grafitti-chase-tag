@@ -45,28 +45,11 @@ public class CharacterActionController : MonoBehaviour
                 GetComponent<CharacterMotor>();
         }
 
-        if (characterMotor == null)
-        {
-            Debug.LogError(
-                "CharacterActionController: CharacterMotor is missing.",
-                this
-            );
-        }
-
         if (actionRuntime == null)
         {
             actionRuntime =
                 GetComponent<CharacterActionRuntime>();
         }
-
-        if (actionRuntime == null)
-        {
-            Debug.LogError(
-                "CharacterActionController: CharacterActionRuntime is missing.",
-                this
-            );
-        }
-        
 
         if (interactionResolver == null)
         {
@@ -82,10 +65,6 @@ public class CharacterActionController : MonoBehaviour
 
         if (request.ActionType == CharacterActionType.None)
         {
-            Debug.LogWarning(
-                "ACTION REQUEST FAILED | ActionType is None.",
-                this
-            );
             return false;
         }
 
@@ -155,11 +134,6 @@ public class CharacterActionController : MonoBehaviour
 
         if (interactionResolver == null)
         {
-            Debug.LogError(
-                "CharacterActionController: InteractionResolver is missing.",
-                this
-            );
-
             return;
         }
 
@@ -201,23 +175,17 @@ public class CharacterActionController : MonoBehaviour
 
     private bool TryAirborneJumpAction()
     {
-        Debug.Log("JUMP INPUT → AIRBORNE → TRY TIC TAC");
-
         if (RequestParkourAction(
                 ParkourActionType.TicTac))
         {
-            Debug.Log("JUMP INPUT → TIC TAC");
             return true;
         }
 
-        Debug.Log("JUMP INPUT → NO TIC TAC");
         return false;
     }
 
     public bool RequestJumpInput()
     {
-        Debug.Log("Jump input received.");
-
         // =====================================================
         // AIRBORNE → TRY TIC TAC
         // =====================================================
@@ -234,24 +202,12 @@ public class CharacterActionController : MonoBehaviour
         bool jumpPerformed =
             RequestJump();
 
-        if (jumpPerformed)
-        {
-            Debug.Log("JUMP INPUT → NORMAL JUMP");
-        }
-
         return jumpPerformed;
     }
 
     public bool RequestTagInput()
     {
-        Debug.Log("Tag input received.");
-
         bool tagPerformed = RequestTag();
-
-        if (tagPerformed)
-        {
-            Debug.Log("TAG INPUT → TAG");
-        }
 
         return tagPerformed;
     }
@@ -323,11 +279,6 @@ public class CharacterActionController : MonoBehaviour
     {
         if (spawnPoint == null)
         {
-            Debug.LogError(
-                "ROUND SPAWN FAILED | Spawn point is missing.",
-                this
-            );
-
             return false;
         }
 
@@ -344,22 +295,11 @@ public class CharacterActionController : MonoBehaviour
 
         if (!success)
         {
-            Debug.LogError(
-                $"ROUND SPAWN FAILED | Character={name}",
-                this
-            );
-
             return false;
         }
 
         // Clear any movement intent left by the previous round.
         movementIntent = default;
-
-        Debug.Log(
-            $"ROUND SPAWN COMPLETE | Character={name} | " +
-            $"Position={transform.position}",
-            this
-        );
 
         return true;
     }

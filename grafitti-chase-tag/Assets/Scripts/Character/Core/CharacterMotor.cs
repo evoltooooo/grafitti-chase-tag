@@ -105,14 +105,6 @@ public class CharacterMotor : MonoBehaviour
             cameraTransform = Camera.main.transform;
         }
 
-        if (settings == null)
-        {
-            Debug.LogError(
-                $"{name}: CharacterMotor is missing MovementSettings.",
-                this
-            );
-        }
-
         if (stamina == null)
         {
             stamina = GetComponent<CharacterStamina>();
@@ -199,39 +191,10 @@ public class CharacterMotor : MonoBehaviour
             actionRuntime.CurrentMotionType == ActionMotionType.Hybrid ||
             actionRuntime.CurrentMotionType == ActionMotionType.Specialized);
 
-        Debug.Log(
-            $"AI MOTOR SPRINT TRACE | " +
-            $"Grounded={isGrounded} | " +
-            $"Jumping={isJumping} | " +
-            $"WorldDirection={worldDirection} | " +
-            $"MovementInput={movementInput} | " +
-            $"HorizontalVelocity={HorizontalVelocity} | " +
-            $"VerticalVelocity={verticalVelocity:F2}",
-            this
-        );
-
         if (actionControlsNormalMovement)
         {
-            Debug.Log(
-                $"AI MOTOR MOVEMENT BLOCKED | " +
-                $"ActionExecuting={actionExecuting} | " +
-                $"Action={actionRuntime.CurrentActionType} | " +
-                $"Parkour={actionRuntime.CurrentParkourActionType} | " +
-                $"MotionType={actionRuntime.CurrentMotionType} | " +
-                $"ActionTime={actionRuntime.ActionTime:F2} | " +
-                $"ActionNormalized={actionRuntime.ActionNormalizedTime:F2} | " +
-                $"WorldDirection={worldDirection}"
-            );
-
             return;
         }
-
-        Debug.Log(
-            $"MOTOR INPUT | WorldDirection={worldDirection} | " +
-            $"MovementInput={MovementInput} | " +
-            $"SprintHeld={sprintHeld} | " +
-            $"FaceCamera={faceCameraDirection}"
-        );
 
         HandleHorizontalMovement(
             hasLookDirection &&
@@ -279,13 +242,6 @@ public class CharacterMotor : MonoBehaviour
         jumpStartPosition = transform.position;
         jumpStartHorizontalSpeed = HorizontalSpeed;
         jumpDebugActive = true;
-
-        Debug.Log(
-            $"JUMP | HorizontalSpeed={HorizontalSpeed:F2} | " +
-            $"HorizontalVelocity={HorizontalVelocity} | " +
-            $"VerticalVelocity={verticalVelocity:F2}",
-            this
-        );
 
         return true;
     }
@@ -347,16 +303,6 @@ public class CharacterMotor : MonoBehaviour
 
         IsSprinting = canSprint;
 
-        Debug.Log(
-            $"AI MOTOR SPRINT CHECK | " +
-            $"SprintHeld={sprintHeld} | " +
-            $"MovementInput={MovementInput} | " +
-            $"MovingForward={movingForward} | " +
-            $"InputAmount={inputAmount:F2} | " +
-            $"Grounded={IsGrounded} | " +
-            $"IsSprinting={IsSprinting}"
-        );
-
         float targetSpeed;
 
         if (canSprint)
@@ -372,11 +318,6 @@ public class CharacterMotor : MonoBehaviour
 
             if (Time.time >= nextSprintDebugTime)
             {
-                Debug.Log(
-                    $"SPRINT | Target: {currentSprintSpeed:F2} | " +
-                    $"Actual: {HorizontalSpeed:F2}"
-                );
-
                 nextSprintDebugTime = Time.time + 0.25f;
             }
 
@@ -453,16 +394,6 @@ public class CharacterMotor : MonoBehaviour
                 RotateTowards(desiredDirection);
             }
         }
-        
-        Debug.Log(
-            $"AI HORIZONTAL RESULT | " +
-            $"Input={MovementInput} | " +
-            $"DesiredDirection={desiredDirection} | " +
-            $"Grounded={IsGrounded} | " +
-            $"TargetVelocity={targetVelocity} | " +
-            $"HorizontalVelocity={horizontalVelocity} | " +
-            $"Speed={HorizontalSpeed:F2}"
-        );
     }
 
     private Vector3 GetCameraRelativeDirection(Vector2 input)
@@ -603,14 +534,6 @@ public class CharacterMotor : MonoBehaviour
 
         bool canRestore = CanRestoreStandingCollider();
 
-        Debug.Log(
-            $"PLAYER SLIDE COLLIDER CHECK | " +
-            $"CanRestore={canRestore} | " +
-            $"CurrentHeight={characterController.height:F2} | " +
-            $"StandingHeight={standingColliderHeight:F2} | " +
-            $"Position={transform.position}"
-        );
-
         if (!canRestore)
             return;
 
@@ -621,11 +544,6 @@ public class CharacterMotor : MonoBehaviour
             standingColliderCenter;
 
         IsSliding = false;
-
-        Debug.Log(
-            $"PLAYER SLIDE COLLIDER RESTORED | " +
-            $"Height={characterController.height:F2}"
-        );
     }
     
     private bool CanRestoreStandingCollider()
@@ -667,19 +585,6 @@ public class CharacterMotor : MonoBehaviour
 
             blocked = true;
 
-            if (!wasSlideRestoreBlocked || lastSlideRestoreBlocker != overlap)
-            {
-                Debug.Log(
-                    $"SLIDE RESTORE BLOCKED | " +
-                    $"Character={name} | " +
-                    $"Collider={overlap.name} | " +
-                    $"Layer={LayerMask.LayerToName(overlap.gameObject.layer)} | " +
-                    $"Position={overlap.transform.position} | " +
-                    $"CharacterPosition={transform.position}",
-                    overlap
-                );
-            }
-
             lastSlideRestoreBlocker = overlap;
             wasSlideRestoreBlocked = true;
         }
@@ -715,10 +620,6 @@ public class CharacterMotor : MonoBehaviour
 
         lastWallNormal = hit.normal;
         hasWallContact = true;
-
-        Debug.Log(
-            $"WALL CONTACT | Normal: {lastWallNormal}"
-        );
     }
 
     // =========================================================
@@ -745,14 +646,6 @@ public class CharacterMotor : MonoBehaviour
 
         Vector3 actualDisplacement =
             transform.position - positionBefore;
-
-        Debug.Log(
-            $"MOTOR MOVE TRACE | " +
-            $"VelocityBefore={velocityBeforeMove} | " +
-            $"Displacement={actualDisplacement} | " +
-            $"Flags={collisionFlags} | " +
-            $"VelocityAfter={horizontalVelocity}"
-        );
 
         if ((collisionFlags & CollisionFlags.Sides) != 0)
         {
@@ -786,20 +679,7 @@ public class CharacterMotor : MonoBehaviour
                     settings.wallReboundSpeed;
                 
                 lastWallReboundTime = Time.time;    
-
-                Debug.Log(
-                    $"WALL REBOUND | Direction: {reboundDirection} | " +
-                    $"Speed: {settings.wallReboundSpeed:F2}"
-                );
             }
-
-            Debug.Log(
-                $"WALL REBOUND CHECK | " +
-                $"Speed: {HorizontalSpeed:F2} | " +
-                $"Approach Speed: {wallApproachSpeed:F2} | " +
-                $"Angle: {approachAngle:F1}° | " +
-                $"Valid Angle: {validApproachAngle}"
-            );
         }
 
         isGrounded =
@@ -808,14 +688,6 @@ public class CharacterMotor : MonoBehaviour
 
         if (Time.time >= nextMotorDebugTime)
         {
-            Debug.Log(
-                $"AI MOTOR DEBUG | " +
-                $"Grounded={isGrounded} | " +
-                $"VerticalVelocity={verticalVelocity:F2} | " +
-                $"HorizontalSpeed={HorizontalSpeed:F2} | " +
-                $"CollisionFlags={collisionFlags}"
-            );
-
             nextMotorDebugTime =
                 Time.time + 0.25f;
         }
@@ -826,13 +698,6 @@ public class CharacterMotor : MonoBehaviour
                 transform.position - jumpStartPosition;
 
             jumpDisplacement.y = 0f;
-
-            Debug.Log(
-                $"JUMP LAND | " +
-                $"StartSpeed={jumpStartHorizontalSpeed:F2} | " +
-                $"Distance={jumpDisplacement.magnitude:F2}",
-                this
-            );
 
             jumpDebugActive = false;
         }
@@ -959,12 +824,6 @@ public class CharacterMotor : MonoBehaviour
 
         isGrounded = characterController.enabled &&
                     characterController.isGrounded;
-
-        Debug.Log(
-            $"MOTOR ROUND RESET | Position={transform.position} | " +
-            $"Grounded={isGrounded} | Sliding={IsSliding}",
-            this
-        );
 
         return true;
     }

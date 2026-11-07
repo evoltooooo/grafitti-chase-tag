@@ -114,24 +114,12 @@ public class AIEvader
                         false,
                         Vector2.zero));
 
-                Debug.Log(
-                    $"EVADER CLIMB RECOVERY DEFERRED | " +
-                    $"Position={context.Position} | " +
-                    $"VelocityY={context.Velocity.y:F2} | " +
-                    $"Grounded={context.IsGrounded}");
-
                 return;
             }
 
             // The action ended while grounded, or it was not Climb.
             movement.InvalidateDestination();
             threatRecheckTimer = 0f;
-
-            Debug.Log(
-                $"EVADER ACTION ENDED | " +
-                $"Position={context.Position} | " +
-                $"Grounded={context.IsGrounded} | " +
-                $"Recalculating escape destination");
         }
 
         // Do not let normal navigation compete with recovery.
@@ -164,25 +152,11 @@ public class AIEvader
                 ? Vector3.Distance(context.Position, landingHit.position)
                 : -1f;
 
-            Debug.Log(
-                $"EVADER LANDING NAVMESH CHECK | " +
-                $"Actual={context.Position} | " +
-                $"Grounded={context.IsGrounded} | " +
-                $"Found={landingOnNavMesh} | " +
-                $"Sampled={(landingOnNavMesh ? landingHit.position.ToString() : "NONE")} | " +
-                $"Distance={landingSampleDistance:F2}");
-
             postClimbRecoveryPending = false;
             postClimbRecoveryTimer = 0f;
 
             movement.InvalidateDestination();
             threatRecheckTimer = 0f;
-
-            Debug.Log(
-                $"EVADER CLIMB RECOVERY RESUMED | " +
-                $"Position={context.Position} | " +
-                $"Grounded={context.IsGrounded} | " +
-                $"TimedOut={recoveryTimedOut}");
         }
 
         dropCooldownTimer = Mathf.Max(
@@ -207,10 +181,6 @@ public class AIEvader
 
         if (desiredState != CurrentState)
         {
-            Debug.Log(
-                $"AI EVADER STATE CHANGE | " +
-                $"{CurrentState} -> {desiredState}");
-
             CurrentState = desiredState;
         }
 
@@ -230,14 +200,6 @@ public class AIEvader
         bool shouldFindDestination =
             movement.NeedsDestination &&
             movement.CanRetry;
-        
-        Debug.Log(
-            $"EVADER REPLAN CHECK | " +
-            $"NeedsDestination={movement.NeedsDestination} | " +
-            $"CanRetry={movement.CanRetry} | " +
-            $"HasPath={movement.HasNavigationPath} | " +
-            $"ShouldFind={shouldFindDestination} | " +
-            $"ThreatVisible={context.OpponentVisible}");
 
         bool shouldReevaluateEscape =
             context.OpponentVisible &&
@@ -248,47 +210,16 @@ public class AIEvader
             shouldFindDestination ||
             shouldReevaluateEscape)
         {
-            Debug.Log(
-                $"EVADER REPLAN START | " +
-                $"ShouldRecheckThreat={shouldRecheckThreat} | " +
-                $"ShouldFindDestination={shouldFindDestination} | " +
-                $"ShouldReevaluateEscape={shouldReevaluateEscape} | " +
-                $"Position={context.Position} | " +
-                $"ThreatPosition={threatPosition}");
-    
             bool foundDestination = destination.TryCalculate(
                 context,
                 threatPosition,
                 out Vector3 escapeDestination);
-            
-            Debug.Log(
-                $"EVADER REPLAN RESULT | " +
-                $"FoundDestination={foundDestination} | " +
-                $"Candidate={escapeDestination} | " +
-                $"Position={context.Position}");
 
             if (foundDestination)
             {
                 bool destinationAccepted = movement.TrySetDestination(
                     context.Position,
                     escapeDestination);
-                
-                Debug.Log(
-                    $"EVADER DESTINATION ACCEPTANCE | " +
-                    $"Accepted={destinationAccepted} | " +
-                    $"Position={context.Position} | " +
-                    $"Destination={escapeDestination} | " +
-                    $"HasPath={movement.HasNavigationPath} | " +
-                    $"NeedsDestination={movement.NeedsDestination}");
-
-                Debug.Log(
-                    $"EVADER DESTINATION RESULT | " +
-                    $"Accepted={destinationAccepted} | " +
-                    $"Start={context.Position} | " +
-                    $"Target={escapeDestination} | " +
-                    $"HasPath={movement.HasNavigationPath} | " +
-                    $"NeedsDestination={movement.NeedsDestination}");
-
                 if (!destinationAccepted)
                 {
                     Debug.Log("EVADER DESTINATION REJECTED");
@@ -305,11 +236,6 @@ public class AIEvader
             }
             else
             {
-                Debug.Log(
-                    $"EVADER DESTINATION FAILED | " +
-                    $"Position={context.Position} | " +
-                    $"Threat={threatPosition}");
-
                 if (movement.NeedsDestination)
                 {
                     movement.RegisterFailedAttempt();
@@ -383,11 +309,6 @@ public class AIEvader
         if (landingThreatDistance <
             currentThreatDistance + MinimumUsefulEscapeGain)
         {
-            Debug.Log(
-                $"EVADER DROP REJECTED | " +
-                $"CurrentThreatDistance={currentThreatDistance:F2} | " +
-                $"LandingThreatDistance={landingThreatDistance:F2}");
-
             return false;
         }
 
@@ -403,7 +324,6 @@ public class AIEvader
             context.Position,
             approachPoint))
         {
-            Debug.Log("EVADER DROP REJECTED | Approach path failed");
             return false;
         }
 
@@ -412,13 +332,6 @@ public class AIEvader
         dropDirection = outwardDirection;
         dropPhase = DropPhase.Approach;
         dropPhaseTimer = 0f;
-
-        Debug.Log(
-            $"EVADER DROP STARTED | " +
-            $"Approach={dropApproachPoint} | " +
-            $"Landing={dropLandingPoint} | " +
-            $"CurrentThreatDistance={currentThreatDistance:F2} | " +
-            $"LandingThreatDistance={landingThreatDistance:F2}");
 
         return true;
     }
@@ -460,13 +373,6 @@ public class AIEvader
                     dropPhaseTimer = 0f;
                     dropPhase = DropPhase.StepOff;
 
-                    Debug.Log(
-                        $"EVADER DROP STEP-OFF | " +
-                        $"Position={context.Position} | " +
-                        $"Approach={dropApproachPoint} | " +
-                        $"Distance={distanceToApproach:F2} | " +
-                        $"Direction={dropDirection}");
-
                     return true;
                 }
 
@@ -474,14 +380,6 @@ public class AIEvader
                 // the Evader out of its normal escape behavior.
                 if (dropPhaseTimer >= DropApproachTimeout)
                 {
-                    Debug.Log(
-                        $"EVADER DROP APPROACH TIMEOUT | " +
-                        $"Position={context.Position} | " +
-                        $"Approach={dropApproachPoint} | " +
-                        $"Distance={distanceToApproach:F2} | " +
-                        $"HasPath={movement.HasNavigationPath} | " +
-                        $"Waypoint={movement.CurrentWaypoint}");
-
                     AbortDrop("Approach timed out");
                     return false;
                 }
@@ -495,11 +393,6 @@ public class AIEvader
 
                     if (!rebuilt)
                     {
-                        Debug.Log(
-                            $"EVADER DROP APPROACH PATH REBUILD FAILED | " +
-                            $"Position={context.Position} | " +
-                            $"Approach={dropApproachPoint}");
-
                         AbortDrop("Approach path lost");
                         return false;
                     }
@@ -526,11 +419,6 @@ public class AIEvader
                             Vector3.zero,
                             false,
                             Vector2.zero));
-
-                    Debug.Log(
-                        $"EVADER DROP FALLING | " +
-                        $"Position={context.Position} | " +
-                        $"VelocityY={context.Velocity.y:F2}");
 
                     return true;
                 }
@@ -566,11 +454,6 @@ public class AIEvader
 
                 if (context.IsGrounded && droppedEnough)
                 {
-                    Debug.Log(
-                        $"EVADER DROP LANDED | " +
-                        $"Position={context.Position} | " +
-                        $"ExpectedLanding={dropLandingPoint}");
-
                     FinishDrop();
                     return true;
                 }
@@ -581,10 +464,6 @@ public class AIEvader
                     {
                         // The AI has landed, but not at the expected
                         // vertical drop height. Resume safely.
-                        Debug.Log(
-                            "EVADER DROP RECOVERY | " +
-                            "Grounded without confirmed drop height");
-
                         FinishDrop();
                         return true;
                     }

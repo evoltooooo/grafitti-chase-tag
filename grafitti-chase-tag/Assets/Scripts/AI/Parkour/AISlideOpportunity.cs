@@ -86,12 +86,6 @@ public class AISlideOpportunity
                 QueryTriggerInteraction.Ignore
             );
 
-        Debug.Log(
-            $"SLIDE RAYS | " +
-            $"LowBlocked={lowBlocked} | " +
-            $"HighBlocked={highBlocked}"
-        );
-
         // Slide opportunity:
         //
         // Low space is clear

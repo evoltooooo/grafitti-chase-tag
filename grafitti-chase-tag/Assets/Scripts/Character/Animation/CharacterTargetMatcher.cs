@@ -56,19 +56,6 @@ public class CharacterTargetMatcher : MonoBehaviour
 
             CharacterMotor motor =
                 GetComponent<CharacterMotor>();
-
-            Debug.Log(
-                $"CLIMB FRAME TRACE | " +
-                $"Time={actionRuntime.ActionTime:F3} | " +
-                $"Normalized={state.normalizedTime:F3} | " +
-                $"StateHash={state.shortNameHash} | " +
-                $"Transition={animator.IsInTransition(0)} | " +
-                $"Matching={animator.isMatchingTarget} | " +
-                $"RootMotion={animator.applyRootMotion} | " +
-                $"Position={transform.position} | " +
-                $"Velocity={(motor != null ? motor.Velocity.ToString() : "No Motor")} | " +
-                $"Grounded={(motor != null && motor.IsGrounded)}"
-            );
         }
 
         // -------------------------------------------------
@@ -92,16 +79,6 @@ public class CharacterTargetMatcher : MonoBehaviour
                 actionRuntime.CurrentActionType;
 
             currentPhaseIndex = -1;
-
-            if (logMatching)
-            {
-                Debug.Log(
-                    $"TARGET MATCH ACTION DETECTED | " +
-                    $"Action={actionRuntime.CurrentActionType} | " +
-                    $"Motion={actionRuntime.CurrentMotionType} | " +
-                    $"Parkour={actionRuntime.CurrentParkourActionType}"
-                );
-            }
         }
 
         // -------------------------------------------------
@@ -140,11 +117,6 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (parkourActionData == null)
         {
-            Debug.LogWarning(
-                "TARGET MATCH FAILED | " +
-                "Runtime has no ParkourActionData."
-            );
-
             return;
         }
 
@@ -158,11 +130,6 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (!target.IsValid)
         {
-            Debug.LogWarning(
-                "TARGET MATCH FAILED | " +
-                "ParkourTarget is invalid."
-            );
-
             return;
         }
 
@@ -172,12 +139,6 @@ public class CharacterTargetMatcher : MonoBehaviour
         if (phases == null ||
             phases.Length == 0)
         {
-            Debug.LogWarning(
-                $"TARGET MATCH FAILED | " +
-                $"No Target Match Phases configured for " +
-                $"{parkourActionData.actionType}."
-            );
-
             return;
         }
 
@@ -211,13 +172,6 @@ public class CharacterTargetMatcher : MonoBehaviour
 
             AnimatorStateInfo nextState =
                 animator.GetNextAnimatorStateInfo(0);
-
-            Debug.Log(
-                $"CLIMB TRANSITION DIAGNOSTIC | " +
-                $"CurrentHash={stateInfo.fullPathHash} | " +
-                $"InTransition={inTransition} | " +
-                $"NextHash={(inTransition ? nextState.fullPathHash : 0)}"
-            );
         }
 
         // Keep your existing CLIMB ACTIVE CLIP diagnostic below.
@@ -237,42 +191,8 @@ public class CharacterTargetMatcher : MonoBehaviour
                     clip.clip.name + " (" +
                     clip.weight.ToString("F2") + ") ";
             }
-
-            Debug.Log(
-                $"CLIMB ACTIVE CLIP | " +
-                $"ActionTime={actionRuntime.ActionTime:F3} | " +
-                $"Clips=[{clipNames}] | " +
-                $"ConfiguredAnimation=" +
-                $"{actionRuntime.CurrentParkourActionData.animationStateName}"
-            );
         }
         
-        if (actionRuntime.CurrentParkourActionType == ParkourActionType.Climb)
-        {
-            Debug.Log(
-                $"CLIMB STATE DIAGNOSTIC | " +
-                $"Layer={animator.GetLayerName(0)} | " +
-                $"FullPathHash={stateInfo.fullPathHash} | " +
-                $"ShortNameHash={stateInfo.shortNameHash} | " +
-                $"ConfiguredPhase=[{phases[0].animationStateName}] | " +
-                $"IsConfiguredState={stateInfo.IsName(phases[0].animationStateName)} | " +
-                $"IsTransition={animator.IsInTransition(0)}"
-            );
-        }
-
-        if (actionRuntime.CurrentParkourActionType ==
-                ParkourActionType.Climb)
-        {
-            Debug.Log(
-                $"CLIMB MATCH CHECK | " +
-                $"ActionTime={actionRuntime.ActionTime:F3} | " +
-                $"StateName={stateInfo.fullPathHash} | " +
-                $"Normalized={stateInfo.normalizedTime:F3} | " +
-                $"PhaseFound={FindMatchingPhase(phases, stateInfo)} | " +
-                $"Matching={animator.isMatchingTarget}"
-            );
-        }
-
         int phaseIndex =
             FindMatchingPhase(phases, stateInfo);
 
@@ -294,15 +214,6 @@ public class CharacterTargetMatcher : MonoBehaviour
 
             // Allow this phase to queue its match once.
             lastQueuedLoop = -1;
-
-            if (logMatching)
-            {
-                Debug.Log(
-                    $"TARGET MATCH PHASE ENTERED | " +
-                    $"Index={phaseIndex} | " +
-                    $"State={phase.animationStateName}"
-                );
-            }
         }
 
         // -------------------------------------------------
@@ -401,15 +312,6 @@ public class CharacterTargetMatcher : MonoBehaviour
         {
             lastQueuedLoop = phaseIndex;
         }
-
-        Debug.Log(
-            $"TARGET MATCH STARTED | " +
-            $"Phase={phaseIndex} | " +
-            $"State={phase.animationStateName} | " +
-            $"Normalized={normalizedTime:0.000} | " +
-            $"Window={matchStart:0.000}->{matchEnd:0.000} | " +
-            $"Target={targetPosition}"
-        );
     }
 
     private void ApplyTargetMatch(
@@ -425,15 +327,6 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (!animator.applyRootMotion)
         {
-            if (logMatching)
-            {
-                Debug.LogWarning(
-                    "TARGET MATCH FAILED | " +
-                    "Animator.applyRootMotion is disabled.",
-                    this
-                );
-            }
-
             return;
         }
 

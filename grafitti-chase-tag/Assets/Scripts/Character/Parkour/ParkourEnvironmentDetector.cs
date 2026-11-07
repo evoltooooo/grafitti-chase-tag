@@ -143,21 +143,6 @@ public class ParkourEnvironmentDetector : MonoBehaviour
             QueryTriggerInteraction.Ignore
         );
 
-        Debug.Log(
-            $"CLIMB WALL CAST | " +
-            $"Origin={origin} | " +
-            $"Direction={forward} | " +
-            $"Distance={detectionDistance:F2} | " +
-            $"Radius={wallDetectionRadius:F2} | " +
-            $"Mask={parkourLayers.value} | " +
-            $"Hit={hitWall}" +
-            (hitWall
-                ? $" | Collider={wallHit.collider.name}" +
-                $" | Layer={wallHit.collider.gameObject.layer}" +
-                $" | Distance={wallHit.distance:F2}"
-                : "")
-        );
-
         return hitWall;
     }
 

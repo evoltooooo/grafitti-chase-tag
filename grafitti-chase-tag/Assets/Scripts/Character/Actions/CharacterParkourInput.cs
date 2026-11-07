@@ -35,36 +35,18 @@ public class CharacterParkourInput : MonoBehaviour
             inputSettings.interactionInput.action.Enable();
             inputSettings.interactionInput.action.started += OnInteraction;
             inputSettings.interactionInput.action.canceled += OnInteraction;
-
-            Debug.Log(
-                $"Interaction action enabled: " +
-                $"{inputSettings.interactionInput.action.enabled}",
-                this
-            );
         }
 
         if (inputSettings.jumpInput != null)
         {
             inputSettings.jumpInput.action.Enable();
             inputSettings.jumpInput.action.performed += OnJump;
-
-            Debug.Log(
-                $"Jump action enabled: " +
-                $"{inputSettings.jumpInput.action.enabled}",
-                this
-            );
         }
 
         if (inputSettings.tagInput != null)
         {
             inputSettings.tagInput.action.Enable();
             inputSettings.tagInput.action.performed += OnTag;
-
-            Debug.Log(
-                $"Tag action enabled: " +
-                $"{inputSettings.tagInput.action.enabled}",
-                this
-            );
         }
     }
 
@@ -99,9 +81,6 @@ public class CharacterParkourInput : MonoBehaviour
     {
         if (context.started)
         {
-
-            Debug.Log(">>> INTERACTION STARTED <<<");
-
             if (actionController != null)
             {
                 actionController.SetInteractionHeld(true);
@@ -110,8 +89,6 @@ public class CharacterParkourInput : MonoBehaviour
         }
         else if (context.canceled)
         {
-            Debug.Log(">>> INTERACTION RELEASED <<<");
-
             if (actionController != null)
             {
                 actionController.SetInteractionHeld(false);
@@ -121,8 +98,6 @@ public class CharacterParkourInput : MonoBehaviour
 
     private void OnJump(InputAction.CallbackContext context)
     {
-        Debug.Log(">>> JUMP INPUT RECEIVED <<<");
-
         if (actionController != null)
         {
             actionController.RequestJumpInput();
@@ -131,8 +106,6 @@ public class CharacterParkourInput : MonoBehaviour
 
     private void OnTag(InputAction.CallbackContext context)
     {
-        Debug.Log(">>> TAG INPUT RECEIVED <<<", this);
-
         if (actionController != null)
         {
             actionController.RequestTagInput();

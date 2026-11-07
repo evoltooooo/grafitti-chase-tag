@@ -132,21 +132,10 @@ public class AIEvaderDropPlanner
                     approachPoint = approachHit.position;
                     landingPoint = hit.point;
 
-                    Debug.Log(
-                        $"EVADER DROP CANDIDATE FOUND | " +
-                        $"Approach={approachPoint} | " +
-                        $"Landing={landingPoint} | " +
-                        $"DropHeight={dropHeight:F2} | " +
-                        $"Direction={direction}");
-
                     return true;
                 }
             }
         }
-
-        Debug.Log(
-            $"EVADER DROP CANDIDATE NOT FOUND | " +
-            $"Position={currentPosition}");
 
         return false;
     }

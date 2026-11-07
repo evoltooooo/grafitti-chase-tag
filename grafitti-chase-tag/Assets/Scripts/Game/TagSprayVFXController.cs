@@ -96,7 +96,6 @@ public class TagSprayVFXController : MonoBehaviour
             sprayDroplets == null ||
             sprayFlecks == null)
         {
-            Debug.LogError("TAG VFX | One or more particle references are missing.", this);
             enabled = false;
             return;
         }
@@ -111,14 +110,6 @@ public class TagSprayVFXController : MonoBehaviour
         if (name == "AI" && !hasLoggedAIDiagnostic)
         {
             hasLoggedAIDiagnostic = true;
-
-            Debug.LogError(
-                $"AI VFX LATEUPDATE RUNNING | " +
-                $"Active={gameObject.activeInHierarchy} | " +
-                $"Enabled={enabled} | " +
-                $"Runtime={(actionRuntime != null ? actionRuntime.name : "NULL")}",
-                this
-            );
         }
 
         bool isSpraying =
@@ -182,11 +173,6 @@ public class TagSprayVFXController : MonoBehaviour
 
     private void StartSpray()
     {
-        Debug.Log(
-            $"TAG VFX PLAYING | Character={name} | " +
-            $"VisualRoot={visualRoot.name}",
-            this
-        );
         visualRoot.gameObject.SetActive(true);
 
         UpdateVisualPosition();
@@ -454,11 +440,6 @@ public class TagSprayVFXController : MonoBehaviour
 
         if (actionRuntime.CurrentActionType != CharacterActionType.Tag)
             return;
-
-        Debug.Log(
-            $"TAG VFX EVENT RECEIVED | Character={name}",
-            this
-        );
 
         wasSpraying = true;
 

@@ -42,15 +42,6 @@ public class ClimbDetector : MonoBehaviour
                 climbableLayers,
                 out RaycastHit wallHit))
         {
-            Debug.Log(
-                $"CLIMB WALL NOT DETECTED | " +
-                $"Position={transform.position} | " +
-                $"Forward={environmentDetector.GetHorizontalForward()} | " +
-                $"MaxDistance={actionData.maxTriggerDistance} | " +
-                $"CastBack={actionData.detectionCastBackOffset} | " +
-                $"ClimbableMask={climbableLayers.value}"
-            );
-
             return false;
         }
 
@@ -60,12 +51,6 @@ public class ClimbDetector : MonoBehaviour
 
         if (wallUpDot > 0.5f)
         {
-            Debug.Log(
-                $"CLIMB REJECTED | Invalid wall normal | " +
-                $"Normal={wallHit.normal} | " +
-                $"WallUpDot={wallUpDot:F2}"
-            );
-
             return false;
         }
 
@@ -83,7 +68,6 @@ public class ClimbDetector : MonoBehaviour
                 climbableLayers,
                 out RaycastHit topHit))
         {
-            Debug.Log("CLIMB DETECTION FAILED | Top surface not found");
             return false;
         }
 
@@ -99,12 +83,6 @@ public class ClimbDetector : MonoBehaviour
             obstacleHeight,
             actionData))
         {
-            Debug.Log(
-                $"CLIMB DETECTION FAILED | " +
-                $"Height={obstacleHeight:F2} | " +
-                $"Min={actionData.minObstacleHeight:F2} | " +
-                $"Max={actionData.maxObstacleHeight:F2}"
-            );
             return false;
         }
 
@@ -145,14 +123,6 @@ public class ClimbDetector : MonoBehaviour
 
         if (!foundLanding)
         {
-            Debug.Log(
-                $"CLIMB REJECTED | No landing surface found | " +
-                $"Top={topHit.point} | " +
-                $"Forward={forward} | " +
-                $"SearchDistance={maxLandingSearchDistance:F2} | " +
-                $"ClimbableMask={climbableLayers.value}"
-            );
-
             return false;
         }
 
@@ -168,24 +138,8 @@ public class ClimbDetector : MonoBehaviour
 
         if (!HasLandingSupport(landingPosition))
         {
-            Debug.Log(
-                $"CLIMB REJECTED | Landing support invalid | " +
-                $"Landing={landingPosition} | " +
-                $"ColliderRadius=" +
-                $"{(characterMotor != null ? characterMotor.ColliderRadius : -1f):F2}"
-            );
-
             return false;
         }
-
-        Debug.Log(
-            $"CLIMB TARGET DEBUG | " +
-            $"Start={transform.position} | " +
-            $"Top={topHit.point} | " +
-            $"Landing={landingPosition} | " +
-            $"Forward={forward} | " +
-            $"LandingOffset={actionData.landingForwardOffset}"
-        );
 
         Quaternion targetRotation =
             Quaternion.LookRotation(
@@ -197,13 +151,6 @@ public class ClimbDetector : MonoBehaviour
             out UnityEngine.AI.NavMeshHit navHit,
             0.1f,
             UnityEngine.AI.NavMesh.AllAreas);
-
-        Debug.Log(
-            $"CLIMB LANDING NAVMESH DEBUG | " +
-            $"Landing={landingPosition} | " +
-            $"Found={landingOnNavMesh} | " +
-            $"Sampled={(landingOnNavMesh ? navHit.position.ToString() : "NONE")} | " +
-            $"Distance={(landingOnNavMesh ? Vector3.Distance(landingPosition, navHit.position) : -1f):F2}");
 
         target = new ParkourTarget(
             ParkourActionType.Climb,
@@ -224,11 +171,6 @@ public class ClimbDetector : MonoBehaviour
     {
         if (characterMotor == null)
         {
-            Debug.LogWarning(
-                "CLIMB LANDING CHECK FAILED | CharacterMotor missing",
-                this
-            );
-
             return false;
         }
 
@@ -266,24 +208,11 @@ public class ClimbDetector : MonoBehaviour
                 climbableLayers,
                 QueryTriggerInteraction.Ignore))
             {
-                Debug.Log(
-                    $"CLIMB LANDING REJECTED | " +
-                    $"Unsupported sample={i} | " +
-                    $"Point={rayOrigin}",
-                    this
-                );
-
                 return false;
             }
 
             if (hit.normal.y < 0.7f)
             {
-                Debug.Log(
-                    $"CLIMB LANDING REJECTED | " +
-                    $"Steep surface | Normal={hit.normal}",
-                    this
-                );
-
                 return false;
             }
 

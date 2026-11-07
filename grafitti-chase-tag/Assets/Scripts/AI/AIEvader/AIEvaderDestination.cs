@@ -29,22 +29,8 @@ public class AIEvaderDestination
         if (startOnNavMesh)
         {
             Vector3 difference = startHit.position - context.Position;
-
-            Debug.Log(
-                $"EVADER NAVMESH START OFFSET | " +
-                $"Actual={context.Position} | " +
-                $"Sampled={startHit.position} | " +
-                $"HorizontalOffset={new Vector2(difference.x, difference.z).magnitude:F2} | " +
-                $"VerticalOffset={difference.y:F2}");
         }
 
-        Debug.Log(
-            $"EVADER DESTINATION START | " +
-            $"Position={context.Position} | " +
-            $"StartOnNavMesh={startOnNavMesh} | " +
-            $"SampledPosition={(startOnNavMesh ? startHit.position.ToString() : "NONE")} | " +
-            $"SampleDistance={(startOnNavMesh ? Vector3.Distance(context.Position, startHit.position) : -1f):F2}");
-        
         LogVerticalNavMeshSamples(context.Position);
 
         Vector3 awayDirection =
@@ -91,10 +77,6 @@ public class AIEvaderDestination
 
             if (candidateDistance < 1.25f)
             {
-                Debug.Log(
-                    $"EVADER CANDIDATE REJECTED | Reason=TooClose | " +
-                    $"Candidate={candidate} | Distance={candidateDistance:F2}");
-
                 continue;
             }
 
@@ -109,16 +91,6 @@ public class AIEvaderDestination
             float horizontalDistance = Vector2.Distance(
                 new Vector2(candidate.x, candidate.z),
                 new Vector2(context.Position.x, context.Position.z));
-
-            Debug.Log(
-                $"EVADER CANDIDATE SAMPLE FAILED | " +
-                $"Angle={angle} | " +
-                $"Candidate={candidate} | " +
-                $"Start={context.Position} | " +
-                $"SampleRadius={SampleRadius} | " +
-                $"EscapeDistance={EscapeDistance} | " +
-                $"HorizontalDistance={horizontalDistance:F2}");
-
 
                 // ADD THIS LINE HERE
                 LogVerticalNavMeshSamples(candidate);
@@ -135,12 +107,6 @@ public class AIEvaderDestination
 
             if (sampledDestinationDistance < 1.25f)
             {
-                Debug.Log(
-                    $"EVADER CANDIDATE REJECTED | " +
-                    $"Reason=SampledDestinationTooClose | " +
-                    $"Distance={sampledDestinationDistance:F2} | " +
-                    $"SampledDestination={hit.position}");
-
                 continue;
             }
 
@@ -153,13 +119,6 @@ public class AIEvaderDestination
                     ? "Higher"
                     : "SameFloor";
 
-            Debug.Log(
-                $"EVADER CANDIDATE FLOOR CHECK | " +
-                $"CurrentPosition={context.Position} | " +
-                $"Candidate={hit.position} | " +
-                $"VerticalDifference={verticalDifference:F2} | " +
-                $"FloorType={floorType}");
-
             Vector3 sameHeightCandidate = new Vector3(
                 candidate.x,
                 context.Position.y,
@@ -171,42 +130,15 @@ public class AIEvaderDestination
                 0.5f,
                 NavMesh.AllAreas);
 
-            Debug.Log(
-                $"EVADER SAME-HEIGHT SAMPLE | " +
-                $"Candidate={sameHeightCandidate} | " +
-                $"Found={sameHeightFound} | " +
-                $"Hit={(sameHeightFound ? sameHeightHit.position.ToString() : "NONE")} | " +
-                $"VerticalDifference={(sameHeightFound ? Mathf.Abs(sameHeightHit.position.y - context.Position.y) : -1f):F2}");
-
-            Debug.Log(
-                $"EVADER PATH START CHECK | " +
-                $"Start={context.Position} | " +
-                $"StartOnNavMesh={NavMesh.SamplePosition(context.Position, out NavMeshHit candidateStartHit, 0.5f, NavMesh.AllAreas)} | " +
-                $"SampledStart={candidateStartHit.position} | " +
-                $"Destination={hit.position}"
-            );
-
             bool pathCalculated = NavMesh.CalculatePath(
                 startHit.position,
                 hit.position,
                 NavMesh.AllAreas,
                 candidatePath);
-            
-            Debug.Log(
-                $"EVADER PATH COMPARISON | " +
-                $"RawStart={context.Position} | " +
-                $"RawDestination={hit.position} | " +
-                $"RawStatus={candidatePath.status} | " +
-                $"RawCorners={candidatePath.corners.Length}"
-            );
 
             if (!pathCalculated)
             {
                 pathCalculationFailures++;
-
-                Debug.Log(
-                    $"EVADER CANDIDATE PATH CALCULATION FAILED | " +
-                    $"Angle={angle} | Destination={hit.position}");
 
                 continue;
             }
@@ -235,12 +167,6 @@ public class AIEvaderDestination
                 // Evader closer to the threat.
                 if (reachableDistanceFromThreat <= currentDistanceFromThreat + 0.25f)
                 {
-                    Debug.Log(
-                        $"EVADER PARTIAL CANDIDATE REJECTED | " +
-                        $"Endpoint={reachableDestination} | " +
-                        $"CurrentThreatDistance={currentDistanceFromThreat:F2} | " +
-                        $"EndpointThreatDistance={reachableDistanceFromThreat:F2}");
-
                     continue;
                 }
 
@@ -268,12 +194,6 @@ public class AIEvaderDestination
                     partialDistanceFromThreat -
                     partialPathLength * PathLengthPenalty +
                     partialAlignment * 1.5f;
-
-                Debug.Log(
-                    $"EVADER PARTIAL CANDIDATE | " +
-                    $"Angle={angle} | " +
-                    $"ReachableDestination={reachableDestination} | " +
-                    $"Score={partialScore:F2}");
 
                 if (partialScore > bestScore)
                 {
@@ -320,12 +240,6 @@ public class AIEvaderDestination
 
             if (validDestinationDistance < 1.25f)
             {
-                Debug.Log(
-                    $"EVADER CANDIDATE REJECTED | " +
-                    $"Reason=CompletePathDestinationTooClose | " +
-                    $"Distance={validDestinationDistance:F2} | " +
-                    $"Destination={hit.position}");
-
                 continue;
             }
 
@@ -334,13 +248,6 @@ public class AIEvaderDestination
                 pathLength * PathLengthPenalty +
                 directionalAlignment * 1.5f;
 
-            Debug.Log(
-                $"EVADER CANDIDATE VALID | " +
-                $"Angle={angle} | " +
-                $"Destination={hit.position} | " +
-                $"PathLength={pathLength:F2} | " +
-                $"Score={score:F2}");
-
             if (score > bestScore)
             {
                 bestScore = score;
@@ -348,22 +255,6 @@ public class AIEvaderDestination
                 foundCandidate = true;
             }
         }
-
-        Debug.Log(
-            $"EVADER CANDIDATE SUMMARY | " +
-            $"SampleFailures={sampleFailures} | " +
-            $"PathCalculationFailures={pathCalculationFailures} | " +
-            $"IncompletePaths={incompletePaths} | " +
-            $"CompletePaths={completePaths} | " +
-            $"FoundCandidate={foundCandidate}");
-
-        Debug.Log(
-            $"EVADER DESTINATION SELECTED | " +
-            $"Threat={threatPosition} | " +
-            $"Position={context.Position} | " +
-            $"BestDestination={bestDestination} | " +
-            $"BestScore={bestScore:F2} | " +
-            $"FoundCandidate={foundCandidate}");
 
         if (foundCandidate)
         {
@@ -378,12 +269,6 @@ public class AIEvaderDestination
 
             if (selectedDistance < 1.25f)
             {
-                Debug.LogWarning(
-                    $"EVADER DESTINATION REJECTED | " +
-                    $"Reason=SelectedDestinationTooClose | " +
-                    $"Distance={selectedDistance:F2} | " +
-                    $"Destination={bestDestination}");
-
                 foundCandidate = false;
                 bestDestination = context.Position;
             }
@@ -421,13 +306,6 @@ public class AIEvaderDestination
                 out NavMeshHit hit,
                 2f,
                 NavMesh.AllAreas);
-
-            Debug.Log(
-                $"EVADER VERTICAL NAVMESH SAMPLE | " +
-                $"Candidate={candidate} | " +
-                $"Offset={offset:F1} | " +
-                $"Found={found} | " +
-                $"HitPosition={(found ? hit.position.ToString() : "NONE")}");
         }
     }
 }

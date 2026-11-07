@@ -127,13 +127,6 @@ public class AIChaserController
     {
         AIChaserState desiredState =
             chaserDecision.Decide(context);
-        
-        Debug.Log(
-            $"AI CHASER DEBUG | " +
-            $"Current={chaser.CurrentState} | " +
-            $"Desired={desiredState} | " +
-            $"Visible={context.OpponentVisible}"
-        );
 
         AIChaserState currentState =
             chaser.CurrentState;
@@ -148,11 +141,6 @@ public class AIChaserController
 
         if (forceSearch)
         {
-            Debug.Log(
-                $"AI CHASER STATE CHANGE | " +
-                $"{currentState} -> Search"
-            );
-
             chaserCommitment.ForceState(
                 AIChaserState.Search
             );
@@ -177,11 +165,6 @@ public class AIChaserController
 
             if (changed)
             {
-                Debug.Log(
-                    $"AI CHASER STATE CHANGE | " +
-                    $"{currentState} -> {desiredState}"
-                );
-
                 chaser.SetState(
                     desiredState
                 );
@@ -261,22 +244,7 @@ public class AIChaserController
         // Throttle attempts so the AI does not request Tag every frame.
         tagAttemptTimer = TagAttemptInterval;
 
-        Debug.Log(
-            $"AI TAG CHECK | " +
-            $"Distance={distance:F2} | " +
-            $"MaxDistance={maximumTagDistance:F2} | " +
-            $"Visible={context.OpponentVisible} | " +
-            $"Grounded={context.IsGrounded}"
-        );
-
         bool tagPerformed =
             actionController.RequestTag();
-
-        Debug.Log(
-            $"AI TAG ATTEMPT | " +
-            $"Performed={tagPerformed} | " +
-            $"Distance={distance:F2} | " +
-            $"MaxDistance={maximumTagDistance:F2}"
-        );
     }
 }

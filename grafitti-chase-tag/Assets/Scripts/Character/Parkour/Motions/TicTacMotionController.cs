@@ -143,16 +143,6 @@ public class TicTacMotionController : MonoBehaviour
                 .verticalLaunchSpeed;
 
         actionInitialized = true;
-
-        Debug.Log(
-            $"TIC TAC MOTION STARTED | " +
-            $"Incoming={incomingDirection} | " +
-            $"WallNormal={wallNormal} | " +
-            $"Bounce={ticTacDirection} | " +
-            $"Speed={ticTacHorizontalSpeed:F2} | " +
-            $"Vertical={ticTacVerticalVelocity:F2}",
-            this
-        );
     }
 
     private void UpdateTicTac()

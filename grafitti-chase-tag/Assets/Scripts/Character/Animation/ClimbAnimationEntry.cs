@@ -108,16 +108,6 @@ public class ClimbAnimationEntry : MonoBehaviour
                 transitionDuration,
                 0,
                 0f);
-
-            if (logTransitions)
-            {
-                Debug.Log(
-                    $"CLIMB ANIMATION ENTRY REQUESTED | " +
-                    $"State={fullStatePath} | " +
-                    $"RuntimeAction={actionRuntime.CurrentActionType} | " +
-                    $"ActionTime={actionRuntime.ActionTime:F3}",
-                    this);
-            }
         }
 
         climbEntryRequested = true;

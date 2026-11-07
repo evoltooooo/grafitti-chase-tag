@@ -98,16 +98,6 @@ public class AIPerception : MonoBehaviour
                 characterMotor.transform.position,
                 opponentTransform.position
             );
-
-            Debug.Log(
-                $"AI PERCEPTION VISIBILITY CHANGE | " +
-                $"Visible={hasLineOfSight} | " +
-                $"InRange={inRange} | " +
-                $"Distance={distance:F2} | " +
-                $"Blocker={(blockingCollider != null ? blockingCollider.name : "None")} | " +
-                $"AI={characterMotor.transform.position} | " +
-                $"Player={opponentTransform.position}"
-            );
         }
 
         OpponentVisible = hasLineOfSight;

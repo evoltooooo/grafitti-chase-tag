@@ -156,15 +156,6 @@ public class AIController : MonoBehaviour
         UpdateAI();
 
         actionController.TickMovement();
-
-        Debug.Log(
-            $"AI MOVEMENT DEBUG | " +
-            $"Role={context.Role} | " +
-            $"Visible={context.OpponentVisible} | " +
-            $"AI Pos={context.Position} | " +
-            $"Player Pos={context.OpponentPosition} | " +
-            $"AI Speed={context.HorizontalSpeed:0.00}"
-        );
     }
 
 

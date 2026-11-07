@@ -91,13 +91,6 @@ public class AIChaser
         // Allow the new state to build a path immediately.
         pathRetryTimer = 0f;
 
-        Debug.Log(
-            $"AI STATE TRANSITION PATH RESET | " +
-            $"PreviousState={state} | " +
-            $"NewState={newState} | " +
-            $"HasPath={navigation.HasPath}"
-        );
-
         // Remove the previous state's NavMesh path.
         navigation.ClearPath();
     }
@@ -132,15 +125,6 @@ public class AIChaser
                 AIChaserState.Pursue,
                 lowObstacleAhead
             );
-        
-        Debug.Log(
-            $"AI SPRINT INTENT DEBUG | " +
-            $"State=Pursue | " +
-            $"LowObstacleAhead={lowObstacleAhead} | " +
-            $"ShouldSprint={sprint} | " +
-            $"Grounded={context.IsGrounded} | " +
-            $"CurrentSprinting={context.IsSprinting}"
-        );
 
         MoveTowardDestination(
             context,
@@ -218,22 +202,6 @@ public class AIChaser
                 dropDirection.Normalize();
             }
 
-            Debug.Log(
-                $"AI DESCENT TRACE | " +
-                $"Position={context.Position} | " +
-                $"Destination={destination} | " +
-                $"Direction={dropDirection} | " +
-                $"Grounded={context.IsGrounded} | " +
-                $"HasLeftSurface={hasLeftPartialPathSurface}"
-            );
-
-            Debug.Log(
-                $"AI DESCENT INTENT | " +
-                $"Position={context.Position} | " +
-                $"Grounded={context.IsGrounded} | " +
-                $"HasLeftSurface={hasLeftPartialPathSurface} | " +
-                $"DropDirection={dropDirection}"
-            );
             actionController.SetMovementIntent(
                 new CharacterMovementIntent(
                     dropDirection,
@@ -273,14 +241,6 @@ public class AIChaser
                     context.Position,
                     destination
                 );
-            
-            Debug.Log(
-                $"AI PATH DEBUG | " +
-                $"State={state} | " +
-                $"Start={context.Position} | " +
-                $"Destination={destination} | " +
-                $"PathBuilt={pathBuilt}"
-            );
 
             if (pathBuilt)
             {
@@ -304,26 +264,8 @@ public class AIChaser
             }
         }
 
-        Debug.Log(
-            $"AI NAV AFTER VAULT CHECK | " +
-            $"HasPath={navigation.HasPath} | " +
-            $"Position={context.Position} | " +
-            $"PartialEnd={navigation.ReachedPartialPathEnd}"
-        );
-
         bool waypointUpdated =
             navigation.UpdateWaypoint(context.Position);
-        
-        if (state == AIChaserState.Search)
-        {
-            Debug.Log(
-                $"AI SEARCH ROUTE DEBUG | " +
-                $"Position={context.Position} | " +
-                $"Waypoint={navigation.CurrentWaypoint} | " +
-                $"Destination={destination} | " +
-                $"HasPath={navigation.HasPath}"
-            );
-        }
         
         if (state == AIChaserState.Search)
         {
@@ -332,15 +274,6 @@ public class AIChaser
                 new Color(0.54f, 0.17f, 0.89f, 1f)
             );
         }
-
-        Debug.Log(
-            $"AI NAV WAYPOINT RESULT | " +
-            $"Updated={waypointUpdated} | " +
-            $"HasPath={navigation.HasPath} | " +
-            $"Waypoint={navigation.CurrentWaypoint} | " +
-            $"Position={context.Position}"
-        );
-
 
         if (!waypointUpdated)
         {
@@ -364,18 +297,6 @@ public class AIChaser
                     destination - context.Position;
 
                 toTarget.y = 0f;
-
-                Debug.Log(
-                    $"AI NAV PARTIAL END | " +
-                    $"TargetBelow={targetIsBelow} | " +
-                    $"TargetAbove={targetIsAbove} | " +
-                    $"VerticalDifference={verticalDifference:F2}"
-                );
-
-                Debug.Log(
-                    $"AI NAV PARTIAL DIRECTION | " +
-                    $"Direction={toTarget.normalized}"
-                );
 
                 if (targetIsBelow)
                 {
@@ -408,25 +329,11 @@ public class AIChaser
                 
                 if (!targetIsAbove && !targetIsBelow)
                 {
-                    Debug.Log(
-                        $"AI NAV PARTIAL END | " +
-                        $"Target at similar height. " +
-                        $"VerticalDifference={verticalDifference:F2} | " +
-                        $"Attempting path rebuild."
-                    );
-
                     // Rebuild from the AI's current position.
                     // The destination may now be reachable from a different route.
                     bool recoveryPathBuilt = navigation.TryBuildPath(
                         context.Position,
                         destination
-                    );
-
-                    Debug.Log(
-                        $"AI PARTIAL PATH RECOVERY | " +
-                        $"PathBuilt={recoveryPathBuilt} | " +
-                        $"HasPath={navigation.HasPath} | " +
-                        $"Partial={navigation.IsPartialPath}"
                     );
 
                     if (recoveryPathBuilt)
@@ -473,28 +380,7 @@ public class AIChaser
             }
         }
 
-        Debug.Log(
-            $"AI PURSUIT INTENT | " +
-            $"Sprint={intent.Sprint} | " +
-            $"Waypoint={navigation.CurrentWaypoint} | " +
-            $"Direction={intent.WorldDirection} | " +
-            $"Input={intent.MovementInput} | " +
-            $"Executing={context.IsExecutingAction}"
-        );
-
         actionController.SetMovementIntent(intent);
-
-        if (state == AIChaserState.Search)
-        {
-            Debug.Log(
-                $"AI SEARCH MOVEMENT CHECK | " +
-                $"Position={context.Position} | " +
-                $"Waypoint={navigation.CurrentWaypoint} | " +
-                $"IntentDirection={intent.WorldDirection} | " +
-                $"Velocity={context.HorizontalVelocity} | " +
-                $"Speed={context.HorizontalSpeed:F2}"
-            );
-        }
     }
 
     private void Stop(
