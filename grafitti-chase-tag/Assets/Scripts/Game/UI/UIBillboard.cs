@@ -10,8 +10,7 @@ public class UIBillboard : MonoBehaviour
 
     private void Awake()
     {
-        if (target == null)
-            mainCamera = Camera.main;
+        mainCamera = Camera.main;
     }
 
     private void LateUpdate()
@@ -29,6 +28,7 @@ public class UIBillboard : MonoBehaviour
             lookTarget = mainCamera.transform;
         }
 
+        // Point the billboard toward the camera.
         Vector3 direction =
             transform.position - lookTarget.position;
 

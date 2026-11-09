@@ -20,6 +20,7 @@ public class GameplayCharacterSpawner : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private StaminaBarUI playerStaminaDisplay;
     [SerializeField] private CharacterBuffNerfDisplay playerBuffNerfDisplay;
+    [SerializeField] private AIOffscreenIndicator aiOffscreenIndicator;
     [SerializeField] private RoundUIManager roundUIManager;
 
     private GameObject spawnedPlayer;
@@ -97,6 +98,16 @@ public class GameplayCharacterSpawner : MonoBehaviour
 
         CharacterBuffNerf playerBuffNerf =
             spawnedPlayer.GetComponent<CharacterBuffNerf>();
+        
+        // Retrieve AI status display components.
+        UIBillboard aiBillboard =
+            spawnedAI.GetComponentInChildren<UIBillboard>(true);
+        
+        StaminaBarUI aiStaminaDisplay =
+            spawnedAI.GetComponentInChildren<StaminaBarUI>(true);
+
+        CharacterBuffNerfDisplay aiBuffNerfDisplay =
+            spawnedAI.GetComponentInChildren<CharacterBuffNerfDisplay>(true);
 
         if (playerRole == null ||
             aiRole == null ||
@@ -130,6 +141,58 @@ public class GameplayCharacterSpawner : MonoBehaviour
             spawnedPlayer.transform,
             playerMotor
         );
+    
+        // Assign AI billboard target.
+        if (aiBillboard != null)
+        {
+            Camera mainCamera = Camera.main;
+
+            if (mainCamera != null)
+            {
+                aiBillboard.SetTarget(mainCamera.transform);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "GAMEPLAY SPAWNER | Main Camera not found for AI billboard.",
+                    this
+                );
+            }
+        }
+        else
+        {
+            Debug.LogWarning(
+                "GAMEPLAY SPAWNER | AI billboard component not found.",
+                this
+            );
+        }
+
+        if (aiOffscreenIndicator != null)
+        {
+            Camera mainCamera = Camera.main;
+
+            if (mainCamera != null)
+            {
+                aiOffscreenIndicator.SetReferences(
+                    mainCamera,
+                    spawnedAI.transform
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "GAMEPLAY SPAWNER | Main Camera not found for AI offscreen indicator.",
+                    this
+                );
+            }
+        }
+        else
+        {
+            Debug.LogWarning(
+                "GAMEPLAY SPAWNER | AI Offscreen Indicator component not found.",
+                this
+            );
+        }
 
         // Assign the spawned Player to the gameplay camera.
         if (gameplayCamera != null)
@@ -163,6 +226,24 @@ public class GameplayCharacterSpawner : MonoBehaviour
             playerBuffNerfDisplay.SetCharacterBuffNerf(
                 playerBuffNerf
             );
+        }
+
+        // Retrieve and assign AI stamina.
+        CharacterStamina aiStamina =
+            spawnedAI.GetComponent<CharacterStamina>();
+
+        if (aiStaminaDisplay != null && aiStamina != null)
+        {
+            aiStaminaDisplay.SetCharacterStamina(aiStamina);
+        }
+
+        // Retrieve and assign AI buff/nerf display.
+        CharacterBuffNerf aiBuffNerf =
+            spawnedAI.GetComponent<CharacterBuffNerf>();
+
+        if (aiBuffNerfDisplay != null && aiBuffNerf != null)
+        {
+            aiBuffNerfDisplay.SetCharacterBuffNerf(aiBuffNerf);
         }
 
         bool initialized =

@@ -58,9 +58,9 @@ public class CharacterActionController : MonoBehaviour
     }
 
     public void SetRoundManager(RoundManager manager)
-{
-    roundManager = manager;
-}
+    {
+        roundManager = manager;
+    }
 
     public bool RequestAction(
         CharacterActionRequest request)

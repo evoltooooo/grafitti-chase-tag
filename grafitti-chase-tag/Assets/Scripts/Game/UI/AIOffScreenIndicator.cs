@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class AIOffscreenIndicator : MonoBehaviour
@@ -121,6 +120,16 @@ public class AIOffscreenIndicator : MonoBehaviour
         selectedArrow.rotation = Quaternion.identity;
 
         selectedArrow.gameObject.SetActive(true);
+    }
+
+    public void SetReferences(
+        Camera camera,
+        Transform target)
+    {
+        targetCamera = camera;
+        aiTarget = target;
+
+        HideAllArrows();
     }
 
     private void HideAllArrows()
