@@ -70,6 +70,30 @@ public class CameraOcclusionFade : MonoBehaviour
         UpdatePlayerFade();
     }
 
+    public void SetPlayerReferences(
+        Transform playerTransform,
+        Transform cameraViewTarget,
+        Renderer[] renderers)
+    {
+        // Restore and clean up any previous Player fade states.
+        if (playerStates != null)
+        {
+            foreach (FadeState state in playerStates)
+            {
+                DestroyFadeMaterials(state);
+            }
+        }
+
+        // Assign the newly spawned Player references.
+        player = playerTransform;
+        viewTarget = cameraViewTarget;
+        playerRenderers = renderers;
+
+        // IMPORTANT:
+        // Recreate fade states after assigning the runtime Player.
+        playerStates = CreateStates(playerRenderers);
+    }
+
     private void UpdateObstacleFades()
     {
         hitThisFrame.Clear();

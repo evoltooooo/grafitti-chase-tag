@@ -66,6 +66,14 @@ public class AIPerception : MonoBehaviour
     // PERCEPTION
     // =========================================================
 
+    public void SetOpponent(
+    Transform opponent,
+    CharacterMotor opponentCharacterMotor)
+    {
+        opponentTransform = opponent;
+        opponentMotor = opponentCharacterMotor;
+    }
+    
     private void UpdatePerception()
     {
         if (opponentTransform == null)

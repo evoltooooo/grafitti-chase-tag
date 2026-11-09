@@ -38,4 +38,9 @@ public class UIBillboard : MonoBehaviour
         transform.rotation =
             Quaternion.LookRotation(direction, Vector3.up);
     }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+    }
 }

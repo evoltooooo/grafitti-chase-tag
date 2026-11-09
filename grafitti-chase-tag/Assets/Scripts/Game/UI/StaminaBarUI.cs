@@ -10,14 +10,6 @@ public class StaminaBarUI : MonoBehaviour
 
     private void Awake()
     {
-        if (characterStamina == null)
-        {
-            Debug.LogError(
-                $"STAMINA UI | CharacterStamina is missing on {name}.",
-                this
-            );
-        }
-
         if (fillImage == null)
         {
             Debug.LogError(
@@ -34,5 +26,11 @@ public class StaminaBarUI : MonoBehaviour
 
         fillImage.fillAmount =
             Mathf.Clamp01(characterStamina.NormalizedStamina);
+    }
+
+    public void SetCharacterStamina(
+        CharacterStamina stamina)
+    {
+        characterStamina = stamina;
     }
 }

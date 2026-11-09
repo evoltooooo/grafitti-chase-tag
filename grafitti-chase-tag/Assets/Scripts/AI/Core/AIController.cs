@@ -185,6 +185,21 @@ public class AIController : MonoBehaviour
     // =========================================================
     // AI
     // =========================================================
+    public void SetOpponent(
+    Transform opponent,
+    CharacterMotor opponentCharacterMotor)
+    {
+        opponentTransform = opponent;
+        opponentMotor = opponentCharacterMotor;
+
+        if (perception != null)
+        {
+            perception.SetOpponent(
+                opponent,
+                opponentCharacterMotor
+            );
+        }
+    }
 
     private void UpdateAI()
     {

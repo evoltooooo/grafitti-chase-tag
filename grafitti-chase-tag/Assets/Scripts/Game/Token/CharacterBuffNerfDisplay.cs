@@ -16,14 +16,17 @@ public class CharacterBuffNerfDisplay : MonoBehaviour
 
     private void Awake()
     {
-        if (characterEffects == null)
-            Debug.LogError("CharacterBuffNerfDisplay: CharacterBuffNerf is missing.", this);
-
         if (indicatorContainer == null)
-            Debug.LogError("CharacterBuffNerfDisplay: Indicator Container is missing.", this);
+            Debug.LogError(
+                "CharacterBuffNerfDisplay: Indicator Container is missing.",
+                this
+            );
 
         if (indicatorPrefab == null)
-            Debug.LogError("CharacterBuffNerfDisplay: Indicator Prefab is missing.", this);
+            Debug.LogError(
+                "CharacterBuffNerfDisplay: Indicator Prefab is missing.",
+                this
+            );
     }
 
     private void OnEnable()
@@ -44,6 +47,24 @@ public class CharacterBuffNerfDisplay : MonoBehaviour
     private void Update()
     {
         UpdateIndicatorDurations();
+    }
+
+    public void SetCharacterBuffNerf(
+    CharacterBuffNerf character)
+    {
+        if (characterEffects == character)
+            return;
+
+        if (characterEffects != null)
+            characterEffects.EffectsChanged -= RefreshDisplay;
+
+        characterEffects = character;
+
+        if (isActiveAndEnabled && characterEffects != null)
+        {
+            characterEffects.EffectsChanged += RefreshDisplay;
+            RefreshDisplay();
+        }
     }
 
     private void RefreshDisplay()

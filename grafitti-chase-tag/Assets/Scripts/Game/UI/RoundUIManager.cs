@@ -94,6 +94,35 @@ public class RoundUIManager : MonoBehaviour
             aiRole.RoleChanged -= OnAIRoleChanged;
     }
 
+    public void SetCharacterRoles(
+        CharacterRole newPlayerRole,
+        CharacterRole newAIRole)
+    {
+        // Remove previous subscriptions.
+        if (playerRole != null)
+            playerRole.RoleChanged -= OnPlayerRoleChanged;
+
+        if (aiRole != null)
+            aiRole.RoleChanged -= OnAIRoleChanged;
+
+        // Assign spawned character references.
+        playerRole = newPlayerRole;
+        aiRole = newAIRole;
+
+        // Subscribe to the new characters.
+        if (isActiveAndEnabled)
+        {
+            if (playerRole != null)
+                playerRole.RoleChanged += OnPlayerRoleChanged;
+
+            if (aiRole != null)
+                aiRole.RoleChanged += OnAIRoleChanged;
+        }
+
+        // Immediately update both images.
+        UpdateRoleDisplays();
+    }
+
     private void OnRoundStarted(int roundNumber, float duration)
     {
         UpdateTimer(duration);

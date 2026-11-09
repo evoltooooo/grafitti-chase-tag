@@ -79,6 +79,7 @@ public class RoundManager : MonoBehaviour
     public int PlayerScore { get; private set; }
     public int AIScore { get; private set; }
 
+    private bool isInitialized;
     public event Action<int, float> RoundStarted;
     public event Action<float> TimerUpdated;
     public event Action<int, CharacterRoleType, int, int> RoundEnded;
@@ -89,17 +90,8 @@ public class RoundManager : MonoBehaviour
 
     private void Start()
     {
-        if (!ValidateReferences())
-        {
-            enabled = false;
-            return;
-        }
-
-        playerActionExecutor.TagSucceeded += OnPlayerTagSucceeded;
-        aiActionExecutor.TagSucceeded += OnAITagSucceeded;
-
-        AssignInitialRoles();
-        BeginRound();
+        // Character initialization is handled by
+        // GameplayCharacterSpawner.
     }
 
     private void Update()
@@ -170,6 +162,65 @@ public class RoundManager : MonoBehaviour
 
             return false;
         }
+
+        if (playerActionController == null ||
+            aiActionController == null)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | Player or AI ActionController is missing.",
+                this
+            );
+
+            return false;
+        }
+
+        if (aiController == null)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | AIController is missing.",
+                this
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool InitializeCharacters(
+        CharacterRole playerCharacterRole,
+        CharacterRole aiCharacterRole,
+        CharacterActionExecutor playerExecutor,
+        CharacterActionExecutor aiExecutor,
+        CharacterActionController playerController,
+        CharacterActionController aiCharacterController,
+        AIController aiCharacterControllerReference)
+    {
+        if (isInitialized)
+            return false;
+
+        playerRole = playerCharacterRole;
+        aiRole = aiCharacterRole;
+
+        playerActionExecutor = playerExecutor;
+        aiActionExecutor = aiExecutor;
+
+        playerActionController = playerController;
+        aiActionController = aiCharacterController;
+
+        aiController = aiCharacterControllerReference;
+
+        if (!ValidateReferences())
+            return false;
+
+        playerActionExecutor.TagSucceeded += OnPlayerTagSucceeded;
+        aiActionExecutor.TagSucceeded += OnAITagSucceeded;
+
+        AssignInitialRoles();
+
+        isInitialized = true;
+
+        BeginRound();
 
         return true;
     }
