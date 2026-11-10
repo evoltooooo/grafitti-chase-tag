@@ -12,6 +12,7 @@ public class GameplayCharacterSpawner : MonoBehaviour
 
     [Header("Manager References")]
     [SerializeField] private RoundManager roundManager;
+    [SerializeField] private PauseManager pauseManager;
 
     [Header("Camera References")]
     [SerializeField] private CinemachineCamera gameplayCamera;
@@ -56,6 +57,21 @@ public class GameplayCharacterSpawner : MonoBehaviour
             aiPrefab,
             characterParent
         );
+
+        InputManager playerInputManager =
+            spawnedPlayer.GetComponent<InputManager>();
+
+        if (pauseManager != null && playerInputManager != null)
+        {
+            pauseManager.SetInputManager(playerInputManager);
+        }
+        else
+        {
+            Debug.LogError(
+                "GAMEPLAY SPAWNER | PauseManager or Player InputManager is missing.",
+                this
+            );
+        }
 
         if (cameraOcclusionFade != null)
         {
