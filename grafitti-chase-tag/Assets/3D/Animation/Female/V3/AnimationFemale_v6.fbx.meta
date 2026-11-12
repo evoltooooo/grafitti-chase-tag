@@ -1,0 +1,844 @@
+fileFormatVersion: 2
+guid: c91225610909d2642b171b4970e651ff
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: F_Armature/F_root
+    animationImportErrors: 
+    animationImportWarnings: "\nClip 'F_Armature|RM|Climb' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'F_pelvis' has translation animation that
+      will be discarded.\n\t'F_pelvis' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'F_upperarm_l' has translation animation
+      that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_upperarm_r' has translation
+      animation that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_thigh_l' has translation
+      animation that will be discarded.\n\t'F_calf_l' has scale animation that will
+      be discarded.\n\t'F_foot_l' has scale animation that will be discarded.\n\t'F_thigh_r'
+      has translation animation that will be discarded.\n\nClip 'F_Armature|RM|PoleSpin_End.v3'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
+      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_clavicle_l'
+      has translation animation that will be discarded.\n\t'F_upperarm_l' has translation
+      animation that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_clavicle_r' has translation
+      animation that will be discarded.\n\t'F_upperarm_r' has translation animation
+      that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_thigh_l' has translation
+      animation that will be discarded.\n\t'F_calf_l' has scale animation that will
+      be discarded.\n\t'F_foot_l' has scale animation that will be discarded.\n\t'F_thigh_r'
+      has translation animation that will be discarded.\n\t'F_calf_r' has scale animation
+      that will be discarded.\n\t'F_foot_r' has scale animation that will be discarded.\n\nClip
+      'F_Armature|RM|PoleSpin_Full.v3' has import animation warnings that might lower
+      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
+      quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_clavicle_l'
+      has translation animation that will be discarded.\n\t'F_upperarm_l' has translation
+      animation that will be discarded.\n\t'F_upperarm_l' has scale animation that
+      will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n\t'F_lowerarm_l' has scale animation
+      that will be discarded.\n\t'F_hand_l' has scale animation that will be discarded.\n\t'F_clavicle_r'
+      has translation animation that will be discarded.\n\t'F_upperarm_r' has translation
+      animation that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_thigh_l' has translation
+      animation that will be discarded.\n\t'F_thigh_l' has scale animation that will
+      be discarded.\n\t'F_calf_l' has scale animation that will be discarded.\n\t'F_foot_l'
+      has scale animation that will be discarded.\n\t'F_thigh_r' has translation
+      animation that will be discarded.\n\t'F_thigh_r' has scale animation that will
+      be discarded.\n\t'F_calf_r' has scale animation that will be discarded.\n\t'F_foot_r'
+      has scale animation that will be discarded.\n\nClip 'F_Armature|RM|PoleSpin_Loop.v3'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'F_Armature|RM|PoleSpin_Start.v3' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
+      has scale animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      has scale animation that will be discarded.\n\t'F_hand_l' has scale animation
+      that will be discarded.\n\t'F_clavicle_r' has translation animation that will
+      be discarded.\n\t'F_upperarm_r' has translation animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_l' has scale
+      animation that will be discarded.\n\t'F_foot_l' has scale animation that will
+      be discarded.\n\t'F_thigh_r' has translation animation that will be discarded.\n\t'F_thigh_r'
+      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
+      that will be discarded.\n\nClip 'F_Armature|RM|Slide_End.v2' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'F_pelvis' has translation
+      animation that will be discarded.\n\t'F_pelvis' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_upperarm_l' has scale
+      animation that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_hand_l' has scale
+      animation that will be discarded.\n\t'F_thumb_01_l' has scale animation that
+      will be discarded.\n\t'F_upperarm_r' has translation animation that will be
+      discarded.\n\t'F_upperarm_r' has scale animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_hand_r'
+      has scale animation that will be discarded.\n\t'F_thumb_01_r' has scale animation
+      that will be discarded.\n\t'F_thigh_l' has translation animation that will
+      be discarded.\n\t'F_thigh_l' has scale animation that will be discarded.\n\t'F_foot_l'
+      has scale animation that will be discarded.\n\t'F_thigh_r' has translation
+      animation that will be discarded.\n\t'F_thigh_r' has scale animation that will
+      be discarded.\n\t'F_foot_r' has scale animation that will be discarded.\n\nClip
+      'F_Armature|RM|Slide_Start.v2' has import animation warnings that might lower
+      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
+      quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
+      has scale animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_hand_l'
+      has scale animation that will be discarded.\n\t'F_thumb_01_l' has scale animation
+      that will be discarded.\n\t'F_upperarm_r' has translation animation that will
+      be discarded.\n\t'F_upperarm_r' has scale animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_hand_r'
+      has scale animation that will be discarded.\n\t'F_thumb_01_r' has scale animation
+      that will be discarded.\n\t'F_thigh_l' has translation animation that will
+      be discarded.\n\t'F_thigh_l' has scale animation that will be discarded.\n\t'F_foot_l'
+      has scale animation that will be discarded.\n\t'F_thigh_r' has scale animation
+      that will be discarded.\n\t'F_foot_r' has scale animation that will be discarded.\n\nClip
+      'F_Armature|RM|Vault' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
+      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
+      has translation animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_r' has translation
+      animation that will be discarded.\n\nClip 'F_Armature|Standard|Backward.v2'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
+      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
+      has translation animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_l' has scale
+      animation that will be discarded.\n\t'F_foot_l' has scale animation that will
+      be discarded.\n\t'F_thigh_r' has translation animation that will be discarded.\n\t'F_thigh_r'
+      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
+      that will be discarded.\n\nClip 'F_Armature|Standard|Idle.v2' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'F_pelvis' has translation
+      animation that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'F_Armature|Standard|Jump_End.v2' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_r' has translation
+      animation that will be discarded.\n\nClip 'F_Armature|Standard|Jump_Loop.v2'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
+      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_r'
+      has translation animation that will be discarded.\n\nClip 'F_Armature|Standard|Jump_Start.v2'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
+      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_l' has scale
+      animation that will be discarded.\n\t'F_foot_l' has scale animation that will
+      be discarded.\n\t'F_thigh_r' has translation animation that will be discarded.\n\t'F_thigh_r'
+      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
+      that will be discarded.\n\nClip 'F_Armature|Standard|Lose' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'F_pelvis' has translation
+      animation that will be discarded.\n\t'F_pelvis' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_upperarm_l' has scale
+      animation that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_hand_l' has scale
+      animation that will be discarded.\n\t'F_upperarm_r' has scale animation that
+      will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n\t'F_hand_r' has scale animation
+      that will be discarded.\n\t'F_thigh_l' has translation animation that will
+      be discarded.\n\t'F_calf_l' has scale animation that will be discarded.\n\t'F_foot_l'
+      has scale animation that will be discarded.\n\t'F_thigh_r' has translation
+      animation that will be discarded.\n\t'F_calf_r' has scale animation that will
+      be discarded.\n\t'F_foot_r' has scale animation that will be discarded.\n\nClip
+      'F_Armature|Standard|Slide_Loop.v2' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'F_Armature|Standard|Sprint.v3' has import animation warnings that might lower
+      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
+      quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
+      has translation animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'F_Armature|Standard|Strafing_L.v2' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_l'
+      has translation animation that will be discarded.\n\t'F_lowerarm_l' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_upperarm_r'
+      has translation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_l' has scale
+      animation that will be discarded.\n\t'F_foot_l' has scale animation that will
+      be discarded.\n\t'F_thigh_r' has translation animation that will be discarded.\n\t'F_thigh_r'
+      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
+      that will be discarded.\n\nClip 'F_Armature|Standard|Strafing_R.v2' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'F_pelvis' has translation
+      animation that will be discarded.\n\t'F_pelvis' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_upperarm_l' has translation
+      animation that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_upperarm_r' has translation
+      animation that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_thigh_l' has translation
+      animation that will be discarded.\n\t'F_thigh_l' has scale animation that will
+      be discarded.\n\t'F_foot_l' has scale animation that will be discarded.\n\t'F_thigh_r'
+      has translation animation that will be discarded.\n\t'F_thigh_r' has scale
+      animation that will be discarded.\n\t'F_foot_r' has scale animation that will
+      be discarded.\n\nClip 'F_Armature|Standard|Tagged' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'F_pelvis' has translation animation that
+      will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\nClip 'F_Armature|Standard|Tagging'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'F_Armature|Standard|TicTac' has import animation warnings that might lower
+      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
+      quality.\n\t'F_pelvis' has translation animation that will be discarded.\n\t'F_pelvis'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_r'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_thigh_l'
+      has translation animation that will be discarded.\n\t'F_thigh_l' has scale
+      animation that will be discarded.\n\t'F_foot_l' has scale animation that will
+      be discarded.\n\t'F_thigh_r' has translation animation that will be discarded.\n\t'F_thigh_r'
+      has scale animation that will be discarded.\n\t'F_foot_r' has scale animation
+      that will be discarded.\n\nClip 'F_Armature|Standard|Walking.v3' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'F_pelvis' has translation
+      animation that will be discarded.\n\t'F_upperarm_l' has translation animation
+      that will be discarded.\n\t'F_lowerarm_l' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_upperarm_r' has translation
+      animation that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\nClip 'F_Armature|Standard|Win'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'F_pelvis'
+      has translation animation that will be discarded.\n\t'F_pelvis' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'F_lowerarm_l'
+      has scale animation that will be discarded.\n\t'F_hand_l' has scale animation
+      that will be discarded.\n\t'F_lowerarm_r' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'F_lowerarm_r' has scale
+      animation that will be discarded.\n\t'F_hand_r' has scale animation that will
+      be discarded.\n\t'F_thigh_l' has translation animation that will be discarded.\n\t'F_thigh_r'
+      has translation animation that will be discarded.\n"
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human:
+    - boneName: F_root
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_thigh_l
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_thigh_r
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_calf_l
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_calf_r
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_foot_l
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_foot_r
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_spine_01
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_spine_02
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_neck_01
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_Head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_clavicle_l
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_clavicle_r
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_upperarm_l
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_upperarm_r
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_hand_l
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_hand_r
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_ball_l
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_ball_r
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_hair_01
+      humanName: RightEye
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_thumb_01_l
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_middle_01_l
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_middle_02_l
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_thumb_01_r
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_middle_01_r
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_middle_02_r
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: F_spine_03
+      humanName: UpperChest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: AnimationFemale_v6(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_Armature
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.000000094156974, y: 0.7071068, z: 0.7071068, w: 0.000000094156974}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_root
+      parentName: F_Armature
+      position: {x: -0.00000008897877, y: 0.33410957, z: -0.000000029802322}
+      rotation: {x: 0.70710677, y: 0.000000040771898, z: 0.000000040771887, w: 0.7071069}
+      scale: {x: 1.0000038, y: 0.99999976, z: 1.0000036}
+    - name: F_pelvis
+      parentName: F_root
+      position: {x: 0.00000009477629, y: 1.0821184, z: 0.3926256}
+      rotation: {x: -0.79046834, y: -0.000000034552468, z: -0.000000040580204, w: 0.6125029}
+      scale: {x: 1.0000002, y: 0.99999994, z: 1.0000011}
+    - name: F_spine_01
+      parentName: F_pelvis
+      position: {x: -8.881784e-16, y: 0.000000029802333, z: 0.15611304}
+      rotation: {x: 0.06470251, y: 9.644765e-10, z: 0.0000000047657824, w: 0.99790466}
+      scale: {x: 1.0000033, y: 1.000001, z: 1.0000023}
+    - name: F_spine_02
+      parentName: F_spine_01
+      position: {x: 1.2434498e-14, y: 0.000000029802333, z: 0.14013614}
+      rotation: {x: 0.07727988, y: -0.0000000064739254, z: 0.00000009362263, w: 0.9970095}
+      scale: {x: 1.000004, y: 1.0000014, z: 1.0000027}
+    - name: F_spine_03
+      parentName: F_spine_02
+      position: {x: 0.0000000013969839, y: -0.00000005972106, z: 0.1596106}
+      rotation: {x: -0.041093923, y: 0.000000009980368, z: 0.0000002418556, w: 0.9991553}
+      scale: {x: 1.0000044, y: 1.0000026, z: 1.0000012}
+    - name: F_neck_01
+      parentName: F_spine_03
+      position: {x: -0.0000000023283064, y: -0.0017644694, z: 0.19311672}
+      rotation: {x: 0.011587468, y: 0.000000020503423, z: -0.00000058383034, w: 0.9999329}
+      scale: {x: 1.0000021, y: 0.99999994, z: 1.0000006}
+    - name: F_Head
+      parentName: F_neck_01
+      position: {x: 0.00000001071021, y: 0.000787809, z: 0.09395404}
+      rotation: {x: -0.0026729964, y: -0.000000014585087, z: 0.0000003393344, w: 0.9999964}
+      scale: {x: 1.0000019, y: 1.0000017, z: 1.0000019}
+    - name: Ponytail
+      parentName: F_Head
+      position: {x: 0.0000000817541, y: -1.7715844, z: 0.05187259}
+      rotation: {x: -0.000000051488605, y: 0.7185114, z: 0.69551516, w: 0.000000055234743}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: F_hair_01
+      parentName: F_Head
+      position: {x: -0.028333837, y: 0.084519766, z: 0.31657866}
+      rotation: {x: 0.06364114, y: -0.01366583, z: -0.73604965, w: 0.67379075}
+      scale: {x: 1.0000011, y: 1.000003, z: 1.0000021}
+    - name: F_hair_02
+      parentName: F_hair_01
+      position: {x: 0.000000027474016, y: -0.0000000018626451, z: 0.065711655}
+      rotation: {x: -0.365568, y: -0.05851222, z: 0.022189638, w: 0.92867863}
+      scale: {x: 1.000004, y: 0.99999934, z: 1.0000066}
+    - name: F_hair_03
+      parentName: F_hair_02
+      position: {x: -0.0000000026193447, y: -0.00000026170164, z: 0.048250623}
+      rotation: {x: -0.21871157, y: 0.004375375, z: 0.010642917, w: 0.9757218}
+      scale: {x: 1.0000019, y: 1.0000235, z: 0.99998325}
+    - name: F_clavicle_l
+      parentName: F_spine_03
+      position: {x: 0.021240499, y: 0.08040011, z: 0.11734913}
+      rotation: {x: 0.6327764, y: 0.3675537, z: 0.37516525, w: 0.5689898}
+      scale: {x: 0.99999887, y: 0.9999998, z: 0.9999998}
+    - name: F_upperarm_l
+      parentName: F_clavicle_l
+      position: {x: 0.07875073, y: 0.008041392, z: 0.18604717}
+      rotation: {x: 0.18082255, y: -0.1324179, z: 0.74859, w: -0.6240047}
+      scale: {x: 0.99999315, y: 1.0000168, z: 0.9999934}
+    - name: F_lowerarm_l
+      parentName: F_upperarm_l
+      position: {x: -0.000000027997885, y: 0.0000000027939677, z: 0.28034887}
+      rotation: {x: -0.037555844, y: 0.029343463, z: -0.010240271, w: 0.9988112}
+      scale: {x: 0.99999934, y: 1.0000033, z: 1.0000051}
+    - name: F_hand_l
+      parentName: F_lowerarm_l
+      position: {x: 0.00000008195639, y: -0.000000052154064, z: 0.23780832}
+      rotation: {x: -0.3897801, y: -0.10502683, z: 0.025553377, w: 0.91454244}
+      scale: {x: 1.0000074, y: 1.0000002, z: 0.9999911}
+    - name: F_middle_01_l
+      parentName: F_hand_l
+      position: {x: 0.006293319, y: -0.031464368, z: 0.05160818}
+      rotation: {x: 0.19635426, y: 0.28924567, z: -0.6718132, w: 0.6530307}
+      scale: {x: 0.9999728, y: 1.0000002, z: 1.000031}
+    - name: F_middle_02_l
+      parentName: F_middle_01_l
+      position: {x: 0.000000014901161, y: 0.00000010430813, z: 0.06716949}
+      rotation: {x: -0.08875647, y: -0.0010348406, z: -0.0010678616, w: 0.9960523}
+      scale: {x: 1.0000015, y: 0.9999977, z: 1.0000082}
+    - name: F_thumb_01_l
+      parentName: F_hand_l
+      position: {x: 0.02952537, y: 0.016301475, z: 0.048102133}
+      rotation: {x: 0.2185475, y: 0.049165174, z: 0.97230834, w: 0.06660492}
+      scale: {x: 1.000003, y: 1.000004, z: 0.9999967}
+    - name: IK_upperarm_l
+      parentName: F_clavicle_l
+      position: {x: 0.07875073, y: 0.008041392, z: 0.18604717}
+      rotation: {x: 0.03644415, y: -0.46371675, z: 0.73267376, w: -0.49681765}
+      scale: {x: 0.99999315, y: 1.0000168, z: 0.9999934}
+    - name: F_clavicle_r
+      parentName: F_spine_03
+      position: {x: -0.02124041, y: 0.08040014, z: 0.117349155}
+      rotation: {x: 0.6291735, y: -0.3760947, z: -0.37983936, w: 0.5642832}
+      scale: {x: 1.0000007, y: 0.99999994, z: 1.0000014}
+    - name: F_upperarm_r
+      parentName: F_clavicle_r
+      position: {x: -0.06965399, y: 0.008827016, z: 0.17457987}
+      rotation: {x: -0.1756798, y: -0.1223993, z: 0.75213444, w: 0.6232566}
+      scale: {x: 0.9999946, y: 1.0000187, z: 0.99999577}
+    - name: F_lowerarm_r
+      parentName: F_upperarm_r
+      position: {x: -0.00000011455268, y: -0.000000013038516, z: 0.28034893}
+      rotation: {x: -0.03755585, y: -0.029343415, z: 0.010240193, w: 0.9988112}
+      scale: {x: 0.99999887, y: 1.0000057, z: 1.000007}
+    - name: F_hand_r
+      parentName: F_lowerarm_r
+      position: {x: -0.00000012665987, y: -0.000000037252903, z: 0.23780838}
+      rotation: {x: -0.38977998, y: 0.10502677, z: -0.02555344, w: 0.91454256}
+      scale: {x: 1.0000095, y: 1.0000039, z: 0.99998826}
+    - name: F_middle_01_r
+      parentName: F_hand_r
+      position: {x: -0.0062934533, y: -0.031464443, z: 0.051608346}
+      rotation: {x: 0.19635378, y: -0.2892476, z: 0.6718128, w: 0.65303034}
+      scale: {x: 0.99996984, y: 0.99999696, z: 1.000031}
+    - name: F_middle_02_r
+      parentName: F_middle_01_r
+      position: {x: 0.000000029802322, y: -0.000000037252903, z: 0.06716967}
+      rotation: {x: -0.0887566, y: 0.0010347065, z: 0.0010677051, w: 0.99605227}
+      scale: {x: 1.000001, y: 0.9999961, z: 1.0000064}
+    - name: F_thumb_01_r
+      parentName: F_hand_r
+      position: {x: -0.02952554, y: 0.016301453, z: 0.048102245}
+      rotation: {x: -0.21854757, y: 0.049165223, z: 0.9723084, w: -0.06660527}
+      scale: {x: 1.0000055, y: 1.0000048, z: 0.99999684}
+    - name: IK_upperarm_r
+      parentName: F_clavicle_r
+      position: {x: -0.06965399, y: 0.008827016, z: 0.17457987}
+      rotation: {x: -0.036444005, y: -0.4637168, z: 0.7326738, w: 0.4968176}
+      scale: {x: 0.9999946, y: 1.0000187, z: 0.99999577}
+    - name: F_thigh_l
+      parentName: F_pelvis
+      position: {x: 0.100553155, y: 0.04405127, z: 0.06352606}
+      rotation: {x: 0.99266887, y: -0.00000034552568, z: -0.000000042070877, w: -0.120865986}
+      scale: {x: 1.0000057, y: 1.0000035, z: 1.0000086}
+    - name: F_calf_l
+      parentName: F_thigh_l
+      position: {x: 0.0000000023983215, y: -0.0000000055102927, z: 0.34865645}
+      rotation: {x: -0.046836574, y: 0.000006162118, z: 0.000130661, w: 0.9989026}
+      scale: {x: 1.0000011, y: 1.0000018, z: 1.0000014}
+    - name: F_foot_l
+      parentName: F_calf_l
+      position: {x: 0.000000011990778, y: 0.000000015559635, z: 0.623766}
+      rotation: {x: -0.56413585, y: 0.00036618346, z: -0.00031931695, w: -0.8256819}
+      scale: {x: 1.0000095, y: 1.0000023, z: 0.9999973}
+    - name: F_ball_l
+      parentName: F_foot_l
+      position: {x: 0.000000017331331, y: -0.00000008496136, z: 0.21830921}
+      rotation: {x: 0.00012199076, y: 0.23564136, z: -0.97184, w: -0.00050345185}
+      scale: {x: 1.0000015, y: 0.99999946, z: 1.0000014}
+    - name: F_thigh_r
+      parentName: F_pelvis
+      position: {x: -0.10055317, y: 0.04405125, z: 0.063526064}
+      rotation: {x: 0.9926688, y: 0.00000045127055, z: 0.000000054946284, w: -0.12086591}
+      scale: {x: 1.0000019, y: 1.0000027, z: 1.000007}
+    - name: F_calf_r
+      parentName: F_thigh_r
+      position: {x: -0.00000001790977, y: -0.00000004843605, z: 0.34865624}
+      rotation: {x: -0.046836507, y: -0.000006165966, z: -0.00013066125, w: 0.99890256}
+      scale: {x: 0.99999994, y: 1.0000013, z: 1.0000004}
+    - name: F_foot_r
+      parentName: F_calf_r
+      position: {x: 0.0000000030267984, y: 0.00000005264883, z: 0.623766}
+      rotation: {x: -0.56413585, y: -0.00036618343, z: 0.00031931678, w: -0.82568187}
+      scale: {x: 1.0000019, y: 0.99999994, z: 0.9999953}
+    - name: F_ball_r
+      parentName: F_foot_r
+      position: {x: -0.000000023865141, y: -0.000000045045454, z: 0.21830936}
+      rotation: {x: -0.00012199077, y: 0.23564139, z: -0.97183996, w: 0.0005034519}
+      scale: {x: 1.0000018, y: 1.0000018, z: 0.99999875}
+    - name: calf_r.003
+      parentName: F_Armature
+      position: {x: -0.10055318, y: -0.00158177, z: 0.73757416}
+      rotation: {x: -2.1316282e-14, y: 0.00000008940697, z: -1, w: 0.000000057660163}
+      scale: {x: 1, y: 1, z: 1}
+    - name: IK_HandControl_l
+      parentName: F_Armature
+      position: {x: 0.2919214, y: 0.15056463, z: 1.6140276}
+      rotation: {x: -0.26371592, y: -0.65608984, z: 0.65608984, w: -0.26371604}
+      scale: {x: 1.0000001, y: 0.99999976, z: 1.000002}
+    - name: POLEVECTORARM_l
+      parentName: F_Armature
+      position: {x: 0.3639443, y: -0.88506764, z: 0.70801866}
+      rotation: {x: -0.28937304, y: -0.64518464, z: 0.64518464, w: -0.28937316}
+      scale: {x: 1, y: 1.0000024, z: 1.0000023}
+    - name: IK_LegControl_l
+      parentName: F_Armature
+      position: {x: 0.1005532, y: -0.46440536, z: 0.41750306}
+      rotation: {x: 0.70710677, y: -0.00009276662, z: 0.00009284818, w: 0.7071069}
+      scale: {x: 1.0000049, y: 0.9999993, z: 1.0000039}
+    - name: POLEVECTORLEG_l
+      parentName: IK_LegControl_l
+      position: {x: 0.00016282448, y: 0.6204129, z: -0.3223571}
+      rotation: {x: -1, y: 0.00013192101, z: 0.00000007707512, w: 1.772304e-11}
+      scale: {x: 1, y: 1.0000006, z: 1.0000001}
+    - name: IK_HandControl_r
+      parentName: F_Armature
+      position: {x: -0.30068862, y: 0.18297116, z: 1.8123606}
+      rotation: {x: 0.263716, y: -0.6560898, z: 0.6560899, w: 0.26371595}
+      scale: {x: 0.99999964, y: 0.99999976, z: 1.000002}
+    - name: POLEVECTORARM_r
+      parentName: F_Armature
+      position: {x: -0.25627145, y: -0.9683321, z: 0.81625557}
+      rotation: {x: 0.28937313, y: -0.6451846, z: 0.6451847, w: 0.28937307}
+      scale: {x: 1, y: 1.000004, z: 1.0000042}
+    - name: IK_LegControl_r
+      parentName: F_Armature
+      position: {x: -0.100134425, y: 0.23772715, z: 0.7505178}
+      rotation: {x: 0.70710677, y: 0.00009284817, z: -0.00009276663, w: 0.7071069}
+      scale: {x: 1.0000051, y: 0.9999995, z: 1.000004}
+    - name: POLEVECTORLEG_r
+      parentName: IK_LegControl_r
+      position: {x: -0.00008913946, y: 0.3397097, z: -0.5237729}
+      rotation: {x: -1, y: -0.00013192101, z: -0.00000007707688, w: 2.5098567e-12}
+      scale: {x: 1.0000007, y: 1.0000006, z: 1.0000005}
+    - name: F_Arms
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_Chest
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_Hair
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_Legs
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_NeckMesh
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_Shoes
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: F_Shoulder
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hair_High
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Shorts
+      parentName: AnimationFemale_v6(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071068, w: 0.00000005338508}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
