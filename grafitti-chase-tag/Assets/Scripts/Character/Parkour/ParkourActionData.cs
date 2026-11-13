@@ -14,6 +14,13 @@ public class ParkourActionData : CharacterActionData
     [Min(0f)]
     public float landingForwardOffset = 0.5f;
 
+    [Header("Climb Forward Movement")]
+    [Range(0f, 0.95f)]
+    public float climbForwardMovementStartTime = 0.65f;
+
+    [Min(0f)]
+    public float climbForwardMovementDistance = 0.8f;
+
     [Min(0f)]
     public float landingDistance = 1.5f;
 

@@ -9,7 +9,7 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private CharacterStamina stamina;
     [SerializeField] private CharacterStateController stateController;
     [SerializeField] private CharacterActionRuntime actionRuntime;
-
+    [SerializeField] private Animator animator;
     [SerializeField] private CharacterBuffNerf buffNerf;
 
     public float ColliderRadius =>
@@ -29,6 +29,26 @@ public class CharacterMotor : MonoBehaviour
 
     [Header("Slide Collider")]
     [SerializeField] private float slideColliderHeight = 1.0f;
+
+    [Header("Slide Movement Runtime")]
+    private Vector3 slideForwardDirection;
+
+    private float activeSlideInitialSpeed;
+    private float activeSlidePeakSpeed;
+    private float activeSlideExitSpeed;
+    private float activeSlideStartEndTime;
+
+    private float activeSlideAcceleration;
+    private float activeSlideDeceleration;
+    private float activeSlideRecoveryRate;
+
+    private float activeSlideCurrentSpeed;
+
+    private float slideLoopStartActionTime;
+    private bool slideExitAnimationCompleted;
+
+    private bool slideLoopStarted;
+    private bool slideExitStarted;
 
     private float standingColliderHeight;
     private Vector3 standingColliderCenter;
@@ -123,6 +143,11 @@ public class CharacterMotor : MonoBehaviour
         {
             buffNerf = GetComponent<CharacterBuffNerf>();
         }
+
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
     }
 
     public void Tick(Vector2 movementInput, bool sprintHeld)
@@ -135,6 +160,8 @@ public class CharacterMotor : MonoBehaviour
             return;
 
         UpdateGroundedState();
+
+        UpdateSlideMovement();
 
         bool actionExecuting =
             actionRuntime != null &&
@@ -149,16 +176,18 @@ public class CharacterMotor : MonoBehaviour
 
         if (!actionControlsNormalMovement)
         {
-            Vector3 worldDirection =
-                GetCameraRelativeDirection(movementInput);
+            if (!IsSlideMovementActive())
+            {
+                Vector3 worldDirection =
+                    GetCameraRelativeDirection(movementInput);
 
-            HandleHorizontalMovement(
-                worldDirection,
-                sprintHeld
-            );
+                HandleHorizontalMovement(
+                    worldDirection,
+                    sprintHeld
+                );
+            }
 
             HandleVerticalMovement();
-
             ApplyMovement();
         }
     }
@@ -180,6 +209,8 @@ public class CharacterMotor : MonoBehaviour
 
         UpdateGroundedState();
 
+        UpdateSlideMovement();
+
         bool actionExecuting =
             actionRuntime != null &&
             actionRuntime.IsExecuting;
@@ -196,19 +227,47 @@ public class CharacterMotor : MonoBehaviour
             return;
         }
 
-        HandleHorizontalMovement(
-            hasLookDirection &&
-            lookDirection.sqrMagnitude > 0.001f
-                ? lookDirection
-                : worldDirection,
-            sprintHeld,
-            hasLookDirection
-                ? false
-                : faceCameraDirection
-        );
+        if (!IsSlideMovementActive())
+        {
+            HandleHorizontalMovement(
+                hasLookDirection &&
+                lookDirection.sqrMagnitude > 0.001f
+                    ? lookDirection
+                    : worldDirection,
+                sprintHeld,
+                hasLookDirection
+                    ? false
+                    : faceCameraDirection
+            );
+        }
 
         HandleVerticalMovement();
         ApplyMovement();
+    }
+
+    private bool IsSlideMovementActive()
+    {
+        if (!IsSliding)
+            return false;
+
+        // Keep normal movement disabled while the Slide action runs.
+        if (IsSlideActionActive())
+            return true;
+
+        // Wait until the Exit animation has started.
+        if (!slideExitStarted || animator == null)
+            return true;
+
+        // Do not resume movement during the Exit transition.
+        if (animator.IsInTransition(0))
+            return true;
+
+        AnimatorStateInfo currentState =
+            animator.GetCurrentAnimatorStateInfo(0);
+
+        // Slide movement is finished when Exit has completed.
+        return currentState.IsName(SlideExitState) &&
+            currentState.normalizedTime < 1f;
     }
 
     public void SetMovementInput(Vector2 movementInput)
@@ -246,15 +305,67 @@ public class CharacterMotor : MonoBehaviour
         return true;
     }
 
+    private const string SlideStartState =
+    "Armature|Slide_Start";
+
+    private const string SlideLoopState =
+        "Armature|Slide_Loop";
+
+    private const string SlideExitState =
+        "Armature|Slide_Exit";
+
+    private float nextSlideDebugTime;
+
     private void UpdateSlideCollider()
     {
         if (!IsSliding)
             return;
 
-        if (actionRuntime == null ||
-            !actionRuntime.IsExecuting ||
-            actionRuntime.CurrentActionType !=
-                CharacterActionType.Slide)
+        bool slideActionActive =
+            actionRuntime != null &&
+            actionRuntime.IsExecuting &&
+            actionRuntime.CurrentActionType ==
+                CharacterActionType.Slide;
+
+        if (slideActionActive)
+            return;
+
+        if (animator == null)
+        {
+            TryEndSlide();
+            return;
+        }
+
+        bool isTransitioning = animator.IsInTransition(0);
+
+        AnimatorStateInfo currentState =
+            animator.GetCurrentAnimatorStateInfo(0);
+
+        // Check whether Slide Exit has completed.
+        if (currentState.IsName(SlideExitState) &&
+            currentState.normalizedTime >= 1f)
+        {
+            slideExitAnimationCompleted = true;
+        }
+
+        // Also inspect the previous state during the transition
+        // away from Slide Exit.
+        if (isTransitioning)
+        {
+            AnimatorStateInfo nextState =
+                animator.GetNextAnimatorStateInfo(0);
+
+            if (currentState.IsName(SlideExitState) &&
+                currentState.normalizedTime >= 1f &&
+                !nextState.IsName(SlideExitState))
+            {
+                slideExitAnimationCompleted = true;
+            }
+
+            return;
+        }
+
+        if (slideExitAnimationCompleted)
         {
             TryEndSlide();
         }
@@ -487,13 +598,168 @@ public class CharacterMotor : MonoBehaviour
         );
     }
 
+    public void SetParkourColliderVerticalOffset(float offset)
+    {
+        if (characterController == null)
+            return;
+
+        Vector3 targetCenter = standingColliderCenter;
+        targetCenter.y += offset;
+
+        characterController.center = targetCenter;
+    }
+
+    public void ResetParkourColliderVerticalOffset()
+    {
+        if (characterController == null)
+            return;
+
+        // Do not interfere with the crouched collider during Slide.
+        if (IsSliding)
+            return;
+
+        characterController.center = standingColliderCenter;
+    }
+
+    private bool IsSlideActionActive()
+    {
+        return IsSliding &&
+            actionRuntime != null &&
+            actionRuntime.IsExecuting &&
+            actionRuntime.CurrentActionType ==
+                CharacterActionType.Slide;
+    }
+
+    private void UpdateSlideMovement()
+    {
+        if (!IsSliding || animator == null)
+            return;
+
+        AnimatorStateInfo currentState =
+            animator.GetCurrentAnimatorStateInfo(0);
+
+        bool isTransitioning = animator.IsInTransition(0);
+
+        AnimatorStateInfo nextState =
+            isTransitioning
+                ? animator.GetNextAnimatorStateInfo(0)
+                : currentState;
+
+        bool inSlideStart =
+            currentState.IsName(SlideStartState);
+
+        bool transitioningToStart =
+            isTransitioning &&
+            nextState.IsName(SlideStartState);
+
+        bool transitioningToLoop =
+            isTransitioning &&
+            nextState.IsName(SlideLoopState);
+
+        bool inSlideLoop =
+            currentState.IsName(SlideLoopState);
+
+        bool transitioningToExit =
+            isTransitioning &&
+            nextState.IsName(SlideExitState);
+
+        bool inSlideExit =
+            currentState.IsName(SlideExitState);
+
+        // -----------------------------------------
+        // SLIDE START: ACCELERATION
+        // -----------------------------------------
+
+        if (inSlideStart || transitioningToStart)
+        {
+            activeSlideCurrentSpeed =
+                Mathf.MoveTowards(
+                    activeSlideCurrentSpeed,
+                    activeSlidePeakSpeed,
+                    activeSlideAcceleration * Time.deltaTime
+                );
+        }
+
+        // -----------------------------------------
+        // START -> LOOP
+        // -----------------------------------------
+
+        if (transitioningToLoop)
+        {
+            slideLoopStarted = true;
+
+            activeSlideCurrentSpeed =
+                Mathf.MoveTowards(
+                    activeSlideCurrentSpeed,
+                    activeSlidePeakSpeed,
+                    activeSlideAcceleration * Time.deltaTime
+                );
+        }
+
+        // -----------------------------------------
+        // SLIDE LOOP: DECELERATION
+        // -----------------------------------------
+
+        if (inSlideLoop)
+        {
+            if (!slideLoopStarted)
+            {
+                slideLoopStarted = true;
+            }
+
+            activeSlideCurrentSpeed =
+                Mathf.MoveTowards(
+                    activeSlideCurrentSpeed,
+                    activeSlideExitSpeed,
+                    activeSlideDeceleration * Time.deltaTime
+                );
+        }
+
+        // -----------------------------------------
+        // LOOP -> EXIT: RECOVER ORIGINAL SPEED
+        // -----------------------------------------
+
+        if (transitioningToExit || inSlideExit)
+        {
+            slideExitStarted = true;
+
+            activeSlideCurrentSpeed =
+                Mathf.MoveTowards(
+                    activeSlideCurrentSpeed,
+                    activeSlideInitialSpeed,
+                    activeSlideRecoveryRate * Time.deltaTime
+                );
+        }
+
+        // -----------------------------------------
+        // UPDATE SHARED HORIZONTAL VELOCITY
+        // -----------------------------------------
+
+        if (inSlideStart ||
+            transitioningToStart ||
+            transitioningToLoop ||
+            inSlideLoop ||
+            transitioningToExit ||
+            inSlideExit)
+        {
+            horizontalVelocity =
+                slideForwardDirection * activeSlideCurrentSpeed;
+        }
+    }
+
     public bool BeginSlide()
     {
         if (characterController == null)
             return false;
 
         if (IsSliding)
-            return true;
+        {
+            Debug.LogWarning(
+                "SLIDE START REJECTED | Previous Slide has not finished restoring its collider."
+            );
+
+            return false;
+        }
 
         float minimumHeight =
             characterController.radius * 2f;
@@ -524,6 +790,66 @@ public class CharacterMotor : MonoBehaviour
 
         IsSliding = true;
 
+        // Preserve the character's actual incoming movement direction.
+        Vector3 incomingVelocity = horizontalVelocity;
+        incomingVelocity.y = 0f;
+
+        activeSlideInitialSpeed = incomingVelocity.magnitude;
+
+        if (incomingVelocity.sqrMagnitude > 0.001f)
+        {
+            slideForwardDirection = incomingVelocity.normalized;
+        }
+        else
+        {
+            slideForwardDirection = transform.forward;
+            slideForwardDirection.y = 0f;
+            slideForwardDirection.Normalize();
+        }
+
+        // Slide now controls horizontal movement independently.
+        IsSprinting = false;
+
+        // Read the active Slide action settings.
+        CharacterActionData slideData =
+            actionRuntime != null
+                ? actionRuntime.CurrentActionData
+                : null;
+
+        activeSlidePeakSpeed =
+            slideData != null
+                ? slideData.slidePeakSpeed
+                : 8f;
+
+        activeSlideExitSpeed =
+            slideData != null
+                ? slideData.slideExitSpeed
+                : 3f;
+
+        activeSlideAcceleration =
+            slideData != null
+                ? slideData.slideAcceleration
+                : 20f;
+
+        activeSlideDeceleration =
+            slideData != null
+                ? slideData.slideDeceleration
+                : 8f;
+
+        activeSlideRecoveryRate =
+            slideData != null
+                ? slideData.slideRecoveryRate
+                : 12f;
+
+        // Start with the speed captured before Slide.
+        activeSlideCurrentSpeed = activeSlideInitialSpeed;
+
+        slideLoopStartActionTime = 0f;
+
+        slideLoopStarted = false;
+        slideExitStarted = false;
+        slideExitAnimationCompleted = false;
+
         return true;
     }
     
@@ -535,7 +861,16 @@ public class CharacterMotor : MonoBehaviour
         bool canRestore = CanRestoreStandingCollider();
 
         if (!canRestore)
+        {
+            Debug.LogWarning(
+                $"SLIDE RESTORE BLOCKED | " +
+                $"Blocker={(lastSlideRestoreBlocker != null ? lastSlideRestoreBlocker.name : "Unknown")} | " +
+                $"Position={transform.position} | " +
+                $"Height={characterController.height}"
+            );
+
             return;
+        }
 
         characterController.height =
             standingColliderHeight;
@@ -543,7 +878,31 @@ public class CharacterMotor : MonoBehaviour
         characterController.center =
             standingColliderCenter;
 
+        // Guarantee that the original speed is restored
+        // before normal movement takes over.
+        horizontalVelocity =
+            slideForwardDirection * activeSlideInitialSpeed;
+
         IsSliding = false;
+
+        slideForwardDirection = Vector3.zero;
+
+        activeSlideInitialSpeed = 0f;
+        activeSlideCurrentSpeed = 0f;
+
+        activeSlidePeakSpeed = 0f;
+        activeSlideExitSpeed = 0f;
+
+        activeSlideAcceleration = 0f;
+        activeSlideDeceleration = 0f;
+        activeSlideRecoveryRate = 0f;
+
+        slideLoopStartActionTime = 0f;
+
+        slideLoopStarted = false;
+        slideExitStarted = false;
+
+        slideExitAnimationCompleted = false;
     }
     
     private bool CanRestoreStandingCollider()
@@ -608,7 +967,6 @@ public class CharacterMotor : MonoBehaviour
             settings.gravity *
             Time.deltaTime;
     }
-
     
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {   

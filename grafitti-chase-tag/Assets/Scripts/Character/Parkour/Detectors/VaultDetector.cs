@@ -78,9 +78,39 @@ public class VaultDetector : MonoBehaviour
             return false;
         }
 
+        // Calculate the obstacle's far edge along the
+        // character's forward direction.
+        Bounds obstacleBounds =
+            obstacleHit.collider.bounds;
+
+        Vector3 boundsCenter =
+            obstacleBounds.center;
+
+        Vector3 boundsExtents =
+            obstacleBounds.extents;
+
+        // Project the collider's bounds onto the
+        // horizontal forward direction.
+        float projectedHalfDepth =
+            Mathf.Abs(forward.x) * boundsExtents.x +
+            Mathf.Abs(forward.z) * boundsExtents.z;
+
+        float obstacleCenterDistance =
+            Vector3.Dot(
+                boundsCenter - transform.position,
+                forward
+            );
+
+        float farEdgeDistance =
+            obstacleCenterDistance + projectedHalfDepth;
+
+        // Add the configurable landing distance beyond
+        // the obstacle's far edge.
         Vector3 landingOrigin =
-            topHit.point +
-            forward * actionData.landingDistance;
+            transform.position +
+            forward * (farEdgeDistance + actionData.landingDistance);
+
+        landingOrigin.y = topHit.point.y;
 
         if (!environmentDetector.TryDetectLanding(
                 landingOrigin,

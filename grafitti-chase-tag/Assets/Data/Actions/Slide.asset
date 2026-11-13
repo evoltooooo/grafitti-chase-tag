@@ -15,9 +15,9 @@ MonoBehaviour:
   actionType: 3
   actionState: 4
   animationStateName: 
-  motionType: 3
+  motionType: 0
   holdToExecute: 0
-  duration: 0.7
+  duration: 0.4
   cooldown: 0
   staminaCost: 30
   movementSpeed: 0
@@ -34,7 +34,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.8581163
+      time: 0.45812243
       value: 0.99801457
       inSlope: 0.01760912
       outSlope: 0.01760912
@@ -50,6 +50,44 @@ MonoBehaviour:
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  slidePeakSpeed: 12
+  slideExitSpeed: 0.3
+  slideAcceleration: 15
+  slideDeceleration: 8
+  slideRecoveryRate: 12
+  slideMovementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.006668091
+      value: 0.99523926
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.2827564
+      value: 0.9959318
+      inSlope: -0.0021881154
+      outSlope: -0.0021881154
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.4879518
+    - serializedVersion: 3
+      time: 1.0171814
+      value: 0.011230988
+      inSlope: -0.8148115
+      outSlope: -0.8148115
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.3612121
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

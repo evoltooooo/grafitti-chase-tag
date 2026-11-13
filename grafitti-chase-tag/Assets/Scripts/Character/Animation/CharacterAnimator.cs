@@ -6,6 +6,7 @@ public class CharacterAnimator : MonoBehaviour
     [SerializeField] private CharacterMotor characterMotor;    [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterActionLibrary actionLibrary;
+    [SerializeField] private ParkourTrajectoryMotionController trajectoryMotionController;
 
     [Header("Animation Settings")]
     [SerializeField] private float dampTime = 0.1f;
@@ -55,6 +56,12 @@ public class CharacterAnimator : MonoBehaviour
         {
             actionLibrary =
                 GetComponentInParent<CharacterActionLibrary>();
+        }
+
+        if (trajectoryMotionController == null)
+        {
+            trajectoryMotionController =
+                GetComponentInParent<ParkourTrajectoryMotionController>();
         }
     }
 
@@ -216,6 +223,14 @@ public class CharacterAnimator : MonoBehaviour
         }
 
         Vector3 deltaPosition = animator.deltaPosition;
+
+        if (trajectoryMotionController != null &&
+            trajectoryMotionController.ShouldSuppressVaultHorizontalRootMotion)
+        {
+            deltaPosition.x = 0f;
+            deltaPosition.z = 0f;
+        }
+
         Quaternion deltaRotation = animator.deltaRotation;
 
         Debug.Log(

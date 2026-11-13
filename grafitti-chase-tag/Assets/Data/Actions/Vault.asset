@@ -45,13 +45,44 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  slidePeakSpeed: 8
+  slideExitSpeed: 3
+  slideAcceleration: 20
+  slideDeceleration: 8
+  slideRecoveryRate: 12
+  slideMovementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   steeringAmount: 0.25
   steeringRotationSpeed: 5
   parkourActionType: 1
-  landingForwardOffset: 0.5
-  landingDistance: 1.5
+  landingForwardOffset: 2
+  climbForwardMovementStartTime: 0.65
+  climbForwardMovementDistance: 0.8
+  landingDistance: 2.5
   maxTriggerDistance: 1.5
-  detectionRadius: 0.3
+  detectionRadius: 0.6
   minObstacleHeight: 0.5
   maxObstacleHeight: 1.2
   detectionCastBackOffset: 0.3
@@ -62,7 +93,7 @@ MonoBehaviour:
     staminaPerRevolution: 0
     angularSpeed: 2.5
     rotationSpeed: 10
-  useTargetMatching: 0
+  useTargetMatching: 1
   targetMatchPhases:
   - animationStateName: Armature|Vaulting
     matchStartTime: 0.01

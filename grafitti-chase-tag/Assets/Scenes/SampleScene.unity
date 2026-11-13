@@ -856,6 +856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourTrajectoryMotionController
   characterMotor: {fileID: 1449634116}
   actionRuntime: {fileID: 1449634097}
+  vaultLandingApproachStartTime: 0.3
 --- !u!114 &1449634094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1187,6 +1188,7 @@ MonoBehaviour:
   actionRuntime: {fileID: 1449634097}
   animator: {fileID: 1449634119}
   actionLibrary: {fileID: 1449634099}
+  trajectoryMotionController: {fileID: 0}
   dampTime: 0.1
 --- !u!114 &1449634115
 MonoBehaviour:

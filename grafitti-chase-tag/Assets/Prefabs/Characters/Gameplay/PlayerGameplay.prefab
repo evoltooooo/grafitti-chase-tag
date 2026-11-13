@@ -181,6 +181,7 @@ MonoBehaviour:
   stamina: {fileID: 1649753903444190686}
   stateController: {fileID: 8698383089218229846}
   actionRuntime: {fileID: 8145211139641985323}
+  animator: {fileID: 0}
   buffNerf: {fileID: 0}
   slideColliderHeight: 1
 --- !u!114 &1293920864455279052
@@ -216,6 +217,7 @@ MonoBehaviour:
   actionRuntime: {fileID: 8145211139641985323}
   animator: {fileID: 3623222227998172422}
   actionLibrary: {fileID: 4394074849011532147}
+  trajectoryMotionController: {fileID: 0}
   dampTime: 0.1
 --- !u!114 &1649753903444190686
 MonoBehaviour:
@@ -546,6 +548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourTrajectoryMotionController
   characterMotor: {fileID: 8799650708147832603}
   actionRuntime: {fileID: 8145211139641985323}
+  vaultLandingApproachStartTime: 0.3
 --- !u!114 &1052196005084845564
 MonoBehaviour:
   m_ObjectHideFlags: 0

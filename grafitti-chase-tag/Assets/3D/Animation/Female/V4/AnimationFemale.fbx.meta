@@ -15,7 +15,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
-    motionNodeName: 
+    motionNodeName: F_Armature.001/F_root
     animationImportErrors: 
     animationImportWarnings: "\nClip 'F_Armature.001|RM|Climb' has import animation
       warnings that might lower retargeting quality:\nNote: Activate translation
@@ -340,7 +340,7 @@ ModelImporter:
       takeName: F_Armature.001|RM|Slide_Start.v2
       internalID: -5119370864408432611
       firstFrame: 0
-      lastFrame: 19
+      lastFrame: 13.7
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -571,8 +571,8 @@ ModelImporter:
       name: F_Armature.001|Standard|Slide_Loop.v2
       takeName: F_Armature.001|Standard|Slide_Loop.v2
       internalID: 8381657111267546029
-      firstFrame: 0
-      lastFrame: 119
+      firstFrame: 23
+      lastFrame: 100
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

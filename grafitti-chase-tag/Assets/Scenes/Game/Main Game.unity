@@ -1794,7 +1794,7 @@ MonoBehaviour:
   maximumRounds: 5
   roundResultDuration: 6
   roleShuffleController: {fileID: 865826467}
-  startingRole: 1
+  startingRole: 0
 --- !u!1 &214896949
 GameObject:
   m_ObjectHideFlags: 0
