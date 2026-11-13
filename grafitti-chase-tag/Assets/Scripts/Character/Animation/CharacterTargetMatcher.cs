@@ -223,6 +223,19 @@ public class CharacterTargetMatcher : MonoBehaviour
         float normalizedTime =
             stateInfo.normalizedTime % 1f;
 
+        if (actionRuntime.CurrentParkourActionType ==
+            ParkourActionType.Vault)
+        {
+            Debug.Log(
+                $"VAULT MATCH CHECK | " +
+                $"State={stateInfo.fullPathHash} | " +
+                $"NormalizedTime={normalizedTime:F3} | " +
+                $"Start={phase.matchStartTime:F3} | " +
+                $"End={phase.matchEndTime:F3} | " +
+                $"IsMatching={animator.isMatchingTarget}"
+            );
+        }
+
         float matchStart =
             phase.matchStartTime;
 
@@ -332,6 +345,32 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (animator.isMatchingTarget)
             return;
+        
+        Debug.Log(
+            $"VAULT MATCH STARTED | " +
+            $"TargetPosition={targetPosition:F3} | " +
+            $"BodyPart={bodyPart} | " +
+            $"Start={startTime:F3} | " +
+            $"End={endTime:F3}"
+        );
+
+        if (actionRuntime.CurrentParkourActionType ==
+            ParkourActionType.Vault)
+        {
+            Transform leftHand =
+                animator.GetBoneTransform(
+                    HumanBodyBones.LeftHand
+                );
+
+            Debug.Log(
+                $"VAULT TARGET POSITION CHECK | " +
+                $"Root={transform.position:F3} | " +
+                $"LeftHand={(leftHand != null ? leftHand.position.ToString("F3") : "NULL")} | " +
+                $"Target={targetPosition:F3} | " +
+                $"HandToTargetDistance=" +
+                $"{(leftHand != null ? Vector3.Distance(leftHand.position, targetPosition) : -1f):F3}"
+            );
+        }
 
         animator.MatchTarget(
             targetPosition,

@@ -184,7 +184,7 @@ public class CharacterAnimator : MonoBehaviour
             );
         }
     }
-
+    
     private void OnAnimatorMove()
     {
         if (characterMotor == null ||
@@ -207,17 +207,45 @@ public class CharacterAnimator : MonoBehaviour
             motionType != ActionMotionType.Hybrid &&
             motionType != ActionMotionType.Specialized)
         {
+            Debug.Log(
+                $"ROOT MOTION SKIPPED | Frame={Time.frameCount} | " +
+                $"MotionType={motionType}"
+            );
+
             return;
         }
-        Vector3 deltaPosition =
-            animator.deltaPosition;
 
-        Quaternion deltaRotation =
-            animator.deltaRotation;
+        Vector3 deltaPosition = animator.deltaPosition;
+        Quaternion deltaRotation = animator.deltaRotation;
+
+        Debug.Log(
+            $"ROOT MOTION | Frame={Time.frameCount} | " +
+            $"Action={actionRuntime.CurrentActionType} | " +
+            $"MotionType={motionType} | " +
+            $"ApplyRootMotion={animator.applyRootMotion} | " +
+            $"DeltaPosition={deltaPosition:F4} | " +
+            $"DeltaMagnitude={deltaPosition.magnitude:F4}"
+        );
+
+        if (actionRuntime.CurrentParkourActionType ==
+            ParkourActionType.Vault)
+        {
+            AnimatorStateInfo state =
+                animator.GetCurrentAnimatorStateInfo(0);
+
+            Debug.Log(
+                $"VAULT ROOT MOTION DIAGNOSTIC | " +
+                $"Frame={Time.frameCount} | " +
+                $"NormalizedTime={state.normalizedTime % 1f:F3} | " +
+                $"Delta={deltaPosition:F4} | " +
+                $"IsMatching={animator.isMatchingTarget} | " +
+                $"Position={transform.position:F4}"
+            );
+        }
 
         characterMotor.ApplyActionMotion(
             deltaPosition,
             deltaRotation
         );
-    }
+    }   
 }

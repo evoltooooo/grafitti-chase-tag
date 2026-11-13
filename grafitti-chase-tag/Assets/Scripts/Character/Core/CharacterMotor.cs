@@ -611,7 +611,32 @@ public class CharacterMotor : MonoBehaviour
 
     
     private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
+    {   
+        if (actionRuntime != null &&
+            actionRuntime.IsExecuting &&
+            actionRuntime.CurrentParkourActionType != ParkourActionType.None)
+        {
+            Debug.Log(
+                $"PARKOUR COLLISION | " +
+                $"Action={actionRuntime.CurrentParkourActionType} | " +
+                $"Collider={hit.collider.name} | " +
+                $"Tag={hit.collider.tag} | " +
+                $"Layer={LayerMask.LayerToName(hit.collider.gameObject.layer)} | " +
+                $"Normal={hit.normal} | " +
+                $"MoveDirection={hit.moveDirection}"
+            );
+
+            // TEMPORARY VAULT HEIGHT DIAGNOSTIC
+            Debug.Log(
+                $"VAULT COLLISION HEIGHT | " +
+                $"Action={actionRuntime.CurrentParkourActionType} | " +
+                $"PlayerY={transform.position.y:F3} | " +
+                $"ControllerBottom={characterController.bounds.min.y:F3} | " +
+                $"ControllerTop={characterController.bounds.max.y:F3} | " +
+                $"ObstacleTop={hit.collider.bounds.max.y:F3}"
+            );
+        }
+
         if (hit.moveDirection.y < -0.3f)
             return;
 
@@ -752,17 +777,26 @@ public class CharacterMotor : MonoBehaviour
         if (characterController == null)
             return;
 
-        characterController.Move(
-            deltaPosition
+        Vector3 positionBefore = transform.position;
+
+        characterController.Move(deltaPosition);
+
+        Vector3 positionAfter = transform.position;
+
+        Debug.Log(
+            $"ACTION MOTION APPLIED | Frame={Time.frameCount} | " +
+            $"RequestedDelta={deltaPosition:F4} | " +
+            $"ActualDelta={(positionAfter - positionBefore):F4} | " +
+            $"Grounded={characterController.isGrounded} | " +
+            $"CollisionFlags={characterController.collisionFlags}"
         );
 
         if (deltaRotation != Quaternion.identity)
         {
             transform.rotation =
-                transform.rotation *
-                deltaRotation;
+                transform.rotation * deltaRotation;
         }
-    }
+}
 
     public void ApplyParkourMotion(
     Vector3 deltaPosition,

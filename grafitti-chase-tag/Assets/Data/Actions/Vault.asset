@@ -62,11 +62,11 @@ MonoBehaviour:
     staminaPerRevolution: 0
     angularSpeed: 2.5
     rotationSpeed: 10
-  useTargetMatching: 1
+  useTargetMatching: 0
   targetMatchPhases:
   - animationStateName: Armature|Vaulting
     matchStartTime: 0.01
-    matchEndTime: 0.15
+    matchEndTime: 0.075
     matchBodyPart: 4
     matchRotation: 0
     targetPositionOffset: {x: 0, y: 0, z: 0}
