@@ -83,8 +83,8 @@ MonoBehaviour:
   landingDistance: 2.5
   maxTriggerDistance: 1.5
   detectionRadius: 0.6
-  minObstacleHeight: 0.5
-  maxObstacleHeight: 1.2
+  minObstacleHeight: 0.2
+  maxObstacleHeight: 1.5
   detectionCastBackOffset: 0.3
   ticTacSettings:
     minBounceSpeed: 4

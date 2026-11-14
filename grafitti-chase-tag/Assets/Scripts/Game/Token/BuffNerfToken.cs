@@ -80,16 +80,21 @@ public class BuffNerfToken : MonoBehaviour
             this
         );
 
-        // Spawn optional pickup VFX.
+       // Spawn pickup VFX around the collecting character.
         if (tokenData.PickupVfxPrefab != null)
         {
-            Instantiate(
+            GameObject pickupVfx = Instantiate(
                 tokenData.PickupVfxPrefab,
-                transform.position,
-                Quaternion.identity
+                characterEffects.transform
             );
-        }
 
+            // Align the VFX root with the character root.
+            pickupVfx.transform.localPosition = Vector3.zero;
+            pickupVfx.transform.localRotation = Quaternion.identity;
+
+            // Remove the temporary VFX after its particles finish.
+            Destroy(pickupVfx, 2f);
+        }
         // Remove the entire token prefab from the arena.
         if (tokenPrefabRoot != null)
         {
