@@ -1256,6 +1256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourTrajectoryMotionController
   characterMotor: {fileID: 698081056}
   actionRuntime: {fileID: 698081038}
+  vaultLandingApproachStartTime: 0.7
 --- !u!114 &698081036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1573,6 +1574,7 @@ MonoBehaviour:
   actionRuntime: {fileID: 698081038}
   animator: {fileID: 698081060}
   actionLibrary: {fileID: 698081040}
+  trajectoryMotionController: {fileID: 0}
   dampTime: 0.1
 --- !u!114 &698081056
 MonoBehaviour:
@@ -1591,7 +1593,12 @@ MonoBehaviour:
   stamina: {fileID: 698081054}
   stateController: {fileID: 698081053}
   actionRuntime: {fileID: 698081038}
+  animator: {fileID: 0}
   buffNerf: {fileID: 0}
+  actionController: {fileID: 0}
+  wallReboundLayers:
+    serializedVersion: 2
+    m_Bits: 0
   slideColliderHeight: 1
 --- !u!114 &698081057
 MonoBehaviour:
@@ -2510,7 +2517,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5082444691218511969, guid: 4ad4774a1c7cb474b963ecf703269dc3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.17658
+      value: 1.43
       objectReference: {fileID: 0}
     - target: {fileID: 5082444691218511969, guid: 4ad4774a1c7cb474b963ecf703269dc3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2707,6 +2714,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourTrajectoryMotionController
   characterMotor: {fileID: 1876537578}
   actionRuntime: {fileID: 1876537559}
+  vaultLandingApproachStartTime: 0.7
 --- !u!114 &1876537556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3038,6 +3046,7 @@ MonoBehaviour:
   actionRuntime: {fileID: 1876537559}
   animator: {fileID: 1876537581}
   actionLibrary: {fileID: 1876537561}
+  trajectoryMotionController: {fileID: 0}
   dampTime: 0.1
 --- !u!114 &1876537577
 MonoBehaviour:
@@ -3052,7 +3061,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
   inputManager: {fileID: 1876537579}
-  cameraManager: {fileID: 0}
   characterMotor: {fileID: 1876537578}
   actionRuntime: {fileID: 1876537559}
   actionController: {fileID: 0}
@@ -3073,7 +3081,12 @@ MonoBehaviour:
   stamina: {fileID: 1876537575}
   stateController: {fileID: 1876537574}
   actionRuntime: {fileID: 1876537559}
+  animator: {fileID: 0}
   buffNerf: {fileID: 0}
+  actionController: {fileID: 0}
+  wallReboundLayers:
+    serializedVersion: 2
+    m_Bits: 0
   slideColliderHeight: 1
 --- !u!114 &1876537579
 MonoBehaviour:
@@ -3242,6 +3255,55 @@ MonoBehaviour:
   dropletBrightnessVariation: 0.25
   fleckHueVariation: 45
   fleckBrightnessVariation: 0.3
+--- !u!1 &1926671195
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1926671197}
+  - component: {fileID: 1926671196}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1926671196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926671195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 2633f63b31b537348a6380f60d628fe6, type: 2}
+--- !u!4 &1926671197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926671195}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.7566118, y: -3.8222663, z: -0.05116926}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1975560993 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 24fbed003902cbb49b40b7564ff8e862, type: 3}
@@ -3701,3 +3763,4 @@ SceneRoots:
   - {fileID: 7418775148746185135}
   - {fileID: 7426769794685466699}
   - {fileID: 8392105067371450491}
+  - {fileID: 1926671197}

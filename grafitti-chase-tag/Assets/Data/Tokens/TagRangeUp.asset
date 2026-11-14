@@ -21,4 +21,4 @@ MonoBehaviour:
   roleRestriction: 1
   icon: {fileID: 21300000, guid: 5dadfb5ec4862054fb149f87bf481c25, type: 3}
   worldPrefab: {fileID: 4672041145720092352, guid: bf8f721cb0cee614983e1cbcfdc77e31, type: 3}
-  pickupVfxPrefab: {fileID: 0}
+  pickupVfxPrefab: {fileID: 202027199387535616, guid: 7aba3c80e47803c4883ee4c99a02b39c, type: 3}

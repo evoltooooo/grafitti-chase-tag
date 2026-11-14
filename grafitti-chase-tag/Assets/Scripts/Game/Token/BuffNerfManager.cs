@@ -30,6 +30,13 @@ public class BuffNerfManager : MonoBehaviour
     [SerializeField, Min(1)]
     private int attemptsPerToken = 50;
 
+    [Header("Spawn Clearance")]
+    [SerializeField]
+    private LayerMask obstacleLayers;
+
+    [SerializeField, Min(0.05f)]
+    private float spawnClearanceRadius = 0.35f;
+
     [Header("Spawn Settings")]
     [SerializeField, Min(1f)]
     private float spawnInterval = 20f;
@@ -298,6 +305,21 @@ public class BuffNerfManager : MonoBehaviour
                 // Ensure the sampled surface is inside our arena bounds.
                 if (!bounds.Contains(hit.position))
                     continue;
+                
+                // Calculate the actual token spawn position.
+                Vector3 candidateSpawnPosition =
+                    hit.position +
+                    Vector3.up * spawnHeightAboveSurface;
+
+                // Reject positions overlapping environmental obstacles.
+                if (Physics.CheckSphere(
+                    candidateSpawnPosition,
+                    spawnClearanceRadius,
+                    obstacleLayers,
+                    QueryTriggerInteraction.Ignore))
+                {
+                    continue;
+                }
 
                 // Check that this position is not too close
                 // to another token in the same wave.
