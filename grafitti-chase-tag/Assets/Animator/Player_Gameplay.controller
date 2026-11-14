@@ -70,7 +70,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Armature|Jump_Land
-  m_Speed: 1
+  m_Speed: 3
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 798900244575761608}
@@ -258,7 +258,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Armature|Jump_Start
-  m_Speed: 1
+  m_Speed: 3
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -1988686663044595357}
@@ -554,7 +554,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -5524437777235606309, guid: 1907925ce9f63074dbd4e0989cf42b13, type: 3}
+  m_Motion: {fileID: -2881922877965777926, guid: 24fbed003902cbb49b40b7564ff8e862, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

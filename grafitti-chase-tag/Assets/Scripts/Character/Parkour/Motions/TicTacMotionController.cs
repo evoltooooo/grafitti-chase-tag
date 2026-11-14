@@ -56,8 +56,7 @@ public class TicTacMotionController : MonoBehaviour
 
     private void BeginTicTac()
     {
-        lastAction =
-            actionRuntime.CurrentActionType;
+        lastAction = actionRuntime.CurrentActionType;
 
         ParkourTarget target =
             actionRuntime.CurrentParkourTarget;
@@ -68,91 +67,49 @@ public class TicTacMotionController : MonoBehaviour
             return;
         }
 
-        Vector3 incomingVelocity =
-            characterMotor.HorizontalVelocity;
-
-        Vector3 incomingDirection =
-            incomingVelocity;
-
-        incomingDirection.y = 0f;
-
-        if (incomingDirection.sqrMagnitude < 0.001f)
-        {
-            incomingDirection =
-                transform.forward;
-
-            incomingDirection.y = 0f;
-        }
-
-        if (incomingDirection.sqrMagnitude < 0.001f)
-        {
-            actionInitialized = false;
-            return;
-        }
-
-        incomingDirection.Normalize();
-
-        Vector3 wallNormal =
+        // The wall normal points away from the wall.
+        // Use it directly because the Tic Tac animation
+        // already handles the character's turning.
+        Vector3 launchDirection =
             target.SurfaceNormal;
 
-        wallNormal.y = 0f;
+        launchDirection.y = 0f;
 
-        if (wallNormal.sqrMagnitude < 0.001f)
+        if (launchDirection.sqrMagnitude < 0.001f)
         {
             actionInitialized = false;
             return;
         }
 
-        wallNormal.Normalize();
+        ticTacDirection = launchDirection.normalized;
 
-        Vector3 reflectedDirection =
-            Vector3.Reflect(
-                incomingDirection,
-                wallNormal
-            );
-
-        reflectedDirection.y = 0f;
-
-        if (reflectedDirection.sqrMagnitude < 0.001f)
-        {
-            actionInitialized = false;
-            return;
-        }
-
-        reflectedDirection.Normalize();
-
-        ticTacDirection =
-            reflectedDirection;
+        Vector3 incomingVelocity =
+            characterMotor.HorizontalVelocity;
 
         float incomingSpeed =
             incomingVelocity.magnitude;
 
+        TicTacActionSettings settings =
+            actionRuntime.CurrentParkourActionData.TicTacSettings;
+
         ticTacHorizontalSpeed =
             Mathf.Max(
                 incomingSpeed,
-                actionRuntime
-                    .CurrentParkourActionData
-                    .TicTacSettings
-                    .minBounceSpeed
+                settings.minBounceSpeed
             );
 
         ticTacVerticalVelocity =
-            actionRuntime
-                .CurrentParkourActionData
-                .TicTacSettings
-                .verticalLaunchSpeed;
+            settings.verticalLaunchSpeed;
 
         actionInitialized = true;
     }
 
     private void UpdateTicTac()
     {
-        float gravity =
-            characterMotor.Gravity;
+        float gravity = characterMotor.Gravity;
 
         ticTacVerticalVelocity +=
-            gravity *
-            Time.deltaTime;
+            gravity * Time.deltaTime;
 
         Vector3 horizontalMovement =
             ticTacDirection *
@@ -165,19 +122,14 @@ public class TicTacMotionController : MonoBehaviour
             Time.deltaTime;
 
         Vector3 deltaPosition =
-            horizontalMovement +
-            verticalMovement;
+            horizontalMovement + verticalMovement;
 
-        Quaternion targetRotation =
-            Quaternion.LookRotation(
-                ticTacDirection,
-                Vector3.up
-            );
-
+        // Do not override rotation here.
+        // The Tic Tac animation controls the character's turn.
         characterMotor.ApplyParkourMotion(
             deltaPosition,
-            targetRotation,
-            10f
+            Quaternion.identity,
+            0f
         );
     }
 
@@ -185,16 +137,12 @@ public class TicTacMotionController : MonoBehaviour
     {
         actionInitialized = false;
 
-        lastAction =
-            CharacterActionType.None;
+        lastAction = CharacterActionType.None;
 
-        ticTacDirection =
-            Vector3.zero;
+        ticTacDirection = Vector3.zero;
 
-        ticTacHorizontalSpeed =
-            0f;
+        ticTacHorizontalSpeed = 0f;
 
-        ticTacVerticalVelocity =
-            0f;
+        ticTacVerticalVelocity = 0f;
     }
 }
