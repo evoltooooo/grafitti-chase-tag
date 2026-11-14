@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +6,10 @@ public class SceneNavigation : MonoBehaviour
     [Header("Optional Scene Transition")]
     [SerializeField] private MainMenuTransitionController mainMenuTransition;
     [SerializeField] private GameEndTransitionController gameEndTransition;
+
+    public static string PendingSceneName { get; private set; }
+    private bool isSceneLoadRequested;
+    private const string LoadingSceneName = "Loading";
 
     public void OpenMainMenu()
     {
@@ -35,16 +38,39 @@ public class SceneNavigation : MonoBehaviour
 
     public void ExitGame()
     {
-        if (mainMenuTransition != null)
+        SceneTransitionController transition =
+            SceneTransitionController.Instance;
+
+        if (transition == null)
         {
-            mainMenuTransition.PlayExitAnimation(
-                QuitApplication
-            );
+            SceneTransitionController prefab =
+                Resources.Load<SceneTransitionController>(
+                    "SceneTransitionController"
+                );
+
+            if (prefab == null)
+            {
+                Debug.LogError(
+                    "SCENE NAVIGATION | SceneTransitionController prefab missing.",
+                    this
+                );
+
+                return;
+            }
+
+            transition = Instantiate(prefab);
+            transition.SetAlphaInstant(0f);
         }
-        else
-        {
-            QuitApplication();
-        }
+
+        if (transition.IsTransitioning)
+            return;
+
+        transition.FadeOut(QuitApplication);
+    }
+
+    public static void ClearPendingScene()
+    {
+        PendingSceneName = null;
     }
     
     private void LoadScene(string sceneName)
@@ -60,25 +86,76 @@ public class SceneNavigation : MonoBehaviour
             return;
         }
 
+        if (sceneName == LoadingSceneName)
+        {
+            Debug.LogError(
+                "SCENE NAVIGATION | Loading cannot be used as a destination.",
+                this
+            );
+
+            return;
+        }
+
+        if (isSceneLoadRequested)
+            return;
+
+        SceneTransitionController transition =
+            SceneTransitionController.Instance;
+
+        if (transition != null && transition.IsTransitioning)
+            return;
+
+        isSceneLoadRequested = true;
+        PendingSceneName = sceneName;
+
+        // Play the existing scene-specific exit animation first.
         if (mainMenuTransition != null)
         {
-            mainMenuTransition.PlayExitAnimation(() =>
-            {
-                SceneManager.LoadScene(sceneName);
-            });
+            mainMenuTransition.PlayExitAnimation(BeginFadeOut);
         }
         else if (gameEndTransition != null)
         {
-            gameEndTransition.PlayExitAnimation(() =>
-            {
-                SceneManager.LoadScene(sceneName);
-            });
+            gameEndTransition.PlayExitAnimation(BeginFadeOut);
         }
         else
         {
-            SceneManager.LoadScene(sceneName);
+            BeginFadeOut();
         }
     }
+    private void BeginFadeOut()
+    {
+        SceneTransitionController transition =
+            SceneTransitionController.Instance;
+
+        if (transition == null)
+        {
+            SceneTransitionController prefab =
+                Resources.Load<SceneTransitionController>(
+                    "SceneTransitionController"
+                );
+
+            if (prefab == null)
+            {
+                Debug.LogError(
+                    "SCENE NAVIGATION | SceneTransitionController prefab missing.",
+                    this
+                );
+
+                PendingSceneName = null;
+                isSceneLoadRequested = false;
+                return;
+            }
+
+            transition = Instantiate(prefab);
+            transition.SetAlphaInstant(0f);
+        }
+
+        transition.FadeOut(() =>
+        {
+            SceneManager.LoadScene(LoadingSceneName);
+        });
+    }
+
 
     private void QuitApplication()
     {

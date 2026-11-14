@@ -50,6 +50,9 @@ public class RoundManager : MonoBehaviour
     [SerializeField, Min(1)] private int maximumRounds = 5;
     [SerializeField, Min(0f)] private float roundResultDuration = 5f;
 
+    [Header("Scene Navigation")]
+    [SerializeField] private SceneNavigation sceneNavigation;
+
     private bool sessionTimerStarted;
     public float SessionElapsedTime { get; private set; }
     public bool IsSessionComplete { get; private set; }
@@ -480,7 +483,17 @@ public class RoundManager : MonoBehaviour
             $"Elapsed={SessionElapsedTime:F2}s"
         );
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Game End");
+        if (sceneNavigation == null)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | SceneNavigation reference is missing.",
+                this
+            );
+
+            return;
+        }
+
+        sceneNavigation.OpenGameEnd();
     }
 
     /// <summary>

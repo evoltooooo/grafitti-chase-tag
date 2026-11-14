@@ -1589,6 +1589,7 @@ MonoBehaviour:
   winsRequired: 3
   maximumRounds: 5
   roundResultDuration: 6
+  sceneNavigation: {fileID: 1854618609}
   roleShuffleController: {fileID: 865826467}
   startingRole: 0
 --- !u!1 &214896949
@@ -1645,6 +1646,7 @@ Transform:
   - {fileID: 1198890991}
   - {fileID: 497984894}
   - {fileID: 1351060910}
+  - {fileID: 860244400}
   m_Father: {fileID: 920233326}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &252065951
@@ -4640,8 +4642,12 @@ MonoBehaviour:
   spawnedTokenParent: {fileID: 1652501250}
   navMeshSampleRadius: 1.5
   spawnHeightAboveSurface: 0.8
-  minimumSpawnSeparation: 3
+  minimumSpawnSeparation: 5
   attemptsPerToken: 50
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 10368
+  spawnClearanceRadius: 0.35
   spawnInterval: 20
 --- !u!1 &858505236
 GameObject:
@@ -4735,6 +4741,61 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!1 &860244399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 860244400}
+  - component: {fileID: 860244401}
+  m_Layer: 9
+  m_Name: POLE2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &860244400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860244399}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.806, y: 0, z: -8.223}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 214896950}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &860244401
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860244399}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.06
+  m_Height: 7.8598056
+  m_Direction: 1
+  m_Center: {x: 0, y: 3.4299028, z: 0}
 --- !u!1 &863498531
 GameObject:
   m_ObjectHideFlags: 0
