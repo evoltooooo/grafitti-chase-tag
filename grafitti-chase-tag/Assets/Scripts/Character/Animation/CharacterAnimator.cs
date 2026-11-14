@@ -31,6 +31,20 @@ public class CharacterAnimator : MonoBehaviour
 
     private static readonly int ActionTypeHash =
         Animator.StringToHash("ActionType");
+    
+    private static readonly int TagTriggerHash =
+        Animator.StringToHash("Tag");
+
+    private static readonly int TaggedTriggerHash =
+        Animator.StringToHash("Tagged");
+
+    private static readonly int ResetTaggedTriggerHash =
+        Animator.StringToHash("ResetTagged");
+
+    private const string UpperBodyLayerName = "Upper Body";
+
+    private int upperBodyLayerIndex = -1;
+    private bool isTaggedReactionActive;
 
     private void Awake()
     {
@@ -63,12 +77,33 @@ public class CharacterAnimator : MonoBehaviour
             trajectoryMotionController =
                 GetComponentInParent<ParkourTrajectoryMotionController>();
         }
+
+        if (animator != null)
+        {
+            upperBodyLayerIndex =
+                animator.GetLayerIndex(UpperBodyLayerName);
+
+            if (upperBodyLayerIndex < 0)
+            {
+                Debug.LogWarning(
+                    $"CHARACTER ANIMATOR | Layer '{UpperBodyLayerName}' " +
+                    $"was not found on {animator.name}.",
+                    this
+                );
+            }
+        }
+
+        if (actionRuntime != null)
+        {
+            actionRuntime.ActionStarted += OnActionStarted;
+        }
     }
 
     private void Update()
     {
         if (characterMotor == null ||
-            animator == null)
+            animator == null ||
+            isTaggedReactionActive)
         {
             return;
         }
@@ -262,5 +297,70 @@ public class CharacterAnimator : MonoBehaviour
             deltaPosition,
             deltaRotation
         );
-    }   
+    } 
+
+    private void OnActionStarted()
+    {
+        if (actionRuntime == null ||
+            animator == null ||
+            upperBodyLayerIndex < 0)
+        {
+            return;
+        }
+
+        if (actionRuntime.CurrentActionType !=
+            CharacterActionType.Tag)
+        {
+            return;
+        }
+
+        animator.ResetTrigger(TagTriggerHash);
+        animator.SetTrigger(TagTriggerHash);
+
+        Debug.Log(
+            $"TAG ANIMATION | Triggered on layer '{UpperBodyLayerName}'.",
+            this
+        );
+    }  
+
+    public void PlayTaggedReaction()
+    {
+        if (animator == null || isTaggedReactionActive)
+            return;
+
+        isTaggedReactionActive = true;
+
+        animator.ResetTrigger(ResetTaggedTriggerHash);
+        animator.ResetTrigger(TaggedTriggerHash);
+        animator.SetTrigger(TaggedTriggerHash);
+
+        Debug.Log(
+            $"TAGGED REACTION | Playing on {animator.name}.",
+            this
+        );
+    }
+
+    public void ResetTaggedReaction()
+    {
+        if (animator == null || !isTaggedReactionActive)
+            return;
+
+        isTaggedReactionActive = false;
+
+        animator.ResetTrigger(TaggedTriggerHash);
+        animator.SetTrigger(ResetTaggedTriggerHash);
+
+        Debug.Log(
+            $"TAGGED REACTION | Reset on {animator.name}.",
+            this
+        );
+    }
+
+    private void OnDestroy()
+    {
+        if (actionRuntime != null)
+        {
+            actionRuntime.ActionStarted -= OnActionStarted;
+        }
+    }
 }

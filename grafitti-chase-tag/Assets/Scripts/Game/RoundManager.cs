@@ -91,6 +91,9 @@ public class RoundManager : MonoBehaviour
     public bool IsRoundActive => CurrentState == RoundState.Active;
     public float IntermissionDuration => intermissionDuration;
 
+    private CharacterAnimator playerCharacterAnimator;
+    private CharacterAnimator aiCharacterAnimator;
+
     private void Start()
     {
         // Character initialization is handled by
@@ -204,6 +207,23 @@ public class RoundManager : MonoBehaviour
 
         playerRole = playerCharacterRole;
         aiRole = aiCharacterRole;
+
+        playerCharacterAnimator =
+            playerRole.GetComponentInChildren<CharacterAnimator>(true);
+
+        aiCharacterAnimator =
+            aiRole.GetComponentInChildren<CharacterAnimator>(true);
+
+        if (playerCharacterAnimator == null ||
+            aiCharacterAnimator == null)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | CharacterAnimator reference is missing.",
+                this
+            );
+
+            return false;
+        }
 
         playerActionExecutor = playerExecutor;
         aiActionExecutor = aiExecutor;
@@ -361,6 +381,13 @@ public class RoundManager : MonoBehaviour
     {
         // Keep gameplay locked while preparing the round.
         GameplayInputLock.SetLocked(true);
+
+        if (playerCharacterAnimator != null)
+            playerCharacterAnimator.ResetTaggedReaction();
+
+        if (aiCharacterAnimator != null)
+            aiCharacterAnimator.ResetTaggedReaction();
+            
         CurrentState = RoundState.WaitingToStart;
 
         if (!PositionCharactersForNewRound())
@@ -368,6 +395,8 @@ public class RoundManager : MonoBehaviour
             GameplayInputLock.SetLocked(false);
             return;
         }
+
+        ResetTaggedVisuals();
 
         if (aiController != null)
             aiController.ResetForNewRound();
@@ -396,6 +425,29 @@ public class RoundManager : MonoBehaviour
 
             BeginCountdown();
         }
+    }
+
+    private void ResetTaggedVisuals()
+    {
+        if (playerRole != null)
+        {
+            CharacterTaggedVisual playerVisual =
+                playerRole.GetComponent<CharacterTaggedVisual>();
+
+            if (playerVisual != null)
+                playerVisual.ResetVisual();
+        }
+
+        if (aiRole != null)
+        {
+            CharacterTaggedVisual aiVisual =
+                aiRole.GetComponent<CharacterTaggedVisual>();
+
+            if (aiVisual != null)
+                aiVisual.ResetVisual();
+        }
+
+        Debug.Log("ROUND MANAGER | Tagged visuals reset.");
     }
 
     private void BeginCountdown()
@@ -609,12 +661,70 @@ public class RoundManager : MonoBehaviour
         if (targetRole == null)
         {
             Debug.LogWarning(
-                $"ROUND TAG IGNORED | No CharacterRole found on target {targetCollider.name}");
+                $"ROUND TAG IGNORED | No CharacterRole found on target {targetCollider.name}"
+            );
+
             return;
         }
 
         bool roundResolved =
             RegisterSuccessfulTag(tagger, targetRole);
+
+        if (roundResolved)
+        {
+            // Apply the tagged material.
+            CharacterTaggedVisual taggedVisual =
+                targetRole.GetComponent<CharacterTaggedVisual>();
+
+            if (taggedVisual != null)
+            {
+                taggedVisual.ApplyTaggedVisual();
+            }
+            else
+            {
+                Debug.LogWarning(
+                    $"ROUND TAG | CharacterTaggedVisual missing on {targetRole.name}.",
+                    targetRole
+                );
+            }
+
+            // Retrieve the tagger's spray color.
+            TagSprayVFXController taggerSpray =
+                tagger.GetComponentInChildren<TagSprayVFXController>(true);
+
+            // Retrieve the tagged character's smoke effect.
+            CharacterTaggedSmokeVFX taggedSmoke =
+                targetRole.GetComponentInChildren<CharacterTaggedSmokeVFX>(true);
+
+            if (taggerSpray != null && taggedSmoke != null)
+            {
+                taggedSmoke.PlayBurst(taggerSpray.BaseColor);
+
+                Debug.Log(
+                    $"TAGGED SMOKE | Tagger={tagger.name} | " +
+                    $"Target={targetRole.name} | " +
+                    $"Color={taggerSpray.BaseColor}"
+                );
+            }
+            else
+            {
+                if (taggerSpray == null)
+                {
+                    Debug.LogWarning(
+                        $"ROUND TAG | TagSprayVFXController missing on {tagger.name}.",
+                        tagger
+                    );
+                }
+
+                if (taggedSmoke == null)
+                {
+                    Debug.LogWarning(
+                        $"ROUND TAG | CharacterTaggedSmokeVFX missing on {targetRole.name}.",
+                        targetRole
+                    );
+                }
+            }
+        }
 
         Debug.Log(
             $"ROUND TAG RESULT | " +

@@ -43,6 +43,7 @@ public class TagSprayVFXController : MonoBehaviour
 
     [Header("Spray Color")]
     [SerializeField] private Color baseColor = new Color(1f, 0.2f, 0.4f);
+    public Color BaseColor => baseColor;
 
     [SerializeField, Range(0f, 90f)]
     private float hueVariation = 30f;
