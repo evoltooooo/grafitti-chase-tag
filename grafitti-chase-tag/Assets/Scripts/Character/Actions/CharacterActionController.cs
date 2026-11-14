@@ -65,17 +65,34 @@ public class CharacterActionController : MonoBehaviour
     public bool RequestAction(
         CharacterActionRequest request)
     {
+        Debug.Log(
+            $"ACTION REQUEST | Type={request.ActionType}"
+        );
+
         if (IsRoundLocked)
+        {
+            Debug.LogWarning(
+                "ACTION REJECTED | Round is locked"
+            );
             return false;
+        }
 
         if (request.ActionType == CharacterActionType.None)
         {
+            Debug.LogWarning(
+                "ACTION REJECTED | Action type is None"
+            );
             return false;
         }
 
         if (actionResolver == null ||
             actionExecutor == null)
         {
+            Debug.LogError(
+                $"ACTION REJECTED | Missing reference | " +
+                $"Resolver={actionResolver != null} | " +
+                $"Executor={actionExecutor != null}"
+            );
             return false;
         }
 
@@ -83,12 +100,29 @@ public class CharacterActionController : MonoBehaviour
                 request,
                 out CharacterActionData actionData))
         {
+            Debug.LogWarning(
+                $"ACTION REJECTED | Resolver failed | " +
+                $"Type={request.ActionType}"
+            );
             return false;
         }
 
-        return actionExecutor.Execute(
-            actionData
+        Debug.Log(
+            $"ACTION RESOLVED | " +
+            $"Type={actionData.actionType} | " +
+            $"State={actionData.actionState} | " +
+            $"StaminaCost={actionData.staminaCost}"
         );
+
+        bool executed = actionExecutor.Execute(actionData);
+
+        Debug.Log(
+            $"ACTION EXECUTOR RESULT | " +
+            $"Type={request.ActionType} | " +
+            $"Executed={executed}"
+        );
+
+        return executed;
     }
 
     public bool RequestParkourAction(

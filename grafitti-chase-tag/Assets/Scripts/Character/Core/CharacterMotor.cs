@@ -11,6 +11,7 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterBuffNerf buffNerf;
+    [SerializeField] private CharacterActionController actionController;
 
     public float ColliderRadius =>
     characterController != null
@@ -76,6 +77,7 @@ public class CharacterMotor : MonoBehaviour
     private Vector3 lastWallNormal;
     private bool hasWallContact;
     private float lastWallReboundTime = -Mathf.Infinity;
+    private Vector3 lastPhysicalHorizontalVelocity;
 
     public bool IsSprinting { get; private set; }
     
@@ -148,6 +150,12 @@ public class CharacterMotor : MonoBehaviour
         {
             animator = GetComponentInChildren<Animator>();
         }
+
+        if (actionController == null)
+        {
+            actionController =
+                GetComponent<CharacterActionController>();
+        }
     }
 
     public void Tick(Vector2 movementInput, bool sprintHeld)
@@ -176,7 +184,8 @@ public class CharacterMotor : MonoBehaviour
 
         if (!actionControlsNormalMovement)
         {
-            if (!IsSlideMovementActive())
+            if (!IsSlideMovementActive() &&
+                !IsWallReboundActionActive())
             {
                 Vector3 worldDirection =
                     GetCameraRelativeDirection(movementInput);
@@ -227,7 +236,8 @@ public class CharacterMotor : MonoBehaviour
             return;
         }
 
-        if (!IsSlideMovementActive())
+        if (!IsSlideMovementActive() &&
+            !IsWallReboundActionActive())
         {
             HandleHorizontalMovement(
                 hasLookDirection &&
@@ -1008,66 +1018,167 @@ public class CharacterMotor : MonoBehaviour
     // =========================================================
     // FINAL MOVEMENT
     // =========================================================
-
+    
     private void ApplyMovement()
     {
         hasWallContact = false;
 
         Vector3 movement =
             horizontalVelocity +
-            Vector3.up *
-            verticalVelocity;
+            Vector3.up * verticalVelocity;
 
         Vector3 positionBefore = transform.position;
+
         Vector3 velocityBeforeMove = horizontalVelocity;
 
         CollisionFlags collisionFlags =
             characterController.Move(
-                movement *
-                Time.deltaTime
+                movement * Time.deltaTime
             );
 
         Vector3 actualDisplacement =
             transform.position - positionBefore;
 
-        if ((collisionFlags & CollisionFlags.Sides) != 0)
-        {
-            float wallApproachSpeed =
-                -Vector3.Dot(horizontalVelocity, lastWallNormal);
+        Vector3 actualHorizontalDisplacement =
+            actualDisplacement;
 
-            float approachAngle =
+        actualHorizontalDisplacement.y = 0f;
+
+        // Use the physical velocity measured BEFORE this collision.
+        Vector3 incomingPhysicalVelocity =
+            lastPhysicalHorizontalVelocity;
+
+        if ((collisionFlags & CollisionFlags.Sides) != 0 &&
+            hasWallContact)
+        {
+            Vector3 wallNormal = lastWallNormal;
+
+            float physicalApproachSpeed =
+                -Vector3.Dot(
+                    incomingPhysicalVelocity,
+                    wallNormal
+                );
+
+            float physicalApproachAngle =
                 Vector3.Angle(
-                    horizontalVelocity,
-                    -lastWallNormal
+                    incomingPhysicalVelocity,
+                    -wallNormal
                 );
 
             bool movingIntoWall =
-                wallApproachSpeed > 0f;
+                physicalApproachSpeed > 0f;
+
+            bool validApproachSpeed =
+                physicalApproachSpeed >=
+                settings.wallReboundMinSpeed;
 
             bool validApproachAngle =
-                approachAngle <= settings.wallReboundMaxApproachAngle;
+                physicalApproachAngle <=
+                settings.wallReboundMaxApproachAngle;
+
+            bool cooldownComplete =
+                Time.time - lastWallReboundTime >=
+                settings.wallReboundCooldown;
 
             bool canWallRebound =
-                HorizontalSpeed >= settings.wallReboundMinSpeed &&
+                validApproachSpeed &&
                 movingIntoWall &&
                 validApproachAngle &&
-                Time.time - lastWallReboundTime >= settings.wallReboundCooldown;
+                cooldownComplete;
+            
+            Debug.Log(
+                $"WALL REBOUND CHECK | " +
+                $"Contact={hasWallContact} | " +
+                $"Flags={collisionFlags} | " +
+                $"IncomingVelocity={incomingPhysicalVelocity:F2} | " +
+                $"ApproachSpeed={physicalApproachSpeed:F2} | " +
+                $"RequiredSpeed={settings.wallReboundMinSpeed:F2} | " +
+                $"ApproachAngle={physicalApproachAngle:F2} | " +
+                $"MaxAngle={settings.wallReboundMaxApproachAngle:F2} | " +
+                $"CooldownComplete={cooldownComplete} | " +
+                $"CanRebound={canWallRebound}"
+            );
 
-            if (canWallRebound && hasWallContact)
+            if (canWallRebound)
             {
-                Vector3 reboundDirection = lastWallNormal;
+                Vector3 reboundDirection =
+                    Vector3.Reflect(
+                        incomingPhysicalVelocity,
+                        wallNormal
+                    );
 
-                horizontalVelocity =
-                    reboundDirection *
-                    settings.wallReboundSpeed;
-                
-                lastWallReboundTime = Time.time;    
+                reboundDirection.y = 0f;
+
+                if (reboundDirection.sqrMagnitude < 0.001f)
+                {
+                    reboundDirection = wallNormal;
+                }
+
+                reboundDirection.Normalize();
+
+                Debug.Log(
+                    $"WALL REBOUND REQUESTING | " +
+                    $"ControllerExists={actionController != null} | " +
+                    $"CurrentState={(stateController != null ? stateController.CurrentState.ToString() : "Missing")} | " +
+                    $"ActionExecuting={(actionRuntime != null && actionRuntime.IsExecuting)}"
+                );
+
+                bool actionStarted =
+                    actionController != null &&
+                    actionController.RequestAction(
+                        new CharacterActionRequest(
+                            CharacterActionType.WallRebound
+                        )
+                    );
+
+                Debug.Log(
+                    $"WALL REBOUND REQUEST RESULT | Started={actionStarted}"
+                );
+
+                if (actionStarted)
+                {
+                    horizontalVelocity =
+                        reboundDirection *
+                        settings.wallReboundSpeed;
+
+                    lastWallReboundTime = Time.time;
+
+                    Debug.Log(
+                        $"WALL REBOUND ACTION STARTED | " +
+                        $"Incoming={incomingPhysicalVelocity:F2} | " +
+                        $"Outgoing={reboundDirection:F2}"
+                    );
+                }
+            }
+            else
+            {
+                // Remove only the velocity pushing into the wall.
+                // Preserve tangential movement.
+                float velocityIntoWall =
+                    Vector3.Dot(
+                        horizontalVelocity,
+                        wallNormal
+                    );
+
+                if (velocityIntoWall < 0f)
+                {
+                    horizontalVelocity -=
+                        wallNormal * velocityIntoWall;
+                }
             }
         }
 
+        // Always measure actual displacement, including while
+        // touching a wall. This allows the cache to recover after
+        // a rebound without counting blocked movement as speed.
+        lastPhysicalHorizontalVelocity =
+            actualHorizontalDisplacement /
+            Mathf.Max(Time.deltaTime, 0.0001f);
+
+        lastPhysicalHorizontalVelocity.y = 0f;
+
         isGrounded =
-            (collisionFlags &
-            CollisionFlags.Below) != 0;
+            (collisionFlags & CollisionFlags.Below) != 0;
 
         if (Time.time >= nextMotorDebugTime)
         {
@@ -1085,11 +1196,18 @@ public class CharacterMotor : MonoBehaviour
             jumpDebugActive = false;
         }
 
-        if (isGrounded &&
-            verticalVelocity <= 0f)
+        if (isGrounded && verticalVelocity <= 0f)
         {
             isJumping = false;
         }
+    }
+
+    private bool IsWallReboundActionActive()
+    {
+        return actionRuntime != null &&
+            actionRuntime.IsExecuting &&
+            actionRuntime.CurrentActionType ==
+                CharacterActionType.WallRebound;
     }
 
     public void StopHorizontalMovement()
@@ -1154,7 +1272,7 @@ public class CharacterMotor : MonoBehaviour
             transform.rotation =
                 transform.rotation * deltaRotation;
         }
-}
+    }
 
     public void ApplyParkourMotion(
     Vector3 deltaPosition,
@@ -1209,6 +1327,7 @@ public class CharacterMotor : MonoBehaviour
         hasWallContact = false;
         lastWallNormal = Vector3.zero;
         lastWallReboundTime = -Mathf.Infinity;
+        lastPhysicalHorizontalVelocity = Vector3.zero;
 
         // Restore the standing collider at the new spawn position.
         if (IsSliding)

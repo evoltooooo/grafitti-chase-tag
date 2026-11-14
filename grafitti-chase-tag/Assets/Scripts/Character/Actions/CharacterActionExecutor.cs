@@ -72,6 +72,9 @@ public class CharacterActionExecutor : MonoBehaviour
             
             case CharacterActionType.Tag:
                 return ExecuteTag(actionData);
+            
+            case CharacterActionType.WallRebound:
+                return ExecuteWallRebound(actionData);
 
             default:
                 return false;
@@ -238,6 +241,54 @@ public class CharacterActionExecutor : MonoBehaviour
         {
             TagSucceeded?.Invoke(target);
         }
+
+        return true;
+    }
+    
+    private bool ExecuteWallRebound(
+        CharacterActionData actionData)
+    {
+        if (characterMotor == null ||
+            actionRuntime == null ||
+            stateController == null)
+        {
+            return false;
+        }
+
+        // Do not interrupt another action.
+        if (actionRuntime.IsExecuting)
+            return false;
+
+        // Wall Rebound is allowed while airborne.
+        CharacterState currentState =
+            stateController.CurrentState;
+
+        bool validState =
+            currentState == CharacterState.Locomotion ||
+            currentState == CharacterState.Jumping ||
+            currentState == CharacterState.Falling;
+
+        if (!validState)
+            return false;
+
+        if (actionData.actionState !=
+            CharacterState.WallRebound)
+        {
+            return false;
+        }
+
+        if (!TryConsumeActionStamina(actionData))
+            return false;
+
+        actionRuntime.StartAction(actionData);
+
+        SetActionState(actionData);
+
+        Debug.Log(
+            $"WALL REBOUND EXECUTED | " +
+            $"PreviousState={currentState} | " +
+            $"NewState={actionData.actionState}"
+        );
 
         return true;
     }

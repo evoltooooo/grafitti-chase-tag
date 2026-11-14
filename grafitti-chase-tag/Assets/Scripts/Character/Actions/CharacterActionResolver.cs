@@ -93,7 +93,16 @@ public class CharacterActionResolver : MonoBehaviour
         if (stateController != null &&
             stateController.IsBusy)
         {
-            return false;
+            bool airborneWallRebound =
+                actionData.actionType ==
+                    CharacterActionType.WallRebound &&
+                (stateController.CurrentState ==
+                    CharacterState.Jumping ||
+                stateController.CurrentState ==
+                    CharacterState.Falling);
+
+            if (!airborneWallRebound)
+                return false;
         }
 
         if (stamina != null &&
