@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc459980b2ee84043b09ac4e1286d98b, type: 3}
   m_Name: WallRebound
   m_EditorClassIdentifier: Assembly-CSharp::CharacterActionData
-  actionType: 0
-  actionState: 0
-  animationStateName: 
+  actionType: 8
+  actionState: 9
+  animationStateName: Armature|Wall_Rebound
   motionType: 0
   holdToExecute: 0
-  duration: 1
+  duration: 0.8
   cooldown: 0
-  staminaCost: 0
+  staminaCost: 20
   movementSpeed: 0
   movementSpeedCurve:
     serializedVersion: 2

@@ -81,7 +81,7 @@ MonoBehaviour:
   climbForwardMovementStartTime: 0.65
   climbForwardMovementDistance: 0.8
   landingDistance: 1.5
-  maxTriggerDistance: 4
+  maxTriggerDistance: 1.5
   detectionRadius: 0.3
   minObstacleHeight: 5
   maxObstacleHeight: 10

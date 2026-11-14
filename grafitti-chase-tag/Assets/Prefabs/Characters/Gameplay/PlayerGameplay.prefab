@@ -183,6 +183,10 @@ MonoBehaviour:
   actionRuntime: {fileID: 8145211139641985323}
   animator: {fileID: 0}
   buffNerf: {fileID: 0}
+  actionController: {fileID: 0}
+  wallReboundLayers:
+    serializedVersion: 2
+    m_Bits: 8192
   slideColliderHeight: 1
 --- !u!114 &1293920864455279052
 MonoBehaviour:
@@ -197,7 +201,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
   inputManager: {fileID: 1263753397286834022}
-  cameraManager: {fileID: 0}
   characterMotor: {fileID: 8799650708147832603}
   actionRuntime: {fileID: 8145211139641985323}
   actionController: {fileID: 0}
@@ -459,6 +462,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f411a787a981fc749ae8f1df27d89706, type: 2}
   - {fileID: 11400000, guid: fec5e80a2b350c44fa8b1357c73fc483, type: 2}
   - {fileID: 11400000, guid: e10529720004c694390b99fe6e949275, type: 2}
+  - {fileID: 11400000, guid: 05f4f0802f216ca4bab3f55129144140, type: 2}
 --- !u!114 &6778215828195558976
 MonoBehaviour:
   m_ObjectHideFlags: 0

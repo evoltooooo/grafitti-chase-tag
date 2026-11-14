@@ -13,6 +13,9 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private CharacterBuffNerf buffNerf;
     [SerializeField] private CharacterActionController actionController;
 
+    [Header("Wall Rebound")]
+    [SerializeField] private LayerMask wallReboundLayers;
+
     public float ColliderRadius =>
     characterController != null
         ? characterController.radius
@@ -78,6 +81,9 @@ public class CharacterMotor : MonoBehaviour
     private bool hasWallContact;
     private float lastWallReboundTime = -Mathf.Infinity;
     private Vector3 lastPhysicalHorizontalVelocity;
+    private Vector3 wallReboundFacingDirection;
+    private bool hasWallReboundFacingDirection;
+    private bool isValidWallReboundSurface;
 
     public bool IsSprinting { get; private set; }
     
@@ -196,6 +202,8 @@ public class CharacterMotor : MonoBehaviour
                 );
             }
 
+            UpdateWallReboundRotation();
+
             HandleVerticalMovement();
             ApplyMovement();
         }
@@ -250,6 +258,8 @@ public class CharacterMotor : MonoBehaviour
                     : faceCameraDirection
             );
         }
+
+        UpdateWallReboundRotation();
 
         HandleVerticalMovement();
         ApplyMovement();
@@ -583,6 +593,20 @@ public class CharacterMotor : MonoBehaviour
                 settings.rotationSpeed *
                 Time.deltaTime
             );
+    }
+
+    private void UpdateWallReboundRotation()
+    {
+        if (!IsWallReboundActionActive())
+        {
+            hasWallReboundFacingDirection = false;
+            return;
+        }
+
+        if (!hasWallReboundFacingDirection)
+            return;
+
+        RotateTowards(wallReboundFacingDirection);
     }
 
     private void RotateTowardsCamera()
@@ -1013,6 +1037,11 @@ public class CharacterMotor : MonoBehaviour
 
         lastWallNormal = hit.normal;
         hasWallContact = true;
+
+        // Only allow Wall Rebound on configured layers.
+        isValidWallReboundSurface =
+            (wallReboundLayers.value &
+            (1 << hit.collider.gameObject.layer)) != 0;
     }
 
     // =========================================================
@@ -1081,6 +1110,7 @@ public class CharacterMotor : MonoBehaviour
                 settings.wallReboundCooldown;
 
             bool canWallRebound =
+                isValidWallReboundSurface &&
                 validApproachSpeed &&
                 movingIntoWall &&
                 validApproachAngle &&
@@ -1089,6 +1119,7 @@ public class CharacterMotor : MonoBehaviour
             Debug.Log(
                 $"WALL REBOUND CHECK | " +
                 $"Contact={hasWallContact} | " +
+                $"ValidLayer={isValidWallReboundSurface} | " +
                 $"Flags={collisionFlags} | " +
                 $"IncomingVelocity={incomingPhysicalVelocity:F2} | " +
                 $"ApproachSpeed={physicalApproachSpeed:F2} | " +
@@ -1140,6 +1171,10 @@ public class CharacterMotor : MonoBehaviour
                     horizontalVelocity =
                         reboundDirection *
                         settings.wallReboundSpeed;
+
+                    // Store the direction the character should face.
+                    wallReboundFacingDirection = reboundDirection;
+                    hasWallReboundFacingDirection = true;
 
                     lastWallReboundTime = Time.time;
 

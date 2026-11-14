@@ -4,7 +4,6 @@ public class PlayerManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private CameraManager cameraManager;
     [SerializeField] private CharacterMotor characterMotor;
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private CharacterActionController actionController;
@@ -18,10 +17,6 @@ public class PlayerManager : MonoBehaviour
         if (characterMotor == null)
             characterMotor =
                 GetComponent<CharacterMotor>();
-
-        if (cameraManager == null)
-            cameraManager =
-                FindAnyObjectByType<CameraManager>();
         
         if (actionRuntime == null)
             actionRuntime =
