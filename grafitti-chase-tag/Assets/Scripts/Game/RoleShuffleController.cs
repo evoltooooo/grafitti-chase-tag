@@ -1,4 +1,3 @@
-
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,25 +17,56 @@ public class RoleShuffleController : MonoBehaviour
     [Header("Camera Lock")]
     [SerializeField] private CinemachineInputAxisController cameraInput;
 
-    [Header("Timing")]
+    [Header("Overall Timing")]
     [SerializeField, Min(0f)] private float totalDuration = 3f;
     [SerializeField, Min(0f)] private float fadeInDuration = 0.25f;
     [SerializeField, Min(0f)] private float revealHoldDuration = 0.35f;
     [SerializeField, Min(0f)] private float fadeOutDuration = 0.3f;
-    [SerializeField, Min(0.01f)] private float shuffleInterval = 0.12f;
 
-    [Header("Title Pop Animation")]
-    [SerializeField, Min(0f)] private float titlePopDuration = 0.1f;
-    [SerializeField, Range(0.1f, 1f)] private float titlePopStartScale = 0.75f;
-    [SerializeField] private Ease titlePopEase = Ease.OutCubic;
+    [Header("Shuffle Acceleration")]
+    [SerializeField, Min(0.01f)]
+    private float initialShuffleInterval = 0.28f;
+
+    [SerializeField, Min(0.01f)]
+    private float finalShuffleInterval = 0.055f;
+
+    [SerializeField, Min(0.1f)]
+    private float shuffleAccelerationPower = 1.5f;
+
+    [Header("Final Role Reveal")]
+    [SerializeField, Min(0f)]
+    private float revealShrinkDuration = 0.18f;
+
+    [SerializeField, Min(0f)]
+    private float revealPopupDuration = 0.22f;
+
+    [SerializeField, Min(0f)]
+    private float revealSettleDuration = 0.10f;
+
+    [SerializeField, Min(1f)]
+    private float revealInitialScale = 1.35f;
+
+    [SerializeField, Range(0.1f, 1f)]
+    private float revealSmallScale = 0.65f;
+
+    [SerializeField]
+    private Ease revealShrinkEase = Ease.InCubic;
+
+    [SerializeField]
+    private Ease revealPopupEase = Ease.OutBack;
+
+    [SerializeField]
+    private Ease revealSettleEase = Ease.OutCubic;
 
     [Header("Overlay Easing")]
     [SerializeField] private Ease fadeInEase = Ease.OutQuad;
     [SerializeField] private Ease fadeOutEase = Ease.InQuad;
 
     private Sequence shuffleSequence;
-
     private bool isPlaying;
+
+    private Vector3 chaserOriginalScale;
+    private Vector3 evaderOriginalScale;
 
     private void Awake()
     {
@@ -54,6 +84,12 @@ public class RoleShuffleController : MonoBehaviour
             return;
         }
 
+        if (chaserTitle != null)
+            chaserOriginalScale = chaserTitle.transform.localScale;
+
+        if (evaderTitle != null)
+            evaderOriginalScale = evaderTitle.transform.localScale;
+
         SetVisible(false);
     }
 
@@ -61,12 +97,10 @@ public class RoleShuffleController : MonoBehaviour
         CharacterRoleType playerRole,
         Action onComplete)
     {
-        // Stop an existing shuffle if Play is called again.
         KillShuffleSequence();
 
         isPlaying = true;
 
-        // Lock gameplay input.
         GameplayInputLock.SetLocked(true);
 
         if (cameraInput != null)
@@ -77,44 +111,40 @@ public class RoleShuffleController : MonoBehaviour
 
         SetVisible(true);
 
-        // Start with a transparent overlay.
         overlayGroup.alpha = 0f;
 
         if (infoText != null)
             infoText.text = "This round you are...";
 
+        ResetTitleScales();
         SetTitle(null);
 
-        // Calculate the shuffle duration.
+        // Calculate the available shuffle time.
         float shuffleDuration = Mathf.Max(
             0f,
             totalDuration -
             fadeInDuration -
+            revealShrinkDuration -
+            revealPopupDuration -
+            revealSettleDuration -
             revealHoldDuration -
             fadeOutDuration
         );
 
-        // Prepare the selected role title.
         Image selectedTitleImage =
             playerRole == CharacterRoleType.Chaser
                 ? chaserTitle
                 : evaderTitle;
 
-        Transform selectedTitleTransform =
-            selectedTitleImage != null
-                ? selectedTitleImage.transform
-                : null;
-
         Vector3 originalTitleScale =
-            selectedTitleTransform != null
-                ? selectedTitleTransform.localScale
+            selectedTitleImage != null
+                ? selectedTitleImage.transform.localScale
                 : Vector3.one;
 
-        bool showChaser = true;
-
+        // Initialize the animation sequence.
         shuffleSequence = DOTween.Sequence();
 
-        // Fade overlay in.
+        // Fade the role shuffle overlay in.
         if (fadeInDuration > 0f)
         {
             shuffleSequence.Append(
@@ -130,65 +160,44 @@ public class RoleShuffleController : MonoBehaviour
             });
         }
 
-        // Alternate between Chaser and Evader titles.
-        int switchCount = Mathf.FloorToInt(
-            shuffleDuration / shuffleInterval
-        );
-
-        for (int i = 0; i < switchCount; i++)
-        {
-            shuffleSequence.AppendInterval(shuffleInterval);
-
-            shuffleSequence.AppendCallback(() =>
-            {
-                showChaser = !showChaser;
-
-                SetTitle(
-                    showChaser
-                        ? CharacterRoleType.Chaser
-                        : CharacterRoleType.Evader
-                );
-            });
-        }
-
-        // Preserve the remaining shuffle time.
-        float remainingShuffleTime =
-            shuffleDuration - (switchCount * shuffleInterval);
-
-        if (remainingShuffleTime > 0f)
-            shuffleSequence.AppendInterval(remainingShuffleTime);
+        // Progressively accelerate role switching.
+        BuildAcceleratingShuffle(shuffleDuration);
 
         // Reveal the actual player role.
         shuffleSequence.AppendCallback(() =>
         {
             SetTitle(playerRole);
 
-            if (selectedTitleTransform != null)
+            if (selectedTitleImage != null)
             {
-                selectedTitleTransform.localScale =
-                    originalTitleScale * titlePopStartScale;
+                selectedTitleImage.transform.localScale =
+                    originalTitleScale * revealInitialScale;
             }
         });
 
-        // Animate the selected title popping into place.
-        if (selectedTitleTransform != null && titlePopDuration > 0f)
+        // Shrink from oversized to a smaller scale.
+        if (selectedTitleImage != null && revealShrinkDuration > 0f)
         {
             shuffleSequence.Append(
-                selectedTitleTransform.DOScale(
-                    originalTitleScale,
-                    titlePopDuration
-                ).SetEase(titlePopEase)
+                selectedTitleImage.transform.DOScale(
+                    originalTitleScale * revealSmallScale,
+                    revealShrinkDuration
+                ).SetEase(revealShrinkEase)
             );
         }
-        else if (selectedTitleTransform != null)
+
+        // Pop back toward the original scale.
+        if (selectedTitleImage != null && revealPopupDuration > 0f)
         {
-            shuffleSequence.AppendCallback(() =>
-            {
-                selectedTitleTransform.localScale = originalTitleScale;
-            });
+            shuffleSequence.Append(
+                selectedTitleImage.transform.DOScale(
+                    originalTitleScale,
+                    revealPopupDuration
+                ).SetEase(revealPopupEase)
+            );
         }
 
-        // Hold the revealed role.
+        // Hold the final role.
         if (revealHoldDuration > 0f)
             shuffleSequence.AppendInterval(revealHoldDuration);
 
@@ -221,6 +230,56 @@ public class RoleShuffleController : MonoBehaviour
         });
     }
 
+    private void BuildAcceleratingShuffle(float duration)
+    {
+        if (duration <= 0f)
+            return;
+
+        float elapsed = 0f;
+
+        // Local variable can safely be captured by DOTween callbacks.
+        bool showChaser = true;
+
+        while (elapsed < duration)
+        {
+            float progress = Mathf.Clamp01(elapsed / duration);
+
+            float acceleratedProgress = Mathf.Pow(
+                progress,
+                shuffleAccelerationPower
+            );
+
+            float currentInterval = Mathf.Lerp(
+                initialShuffleInterval,
+                finalShuffleInterval,
+                acceleratedProgress
+            );
+
+            float stepDuration = Mathf.Min(
+                currentInterval,
+                duration - elapsed
+            );
+
+            shuffleSequence.AppendInterval(stepDuration);
+
+            elapsed += stepDuration;
+
+            if (elapsed < duration - 0.001f)
+            {
+                shuffleSequence.AppendCallback(() =>
+                {
+                    showChaser = !showChaser;
+
+                    SetTitle(
+                        showChaser
+                            ? CharacterRoleType.Chaser
+                            : CharacterRoleType.Evader
+                    );
+                });
+            }
+        }
+    }
+
     private void SetTitle(CharacterRoleType? role)
     {
         if (chaserTitle != null)
@@ -236,6 +295,15 @@ public class RoleShuffleController : MonoBehaviour
                 role == CharacterRoleType.Evader
             );
         }
+    }
+
+    private void ResetTitleScales()
+    {
+        if (chaserTitle != null)
+            chaserTitle.transform.localScale = chaserOriginalScale;
+
+        if (evaderTitle != null)
+            evaderTitle.transform.localScale = evaderOriginalScale;
     }
 
     private void SetVisible(bool visible)

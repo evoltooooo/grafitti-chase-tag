@@ -118,10 +118,11 @@ public class RoundEndUIManager : MonoBehaviour
             intermission
         );
 
-        // Reserve time for the next role shuffle.
+        // Use all remaining intermission time for the round-end result.
+        // The role shuffle starts after the intermission finishes.
         float availableTime = Mathf.Max(
             0f,
-            intermission - messageTime - roleShuffleLeadTime
+            intermission - messageTime
         );
 
         float fadeIn = Mathf.Min(
@@ -141,29 +142,27 @@ public class RoundEndUIManager : MonoBehaviour
 
         displaySequence = DOTween.Sequence();
 
-        // Keep immediate round feedback visible.
+        // Keep TAGGED / ESCAPED visible for the configured duration.
         displaySequence.AppendInterval(messageTime);
 
         displaySequence.AppendCallback(() =>
         {
+            // Hide Tagged / Evaded.
             if (taggedDisplay != null)
                 taggedDisplay.SetActive(false);
+
+            // Hide gameplay HUD.
+            SetGameplayUIVisible(false);
+
+            // Show Round End immediately.
+            roundEndRoot.SetActive(true);
+
+            if (roundEndCanvasGroup != null)
+                roundEndCanvasGroup.alpha = 0f;
         });
 
         if (availableTime > 0f)
         {
-            displaySequence.AppendCallback(() =>
-            {
-                // Hide gameplay HUD first.
-                SetGameplayUIVisible(false);
-
-                // Reveal the round-end panel.
-                roundEndRoot.SetActive(true);
-
-                if (roundEndCanvasGroup != null)
-                    roundEndCanvasGroup.alpha = 0f;
-            });
-
             // Fade in.
             if (roundEndCanvasGroup != null)
             {
@@ -205,6 +204,15 @@ public class RoundEndUIManager : MonoBehaviour
                     });
                 }
             }
+        }
+        else
+        {
+            // No remaining display time, but still show the result.
+            SetGameplayUIVisible(false);
+            roundEndRoot.SetActive(true);
+
+            if (roundEndCanvasGroup != null)
+                roundEndCanvasGroup.alpha = 1f;
         }
 
         // Hide the result panel after the sequence.
