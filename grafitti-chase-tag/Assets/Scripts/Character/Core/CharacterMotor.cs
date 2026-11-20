@@ -12,6 +12,7 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterBuffNerf buffNerf;
     [SerializeField] private CharacterActionController actionController;
+    [SerializeField] private CharacterVFXController vfxController;
 
     [Header("Wall Rebound")]
     [SerializeField] private LayerMask wallReboundLayers;
@@ -79,6 +80,7 @@ public class CharacterMotor : MonoBehaviour
 
     private Vector3 lastWallNormal;
     private bool hasWallContact;
+    private Vector3 lastWallContactPoint;
     private float lastWallReboundTime = -Mathf.Infinity;
     private Vector3 lastPhysicalHorizontalVelocity;
     private Vector3 wallReboundFacingDirection;
@@ -162,6 +164,9 @@ public class CharacterMotor : MonoBehaviour
             actionController =
                 GetComponent<CharacterActionController>();
         }
+
+        if (vfxController == null)
+            vfxController = GetComponent<CharacterVFXController>();
     }
 
     public void Tick(Vector2 movementInput, bool sprintHeld)
@@ -1036,6 +1041,7 @@ public class CharacterMotor : MonoBehaviour
             return;
 
         lastWallNormal = hit.normal;
+        lastWallContactPoint = hit.point;
         hasWallContact = true;
 
         // Only allow Wall Rebound on configured layers.
@@ -1168,6 +1174,12 @@ public class CharacterMotor : MonoBehaviour
 
                 if (actionStarted)
                 {
+                    vfxController?.PlayTargetContactShockwave(
+                        lastWallContactPoint +
+                        lastWallNormal.normalized * 0.15f,
+                        lastWallNormal
+                    );
+                    
                     horizontalVelocity =
                         reboundDirection *
                         settings.wallReboundSpeed;

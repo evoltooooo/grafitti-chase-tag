@@ -168,6 +168,8 @@ public class CharacterActionRuntime : MonoBehaviour
 
         ActionDuration =
             actionData.duration;
+        
+        ActionStarted?.Invoke();
     }
 
     public void BeginRelease()

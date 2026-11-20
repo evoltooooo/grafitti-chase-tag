@@ -102,4 +102,7 @@ MonoBehaviour:
     matchRotation: 0
     targetPositionOffset: {x: 0, y: 0, z: 0}
     repeatWhileActionActive: 0
+    enableContactDust: 1
+    contactDustTime: 0.05
+    enableContactShockwave: 0
   motionProfile: {fileID: 11400000, guid: 1fde2dc9801d8a54c9585fd4e102e4be, type: 2}

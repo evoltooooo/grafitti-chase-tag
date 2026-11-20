@@ -21,4 +21,12 @@ public class TargetMatchPhase
 
     [Header("Loop")]
     public bool repeatWhileActionActive;
+
+    [Header("Contact VFX")]
+    public bool enableContactDust = true;
+
+    [Range(0f, 1f)]
+    public float contactDustTime = 0.3f;
+
+    public bool enableContactShockwave = true;
 }

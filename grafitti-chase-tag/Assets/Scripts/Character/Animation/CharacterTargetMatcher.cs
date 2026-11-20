@@ -9,6 +9,12 @@ public class CharacterTargetMatcher : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool logMatching = true;
 
+    [Header("VFX")]
+    [SerializeField] private CharacterVFXController vfxController;
+
+    private int lastContactPhaseIndex = -1;
+    private int lastContactLoop = -1;
+
     private CharacterActionType lastActionType =
         CharacterActionType.None;
 
@@ -25,6 +31,9 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (actionRuntime != null)
             actionRuntime.ActionCompleted += OnActionCompleted;
+        
+        if (vfxController == null)
+            vfxController = GetComponent<CharacterVFXController>();
     }
 
     private void OnDestroy()
@@ -143,15 +152,6 @@ public class CharacterTargetMatcher : MonoBehaviour
         }
 
         // -------------------------------------------------
-        // UNITY CAN ONLY HAVE ONE MATCH ACTIVE
-        // -------------------------------------------------
-
-        if (animator.isMatchingTarget)
-        {
-            return;
-        }
-
-        // -------------------------------------------------
         // FIND CURRENT ANIMATION PHASE
         // -------------------------------------------------
 
@@ -214,6 +214,8 @@ public class CharacterTargetMatcher : MonoBehaviour
 
             // Allow this phase to queue its match once.
             lastQueuedLoop = -1;
+            lastContactPhaseIndex = -1;
+            lastContactLoop = -1;
         }
 
         // -------------------------------------------------
@@ -222,6 +224,22 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         float normalizedTime =
             stateInfo.normalizedTime % 1f;
+        
+        int currentLoop =
+            Mathf.FloorToInt(stateInfo.normalizedTime);
+
+        TryTriggerContactDust(
+            phase,
+            phaseIndex,
+            normalizedTime,
+            currentLoop,
+            target
+        );
+
+        // Contact VFX has already been checked.
+        // We can now safely stop if another match is active.
+        if (animator.isMatchingTarget)
+            return;
 
         if (actionRuntime.CurrentParkourActionType ==
             ParkourActionType.Vault)
@@ -289,7 +307,7 @@ public class CharacterTargetMatcher : MonoBehaviour
 
         if (phase.repeatWhileActionActive)
         {
-            int currentLoop =
+            currentLoop =
                 Mathf.FloorToInt(normalizedTime);
 
             targetStartTime =
@@ -409,6 +427,71 @@ public class CharacterTargetMatcher : MonoBehaviour
         return -1;
     }
 
+    private void TryTriggerContactDust(
+        TargetMatchPhase phase,
+        int phaseIndex,
+        float normalizedTime,
+        int currentLoop,
+        ParkourTarget target)
+    {
+        if (phase == null || vfxController == null)
+            return;
+
+        if (!phase.enableContactDust &&
+            !phase.enableContactShockwave)
+            return;
+
+        if (normalizedTime < phase.contactDustTime)
+            return;
+
+        int contactLoop = phase.repeatWhileActionActive
+            ? currentLoop
+            : 0;
+
+        if (lastContactPhaseIndex == phaseIndex &&
+            lastContactLoop == contactLoop)
+        {
+            return;
+        }
+
+        lastContactPhaseIndex = phaseIndex;
+        lastContactLoop = contactLoop;
+
+        // Existing Dust behavior.
+        if (phase.enableContactDust)
+        {
+            vfxController.PlayTargetContactDust(
+                target.InteractionPosition,
+                target.SurfaceNormal
+            );
+        }
+
+        // Shockwave only for Tic Tac and Wall Rebound.
+        CharacterActionType actionType =
+            actionRuntime.CurrentActionType;
+
+        if (phase.enableContactShockwave &&
+            (actionType == CharacterActionType.TicTac ||
+            actionType == CharacterActionType.WallRebound))
+        {
+            vfxController.PlayTargetContactShockwave(
+                target.InteractionPosition,
+                target.SurfaceNormal
+            );
+        }
+
+        if (logMatching)
+        {
+            Debug.Log(
+                $"TARGET CONTACT VFX | " +
+                $"Action={actionType} | " +
+                $"Phase={phase.animationStateName} | " +
+                $"Time={normalizedTime:F3} | " +
+                $"Position={target.InteractionPosition:F3}"
+            );
+        }
+    }
+
     private void ResetMatcher()
     {
         lastActionType =
@@ -417,5 +500,8 @@ public class CharacterTargetMatcher : MonoBehaviour
         currentPhaseIndex = -1;
 
         lastQueuedLoop = -1;
+
+        lastContactPhaseIndex = -1;
+        lastContactLoop = -1;
     }
 }
