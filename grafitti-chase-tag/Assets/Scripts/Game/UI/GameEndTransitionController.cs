@@ -91,11 +91,6 @@ public class GameEndTransitionController : MonoBehaviour
         PrepareInitialState();
     }
 
-    private void Start()
-    {
-        PlayEntryAnimation();
-    }
-
     private bool ValidateReferences()
     {
         bool valid = true;
@@ -177,6 +172,17 @@ public class GameEndTransitionController : MonoBehaviour
 
         mainMenuTransform.localScale =
             originalMainMenuScale * buttonStartScale;
+    }
+
+    public void ShowResults()
+    {
+        if (isEntryComplete || isExiting)
+            return;
+
+        if (entrySequence != null && entrySequence.IsActive())
+            entrySequence.Kill();
+
+        PlayEntryAnimation();
     }
 
     private void PlayEntryAnimation()
