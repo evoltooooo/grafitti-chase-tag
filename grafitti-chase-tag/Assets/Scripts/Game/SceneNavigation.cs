@@ -124,6 +124,20 @@ public class SceneNavigation : MonoBehaviour
     }
     private void BeginFadeOut()
     {
+        AudioManager audioManager = AudioManager.Instance;
+
+        if (audioManager != null)
+        {
+            audioManager.FadeOutBGM(BeginScreenFadeOut);
+        }
+        else
+        {
+            BeginScreenFadeOut();
+        }
+    }
+
+    private void BeginScreenFadeOut()
+    {
         SceneTransitionController transition =
             SceneTransitionController.Instance;
 

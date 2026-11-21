@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -17,6 +19,18 @@ public class AudioManager : MonoBehaviour
     [Header("SFX Voice Pool")]
     [Min(1)]
     [SerializeField] private int pooledVoiceCount = 8;
+
+    [Header("BGM Settings")]
+    [SerializeField] private AudioSource bgmSource;
+    [SerializeField] private AudioMixerGroup bgmMixerGroup;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float bgmVolume = 1f;
+
+    [SerializeField, Min(0f)]
+    private float bgmFadeDuration = 1f;
+
+    private Coroutine bgmFadeCoroutine;
 
     public float SFXVolume => sfxVolume;
 
@@ -48,6 +62,8 @@ public class AudioManager : MonoBehaviour
             sfxSource.outputAudioMixerGroup = sfxMixerGroup;
 
         InitializeVoicePool();
+
+        InitializeBGM();
     }
 
     private void InitializeVoicePool()
@@ -189,5 +205,121 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance == this)
             Instance = null;
+    }
+
+    private void InitializeBGM()
+    {
+        if (bgmSource == null)
+        {
+            GameObject bgmObject = new GameObject("BGM_Source");
+            bgmObject.transform.SetParent(transform);
+
+            bgmSource = bgmObject.AddComponent<AudioSource>();
+        }
+
+        bgmSource.playOnAwake = false;
+        bgmSource.loop = true;
+        bgmSource.spatialBlend = 0f;
+        bgmSource.volume = 0f;
+
+        if (bgmMixerGroup != null)
+            bgmSource.outputAudioMixerGroup = bgmMixerGroup;
+    }
+
+    public void PlayBGM(AudioClip clip, bool loop = true)
+    {
+        if (clip == null || bgmSource == null)
+            return;
+
+        // Avoid restarting the same track unnecessarily.
+        if (bgmSource.clip == clip && bgmSource.isPlaying)
+        {
+            bgmSource.loop = loop;
+            return;
+        }
+
+        StopBGMFade();
+
+        bgmSource.Stop();
+        bgmSource.clip = clip;
+        bgmSource.loop = loop;
+        bgmSource.volume = 0f;
+        bgmSource.Play();
+
+        bgmFadeCoroutine = StartCoroutine(
+            FadeBGM(bgmVolume, bgmFadeDuration)
+        );
+    }
+
+    public void FadeOutBGM(Action onComplete)
+    {
+        if (bgmSource == null || !bgmSource.isPlaying)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        StopBGMFade();
+
+        bgmFadeCoroutine = StartCoroutine(
+            FadeOutBGMCoroutine(onComplete)
+        );
+    }
+
+    private IEnumerator FadeOutBGMCoroutine(Action onComplete)
+    {
+        yield return FadeBGM(0f, bgmFadeDuration);
+
+        bgmSource.Stop();
+        bgmSource.clip = null;
+
+        bgmFadeCoroutine = null;
+
+        onComplete?.Invoke();
+    }
+
+    private IEnumerator FadeBGM(float targetVolume, float duration)
+    {
+        float startVolume = bgmSource.volume;
+
+        if (duration <= 0f)
+        {
+            bgmSource.volume = targetVolume;
+            yield break;
+        }
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            bgmSource.volume = Mathf.Lerp(
+                startVolume,
+                targetVolume,
+                Mathf.Clamp01(elapsed / duration)
+            );
+
+            yield return null;
+        }
+
+        bgmSource.volume = targetVolume;
+    }
+
+    public void SetBGMVolume(float volume)
+    {
+        bgmVolume = Mathf.Clamp01(volume);
+
+        if (bgmSource != null && bgmSource.isPlaying)
+            bgmSource.volume = bgmVolume;
+    }
+
+    private void StopBGMFade()
+    {
+        if (bgmFadeCoroutine == null)
+            return;
+
+        StopCoroutine(bgmFadeCoroutine);
+        bgmFadeCoroutine = null;
     }
 }
