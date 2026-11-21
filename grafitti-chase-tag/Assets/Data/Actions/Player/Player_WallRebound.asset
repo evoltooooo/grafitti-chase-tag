@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc459980b2ee84043b09ac4e1286d98b, type: 3}
-  m_Name: Jump
+  m_Name: Player_WallRebound
   m_EditorClassIdentifier: Assembly-CSharp::CharacterActionData
-  actionType: 1
-  actionState: 1
-  animationStateName: 
+  actionType: 8
+  actionState: 9
+  animationStateName: F|Wall_Rebound
   motionType: 0
   holdToExecute: 0
-  duration: 0.5
+  duration: 0.8
   cooldown: 0
-  staminaCost: 30
+  staminaCost: 20
   movementSpeed: 0
   movementSpeedCurve:
     serializedVersion: 2
@@ -37,6 +37,35 @@ MonoBehaviour:
       time: 1
       value: 0
       inSlope: -1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  slidePeakSpeed: 8
+  slideExitSpeed: 3
+  slideAcceleration: 20
+  slideDeceleration: 8
+  slideRecoveryRate: 12
+  slideMovementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
       outSlope: 0
       tangentMode: 0
       weightedMode: 0

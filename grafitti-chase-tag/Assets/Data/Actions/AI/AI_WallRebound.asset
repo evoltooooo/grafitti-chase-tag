@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48d3aec9f0aa9b747beb7498967d70f1, type: 3}
-  m_Name: Vault
-  m_EditorClassIdentifier: Assembly-CSharp::ParkourActionData
-  actionType: 4
-  actionState: 5
-  animationStateName: Armature|Vaulting
-  motionType: 2
+  m_Script: {fileID: 11500000, guid: dc459980b2ee84043b09ac4e1286d98b, type: 3}
+  m_Name: AI_WallRebound
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterActionData
+  actionType: 8
+  actionState: 9
+  animationStateName: M|Wall_Rebound
+  motionType: 0
   holdToExecute: 0
-  duration: 1
+  duration: 0.8
   cooldown: 0
-  staminaCost: 30
+  staminaCost: 20
   movementSpeed: 0
   movementSpeedCurve:
     serializedVersion: 2
@@ -76,33 +76,3 @@ MonoBehaviour:
     m_RotationOrder: 4
   steeringAmount: 0.25
   steeringRotationSpeed: 5
-  parkourActionType: 1
-  landingForwardOffset: 2
-  climbForwardMovementStartTime: 0.65
-  climbForwardMovementDistance: 0.8
-  landingDistance: 2.5
-  maxTriggerDistance: 1.5
-  detectionRadius: 0.6
-  minObstacleHeight: 0.2
-  maxObstacleHeight: 1.5
-  detectionCastBackOffset: 0.3
-  ticTacSettings:
-    minBounceSpeed: 4
-    verticalLaunchSpeed: 5
-  poleSpinSettings:
-    staminaPerRevolution: 0
-    angularSpeed: 2.5
-    rotationSpeed: 10
-  useTargetMatching: 1
-  targetMatchPhases:
-  - animationStateName: Armature|Vaulting
-    matchStartTime: 0.01
-    matchEndTime: 0.075
-    matchBodyPart: 4
-    matchRotation: 0
-    targetPositionOffset: {x: 0, y: 0, z: 0}
-    repeatWhileActionActive: 0
-    enableContactDust: 1
-    contactDustTime: 0.05
-    enableContactShockwave: 0
-  motionProfile: {fileID: 11400000, guid: 1fde2dc9801d8a54c9585fd4e102e4be, type: 2}

@@ -69,7 +69,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Jump_Land
+  m_Name: F|Jump_Land
   m_Speed: 3
   m_CycleOffset: 0
   m_Transitions:
@@ -118,7 +118,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Wall_Rebound
+  m_Name: F|Wall_Rebound
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -179,7 +179,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Vaulting
+  m_Name: F|Vaulting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -310,7 +310,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Jump_Start
+  m_Name: F|Jump_Start
   m_Speed: 3
   m_CycleOffset: 0
   m_Transitions:
@@ -339,7 +339,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|ClimbUp_2m
+  m_Name: F|ClimbUp_2m
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -669,7 +669,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Tic_Tac
+  m_Name: F|Tic_Tac
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -696,7 +696,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|PoleSpin_Full
+  m_Name: F|PoleSpin_Full
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -723,7 +723,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: F_Armature_001|Standard|Tagged
+  m_Name: F|Tagged
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
@@ -921,7 +921,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Armature|Jump_Loop
+  m_Name: F|Jump_Loop
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1088,7 +1088,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Tag
+  m_Name: F|Tag
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
@@ -1179,7 +1179,7 @@ AnimatorStateMachine:
     m_Position: {x: 880, y: 20, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7503213906230691299}
-    m_Position: {x: 73.068146, y: 103.22121, z: 0}
+    m_Position: {x: 70, y: 100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1630379516657230510}
     m_Position: {x: 410, y: 140, z: 0}

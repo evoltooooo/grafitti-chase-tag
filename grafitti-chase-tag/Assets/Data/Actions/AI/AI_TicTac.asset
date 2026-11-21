@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc459980b2ee84043b09ac4e1286d98b, type: 3}
-  m_Name: WallRebound
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterActionData
-  actionType: 8
-  actionState: 9
-  animationStateName: Armature|Wall_Rebound
-  motionType: 0
+  m_Script: {fileID: 11500000, guid: 48d3aec9f0aa9b747beb7498967d70f1, type: 3}
+  m_Name: AI_TicTac
+  m_EditorClassIdentifier: Assembly-CSharp::ParkourActionData
+  actionType: 6
+  actionState: 7
+  animationStateName: M|TicTac
+  motionType: 3
   holdToExecute: 0
   duration: 0.8
   cooldown: 0
@@ -76,3 +76,23 @@ MonoBehaviour:
     m_RotationOrder: 4
   steeringAmount: 0.25
   steeringRotationSpeed: 5
+  parkourActionType: 3
+  landingForwardOffset: 0.5
+  climbForwardMovementStartTime: 0.65
+  climbForwardMovementDistance: 0.8
+  landingDistance: 1.5
+  maxTriggerDistance: 1.5
+  detectionRadius: 0.3
+  minObstacleHeight: 0.5
+  maxObstacleHeight: 1.2
+  detectionCastBackOffset: 0.3
+  ticTacSettings:
+    minBounceSpeed: 4
+    verticalLaunchSpeed: 5
+  poleSpinSettings:
+    staminaPerRevolution: 0
+    angularSpeed: 2.5
+    rotationSpeed: 10
+  useTargetMatching: 0
+  targetMatchPhases: []
+  motionProfile: {fileID: 0}
