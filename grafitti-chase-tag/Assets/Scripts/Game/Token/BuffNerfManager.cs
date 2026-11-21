@@ -260,12 +260,6 @@ public class BuffNerfManager : MonoBehaviour
         spawnTimer = spawnInterval;
 
         TokensSpawned?.Invoke();
-
-        Debug.Log(
-            $"BUFF NERF WAVE SPAWNED | " +
-            $"TokenCount={spawnedTokens.Count} | " +
-            $"NextWaveIn={spawnInterval:F1}s"
-        );
     }
 
     private bool TryGetRandomNavMeshPositions(

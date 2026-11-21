@@ -95,12 +95,6 @@ public class AIEvaderTactics
 
             return false;
         }
-
-        Debug.Log(
-            $"AI EVADER CLIMB TARGET CONFIRMED | " +
-            $"Interaction={target.InteractionPosition} | " +
-            $"Landing={target.LandingPosition} | " +
-            $"VelocityY={context.Velocity.y:F2}");
                 
         bool hasPartialEndpoint = movement.HasPartialPathEndpoint;
         bool reachedPartialEnd = movement.ReachedPartialPathEnd;
@@ -196,10 +190,6 @@ public class AIEvaderTactics
         // Prevent immediate repeated Jump requests if the attempt times out.
         climbRetryLockoutTimer = ClimbRetryLockoutDuration;
 
-        Debug.Log(
-            "AI EVADER CLIMB JUMP ACCEPTED | " +
-            "Waiting for upward movement");
-
         return true;
     }
 
@@ -207,24 +197,13 @@ public class AIEvaderTactics
         AIContext context,
         CharacterActionController actionController)
     {
-        Debug.Log(
-            $"EVADER CLIMB CHECK ENTER | " +
-            $"Armed={climbTraversalArmed} | " +
-            $"Pending={climbRequestPending} | " +
-            $"Grounded={context.IsGrounded} | " +
-            $"VelocityY={context.Velocity.y:F2} | " +
-            $"Executing={context.IsExecutingAction} | " +
-            $"Action={context.CurrentActionType}");
-
         if (!climbTraversalArmed)
         {
-            Debug.Log("EVADER CLIMB BLOCKED | Traversal not armed");
             return false;
         }
 
         if (climbRequestPending)
         {
-            Debug.Log("EVADER CLIMB BLOCKED | Request pending");
             return false;
         }
 
@@ -238,14 +217,11 @@ public class AIEvaderTactics
         if (context.IsGrounded ||
             context.Velocity.y <= JumpAscentThreshold)
         {
-            Debug.Log("EVADER CLIMB BLOCKED | Not ascending");
             return false;
         }
 
         if (climbCheckTimer > 0f)
         {
-            Debug.Log(
-                $"EVADER CLIMB BLOCKED | Timer={climbCheckTimer:F3}");
             return false;
         }
 
@@ -254,51 +230,23 @@ public class AIEvaderTactics
         if (context.IsExecutingAction &&
             context.CurrentActionType != CharacterActionType.Jump)
         {
-            Debug.Log(
-                $"EVADER CLIMB BLOCKED | Other action: " +
-                $"{context.CurrentActionType}");
             return false;
         }
 
         if (context.IsStaminaEmpty)
         {
-            Debug.Log("EVADER CLIMB BLOCKED | Stamina empty");
             return false;
         }
-
-        Debug.Log("EVADER CLIMB CHECK | Trying to resolve target");
 
         if (!parkourOpportunity.TryFindClimb(
                 actionController,
                 out ParkourTarget target))
         {
-            Debug.Log(
-                "EVADER CLIMB BLOCKED | Target resolution failed");
             return false;
         }
 
-        Debug.Log(
-            $"EVADER CLIMB TARGET FOUND | " +
-            $"Interaction={target.InteractionPosition} | " +
-            $"Landing={target.LandingPosition} | " +
-            $"VelocityY={context.Velocity.y:F2}");
-        
-        Debug.Log(
-            $"EVADER CLIMB REQUEST TRACE | " +
-            $"Position={context.Position} | " +
-            $"Velocity={context.Velocity} | " +
-            $"Grounded={context.IsGrounded} | " +
-            $"Interaction={target.InteractionPosition} | " +
-            $"Landing={target.LandingPosition} | " +
-            $"DistanceToInteraction=" +
-            $"{Vector3.Distance(context.Position, target.InteractionPosition):F2}"
-        );
-
         bool performed = actionController.RequestParkourAction(
             ParkourActionType.Climb);
-
-        Debug.Log(
-            $"EVADER CLIMB EXECUTION RESULT | Accepted={performed}");
 
         if (!performed)
             return false;
@@ -307,8 +255,6 @@ public class AIEvaderTactics
         climbRequestPending = true;
         climbActionObservedExecuting = false;
         climbRequestAcceptedTime = Time.time;
-
-        Debug.Log("EVADER CLIMB REQUEST ACCEPTED");
 
         return true;
     }

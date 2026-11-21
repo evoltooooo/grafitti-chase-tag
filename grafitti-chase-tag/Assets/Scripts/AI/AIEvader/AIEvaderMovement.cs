@@ -145,23 +145,10 @@ public class AIEvaderMovement
         CharacterActionController actionController,
         bool sprint)
     {
-        Debug.Log(
-            $"EVADER NAV CHECK | " +
-            $"NeedsDestination={NeedsDestination} | " +
-            $"CanRetry={CanRetry} | " +
-            $"HasPath={navigation.HasPath} | " +
-            $"Position={context.Position} | " +
-            $"Destination={lastDestination}");
-
         bool waypointUpdated =
             navigation.UpdateWaypoint(context.Position);
 
-        Debug.Log(
-            $"EVADER WAYPOINT | " +
-            $"Updated={waypointUpdated} | " +
-            $"Waypoint={navigation.CurrentWaypoint}");
-
-    if (!waypointUpdated)
+        if (!waypointUpdated)
         {
             Debug.Log(
                 $"EVADER WAYPOINT LOST | " +
@@ -225,34 +212,11 @@ public class AIEvaderMovement
 
         consecutiveWaypointLosses = 0;
 
-        Debug.Log(
-            $"EVADER APPROACH DEBUG | " +
-            $"Position={context.Position} | " +
-            $"Waypoint={navigation.CurrentWaypoint} | " +
-            $"Direction={(navigation.CurrentWaypoint - context.Position).normalized} | " +
-            $"FinalWaypoint={navigation.IsFinalWaypoint}");
-
         CharacterMovementIntent intent =
             steering.CreateMoveTowardIntent(
                 context.Position,
                 navigation.CurrentWaypoint,
                 sprint);
-
-        Debug.Log(
-            $"EVADER INTENT | " +
-            $"WorldDirection={intent.WorldDirection} | " +
-            $"MovementInput={intent.MovementInput} | " +
-            $"Sprint={intent.Sprint}");
-
-        Debug.Log(
-            $"EVADER MOVEMENT DIAGNOSTIC | " +
-            $"Position={context.Position} | " +
-            $"Waypoint={navigation.CurrentWaypoint} | " +
-            $"HasPath={navigation.HasPath} | " +
-            $"Direction={intent.WorldDirection} | " +
-            $"Input={intent.MovementInput} | " +
-            $"Velocity={context.Velocity} | " +
-            $"Grounded={context.IsGrounded}");
 
         actionController.SetMovementIntent(intent);
     }
@@ -283,13 +247,6 @@ public class AIEvaderMovement
                 false);
 
         actionController.SetMovementIntent(intent);
-        
-        Debug.Log(
-            $"EVADER CLIMB APPROACH INTENT | " +
-            $"Position={currentPosition} | " +
-            $"Target={targetPosition} | " +
-            $"Direction={intent.WorldDirection} | " +
-            $"Input={intent.MovementInput}");
     }
 
     private void Stop(

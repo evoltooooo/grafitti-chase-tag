@@ -248,10 +248,6 @@ public class RoundManager : MonoBehaviour
         // Keep gameplay locked while the intro cutscene plays.
         GameplayInputLock.SetLocked(true);
 
-        Debug.Log(
-            "ROUND MANAGER | Characters initialized. Waiting for intro cutscene."
-        );
-
         return true;
     }
 
@@ -271,10 +267,6 @@ public class RoundManager : MonoBehaviour
             return;
 
         hasStartedAfterIntro = true;
-
-        Debug.Log(
-            "ROUND MANAGER | Intro finished. Starting first round."
-        );
 
         BeginRound();
     }
@@ -477,8 +469,6 @@ public class RoundManager : MonoBehaviour
             if (aiVisual != null)
                 aiVisual.ResetVisual();
         }
-
-        Debug.Log("ROUND MANAGER | Tagged visuals reset.");
     }
 
     private void BeginCountdown()

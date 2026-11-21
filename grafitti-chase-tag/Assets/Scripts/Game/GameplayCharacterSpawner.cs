@@ -295,10 +295,5 @@ public class GameplayCharacterSpawner : MonoBehaviour
                 aiRole
             );
         }
-
-        Debug.Log(
-            "GAMEPLAY SPAWNER | Player and AI spawned successfully.",
-            this
-        );
     }
 }
