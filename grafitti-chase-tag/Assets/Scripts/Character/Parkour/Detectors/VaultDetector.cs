@@ -57,16 +57,7 @@ public class VaultDetector : MonoBehaviour
         {
             return false;
         }
-
-        Debug.Log(
-            $"VAULT DETECTION GEOMETRY | " +
-            $"Character={transform.position:F3} | " +
-            $"Forward={forward:F3} | " +
-            $"ObstacleHit={obstacleHit.point:F3} | " +
-            $"ObstacleNormal={obstacleHit.normal:F3} | " +
-            $"TopHit={topHit.point:F3}"
-        );
-
+        
         float obstacleHeight =
             topHit.point.y -
             transform.position.y;

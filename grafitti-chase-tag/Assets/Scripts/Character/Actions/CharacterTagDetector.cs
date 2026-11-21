@@ -137,62 +137,25 @@ public class CharacterTagDetector : MonoBehaviour
                 ? Vector3.Angle(forward, horizontalToTarget)
                 : -1f;
 
-            Debug.Log(
-                $"TAG DEBUG CANDIDATE | " +
-                $"Detector={name} | " +
-                $"Collider={candidate.name} | " +
-                $"Root={candidate.transform.root.name} | " +
-                $"IsSelf={candidate.transform.root == transform.root} | " +
-                $"Layer={LayerMask.LayerToName(candidate.gameObject.layer)} | " +
-                $"BoundsCenter={candidate.bounds.center} | " +
-                $"ClosestPoint={closestPoint} | " +
-                $"HorizontalDistance={horizontalDistance:F2} | " +
-                $"Angle={angle:F1} | " +
-                $"Range={effectiveDistance:F2} | " +
-                $"Radius={EffectiveTagRadius:F2} | " +
-                $"HalfAngle={effectiveHalfAngle:F1}",
-                this
-            );
-
             // Ignore colliders belonging to this character.
             if (candidate.transform == transform ||
                 candidate.transform.IsChildOf(transform))
             {
-                Debug.Log(
-                    $"TAG DEBUG REJECTED | Own character collider: {candidate.name}",
-                    this
-                );
-
                 continue;
             }
 
             if (horizontalDistance < 0.001f)
             {
-                Debug.Log(
-                    "TAG DEBUG REJECTED | Horizontal distance is near zero.",
-                    this
-                );
-
                 continue;
             }
 
             if (horizontalDistance > effectiveDistance)
             {
-                Debug.Log(
-                    "TAG DEBUG REJECTED | Outside horizontal range.",
-                    this
-                );
-
                 continue;
             }
 
             if (angle > effectiveHalfAngle)
             {
-                Debug.Log(
-                    "TAG DEBUG REJECTED | Outside forward cone.",
-                    this
-                );
-
                 continue;
             }
 

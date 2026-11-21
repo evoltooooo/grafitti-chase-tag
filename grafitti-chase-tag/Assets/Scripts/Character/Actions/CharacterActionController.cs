@@ -238,17 +238,12 @@ public class CharacterActionController : MonoBehaviour
         // GROUNDED → NORMAL JUMP
         // =====================================================
 
-        bool jumpPerformed =
-            RequestJump();
-
-        return jumpPerformed;
+        return RequestJump();
     }
 
     public bool RequestTagInput()
     {
-        bool tagPerformed = RequestTag();
-
-        return tagPerformed;
+        return RequestTag();
     }
 
     public void SetMovementIntent(

@@ -13,9 +13,6 @@ public class ParkourDetector : MonoBehaviour
     [SerializeField] private bool drawDebug = true;
     [SerializeField] private ParkourActionData actionDataForDebug;
 
-    private ParkourTarget debugTarget;
-    private bool hasDebugTarget;
-
     private void Awake()
     {
         if (vaultDetector == null)
@@ -63,7 +60,6 @@ public class ParkourDetector : MonoBehaviour
             case ParkourActionType.Climb:
                 return climbDetector.TryDetect(
                     actionData,
-                    parkourLayers,
                     out target);
 
             case ParkourActionType.TicTac:
@@ -186,77 +182,6 @@ public class ParkourDetector : MonoBehaviour
                 climbOrigin,
                 climbOrigin + Vector3.up * maxHeight
             );
-
-            // -------------------------------------------------
-            // 3. DEBUG TARGET
-            // -------------------------------------------------
-
-            if (hasDebugTarget)
-            {
-                // -------------------------------------------------
-                // Interaction / top target
-                // -------------------------------------------------
-
-                Gizmos.color = Color.red;
-
-                Gizmos.DrawSphere(
-                    debugTarget.InteractionPosition,
-                    0.12f
-                );
-
-                // -------------------------------------------------
-                // Surface normal
-                // -------------------------------------------------
-
-                Gizmos.color = Color.blue;
-
-                Gizmos.DrawRay(
-                    debugTarget.InteractionPosition,
-                    debugTarget.SurfaceNormal * 0.75f
-                );
-
-                // -------------------------------------------------
-                // Takeoff -> interaction
-                // -------------------------------------------------
-
-                Gizmos.color = Color.red;
-
-                Gizmos.DrawLine(
-                    debugTarget.TakeoffPosition,
-                    debugTarget.InteractionPosition
-                );
-
-                // -------------------------------------------------
-                // Landing
-                // -------------------------------------------------
-
-                Gizmos.color = Color.green;
-
-                Gizmos.DrawSphere(
-                    debugTarget.LandingPosition,
-                    0.12f
-                );
-
-                Gizmos.DrawLine(
-                    debugTarget.InteractionPosition,
-                    debugTarget.LandingPosition
-                );
-
-                // -------------------------------------------------
-                // Target facing direction
-                // -------------------------------------------------
-
-                Gizmos.color = Color.cyan;
-
-                Gizmos.DrawRay(
-                    debugTarget.InteractionPosition,
-                    debugTarget.TargetRotation *
-                    Vector3.forward *
-                    0.75f
-                );
-            }
-
-            return;
         }
 
         // =====================================================
@@ -296,47 +221,5 @@ public class ParkourDetector : MonoBehaviour
             landingPosition -
             Vector3.up * 1.5f
         );
-
-        // -----------------------------------------------------
-        // Existing debug target
-        // -----------------------------------------------------
-
-        if (hasDebugTarget)
-        {
-            Gizmos.color = Color.red;
-
-            Gizmos.DrawSphere(
-                debugTarget.InteractionPosition,
-                0.12f
-            );
-
-            Gizmos.color = Color.green;
-
-            Gizmos.DrawSphere(
-                debugTarget.LandingPosition,
-                0.12f
-            );
-
-            Gizmos.color = Color.red;
-
-            Gizmos.DrawLine(
-                debugTarget.TakeoffPosition,
-                debugTarget.InteractionPosition
-            );
-
-            Gizmos.color = Color.green;
-
-            Gizmos.DrawLine(
-                debugTarget.InteractionPosition,
-                debugTarget.LandingPosition
-            );
-
-            Gizmos.color = Color.blue;
-
-            Gizmos.DrawRay(
-                debugTarget.InteractionPosition,
-                debugTarget.SurfaceNormal * 0.5f
-            );
-        }
     }
 }

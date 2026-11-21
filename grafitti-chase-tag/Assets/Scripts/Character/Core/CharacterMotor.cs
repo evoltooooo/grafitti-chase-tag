@@ -7,7 +7,6 @@ public class CharacterMotor : MonoBehaviour
     [SerializeField] private MovementSettings settings;
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private CharacterStamina stamina;
-    [SerializeField] private CharacterStateController stateController;
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterBuffNerf buffNerf;
@@ -41,7 +40,6 @@ public class CharacterMotor : MonoBehaviour
     private float activeSlideInitialSpeed;
     private float activeSlidePeakSpeed;
     private float activeSlideExitSpeed;
-    private float activeSlideStartEndTime;
 
     private float activeSlideAcceleration;
     private float activeSlideDeceleration;
@@ -49,7 +47,6 @@ public class CharacterMotor : MonoBehaviour
 
     private float activeSlideCurrentSpeed;
 
-    private float slideLoopStartActionTime;
     private bool slideExitAnimationCompleted;
 
     private bool slideLoopStarted;
@@ -58,7 +55,6 @@ public class CharacterMotor : MonoBehaviour
     private float standingColliderHeight;
     private Vector3 standingColliderCenter;
     private Collider lastSlideRestoreBlocker;
-    private bool wasSlideRestoreBlocked;
 
     public bool IsSliding { get; private set; }
 
@@ -70,14 +66,7 @@ public class CharacterMotor : MonoBehaviour
     private bool isGrounded;
     private bool isJumping;
 
-    private Vector3 jumpStartPosition;
-    private float jumpStartHorizontalSpeed;
-    private bool jumpDebugActive;
-
     private float currentSprintSpeed;
-    private float nextSprintDebugTime;
-    private float nextMotorDebugTime;
-
     private Vector3 lastWallNormal;
     private bool hasWallContact;
     private Vector3 lastWallContactPoint;
@@ -323,10 +312,6 @@ public class CharacterMotor : MonoBehaviour
 
         isJumping = true;
 
-        jumpStartPosition = transform.position;
-        jumpStartHorizontalSpeed = HorizontalSpeed;
-        jumpDebugActive = true;
-
         return true;
     }
 
@@ -338,8 +323,6 @@ public class CharacterMotor : MonoBehaviour
 
     private const string SlideExitState =
         "Armature|Slide_Exit";
-
-    private float nextSlideDebugTime;
 
     private void UpdateSlideCollider()
     {
@@ -451,11 +434,6 @@ public class CharacterMotor : MonoBehaviour
                 );
 
             targetSpeed = currentSprintSpeed;
-
-            if (Time.time >= nextSprintDebugTime)
-            {
-                nextSprintDebugTime = Time.time + 0.25f;
-            }
 
             LocomotionAnimationValue = 2f;
 
@@ -883,8 +861,6 @@ public class CharacterMotor : MonoBehaviour
         // Start with the speed captured before Slide.
         activeSlideCurrentSpeed = activeSlideInitialSpeed;
 
-        slideLoopStartActionTime = 0f;
-
         slideLoopStarted = false;
         slideExitStarted = false;
         slideExitAnimationCompleted = false;
@@ -936,8 +912,6 @@ public class CharacterMotor : MonoBehaviour
         activeSlideDeceleration = 0f;
         activeSlideRecoveryRate = 0f;
 
-        slideLoopStartActionTime = 0f;
-
         slideLoopStarted = false;
         slideExitStarted = false;
 
@@ -984,13 +958,11 @@ public class CharacterMotor : MonoBehaviour
             blocked = true;
 
             lastSlideRestoreBlocker = overlap;
-            wasSlideRestoreBlocked = true;
         }
 
         if (!blocked)
         {
             lastSlideRestoreBlocker = null;
-            wasSlideRestoreBlocked = false;
         }
 
         return !blocked;
@@ -1009,31 +981,6 @@ public class CharacterMotor : MonoBehaviour
     
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {   
-        if (actionRuntime != null &&
-            actionRuntime.IsExecuting &&
-            actionRuntime.CurrentParkourActionType != ParkourActionType.None)
-        {
-            Debug.Log(
-                $"PARKOUR COLLISION | " +
-                $"Action={actionRuntime.CurrentParkourActionType} | " +
-                $"Collider={hit.collider.name} | " +
-                $"Tag={hit.collider.tag} | " +
-                $"Layer={LayerMask.LayerToName(hit.collider.gameObject.layer)} | " +
-                $"Normal={hit.normal} | " +
-                $"MoveDirection={hit.moveDirection}"
-            );
-
-            // TEMPORARY VAULT HEIGHT DIAGNOSTIC
-            Debug.Log(
-                $"VAULT COLLISION HEIGHT | " +
-                $"Action={actionRuntime.CurrentParkourActionType} | " +
-                $"PlayerY={transform.position.y:F3} | " +
-                $"ControllerBottom={characterController.bounds.min.y:F3} | " +
-                $"ControllerTop={characterController.bounds.max.y:F3} | " +
-                $"ObstacleTop={hit.collider.bounds.max.y:F3}"
-            );
-        }
-
         if (hit.moveDirection.y < -0.3f)
             return;
 
@@ -1063,8 +1010,6 @@ public class CharacterMotor : MonoBehaviour
             Vector3.up * verticalVelocity;
 
         Vector3 positionBefore = transform.position;
-
-        Vector3 velocityBeforeMove = horizontalVelocity;
 
         CollisionFlags collisionFlags =
             characterController.Move(
@@ -1121,20 +1066,6 @@ public class CharacterMotor : MonoBehaviour
                 movingIntoWall &&
                 validApproachAngle &&
                 cooldownComplete;
-            
-            Debug.Log(
-                $"WALL REBOUND CHECK | " +
-                $"Contact={hasWallContact} | " +
-                $"ValidLayer={isValidWallReboundSurface} | " +
-                $"Flags={collisionFlags} | " +
-                $"IncomingVelocity={incomingPhysicalVelocity:F2} | " +
-                $"ApproachSpeed={physicalApproachSpeed:F2} | " +
-                $"RequiredSpeed={settings.wallReboundMinSpeed:F2} | " +
-                $"ApproachAngle={physicalApproachAngle:F2} | " +
-                $"MaxAngle={settings.wallReboundMaxApproachAngle:F2} | " +
-                $"CooldownComplete={cooldownComplete} | " +
-                $"CanRebound={canWallRebound}"
-            );
 
             if (canWallRebound)
             {
@@ -1153,13 +1084,6 @@ public class CharacterMotor : MonoBehaviour
 
                 reboundDirection.Normalize();
 
-                Debug.Log(
-                    $"WALL REBOUND REQUESTING | " +
-                    $"ControllerExists={actionController != null} | " +
-                    $"CurrentState={(stateController != null ? stateController.CurrentState.ToString() : "Missing")} | " +
-                    $"ActionExecuting={(actionRuntime != null && actionRuntime.IsExecuting)}"
-                );
-
                 bool actionStarted =
                     actionController != null &&
                     actionController.RequestAction(
@@ -1167,10 +1091,6 @@ public class CharacterMotor : MonoBehaviour
                             CharacterActionType.WallRebound
                         )
                     );
-
-                Debug.Log(
-                    $"WALL REBOUND REQUEST RESULT | Started={actionStarted}"
-                );
 
                 if (actionStarted)
                 {
@@ -1189,12 +1109,6 @@ public class CharacterMotor : MonoBehaviour
                     hasWallReboundFacingDirection = true;
 
                     lastWallReboundTime = Time.time;
-
-                    Debug.Log(
-                        $"WALL REBOUND ACTION STARTED | " +
-                        $"Incoming={incomingPhysicalVelocity:F2} | " +
-                        $"Outgoing={reboundDirection:F2}"
-                    );
                 }
             }
             else
@@ -1227,22 +1141,6 @@ public class CharacterMotor : MonoBehaviour
         isGrounded =
             (collisionFlags & CollisionFlags.Below) != 0;
 
-        if (Time.time >= nextMotorDebugTime)
-        {
-            nextMotorDebugTime =
-                Time.time + 0.25f;
-        }
-
-        if (isGrounded && jumpDebugActive)
-        {
-            Vector3 jumpDisplacement =
-                transform.position - jumpStartPosition;
-
-            jumpDisplacement.y = 0f;
-
-            jumpDebugActive = false;
-        }
-
         if (isGrounded && verticalVelocity <= 0f)
         {
             isJumping = false;
@@ -1273,7 +1171,6 @@ public class CharacterMotor : MonoBehaviour
         LocomotionAnimationValue = 0f;
 
         isJumping = false;
-        jumpDebugActive = false;
 
         // Restore the standing collider if Slide was interrupted.
         if (IsSliding)
@@ -1300,19 +1197,7 @@ public class CharacterMotor : MonoBehaviour
         if (characterController == null)
             return;
 
-        Vector3 positionBefore = transform.position;
-
         characterController.Move(deltaPosition);
-
-        Vector3 positionAfter = transform.position;
-
-        Debug.Log(
-            $"ACTION MOTION APPLIED | Frame={Time.frameCount} | " +
-            $"RequestedDelta={deltaPosition:F4} | " +
-            $"ActualDelta={(positionAfter - positionBefore):F4} | " +
-            $"Grounded={characterController.isGrounded} | " +
-            $"CollisionFlags={characterController.collisionFlags}"
-        );
 
         if (deltaRotation != Quaternion.identity)
         {
@@ -1368,8 +1253,6 @@ public class CharacterMotor : MonoBehaviour
         LocomotionAnimationValue = 0f;
 
         isJumping = false;
-        jumpDebugActive = false;
-        jumpStartHorizontalSpeed = 0f;
 
         hasWallContact = false;
         lastWallNormal = Vector3.zero;

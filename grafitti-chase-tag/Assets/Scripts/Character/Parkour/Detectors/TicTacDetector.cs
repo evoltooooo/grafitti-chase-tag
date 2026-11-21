@@ -23,9 +23,6 @@ public class TicTacDetector : MonoBehaviour
         if (actionData == null)
             return false;
 
-        Vector3 forward =
-            environmentDetector.GetHorizontalForward();
-
         if (!environmentDetector.TryDetectWall(
                 actionData,
                 parkourLayers,

@@ -3,7 +3,6 @@ using UnityEngine;
 public class CharacterActionRuntime : MonoBehaviour
 {
     public bool IsExecuting { get; private set; }
-    public Vector2 SteeringInput { get; private set; }
     public bool IsHoldControlled { get; private set; }
     public ActionMotionType CurrentMotionType { get; private set; }
     public bool IsReleasing { get; private set; }
@@ -84,12 +83,6 @@ public class CharacterActionRuntime : MonoBehaviour
         if (IsHoldControlled)
             return;
         
-        if (ActionDuration > 0f &&
-            ActionTime >= ActionDuration)
-        {
-            CompleteAction();
-        }
-
         // Normal actions remain duration-controlled.
         if (ActionDuration > 0f &&
             ActionTime >= ActionDuration)
@@ -215,11 +208,6 @@ public class CharacterActionRuntime : MonoBehaviour
         ResetRuntime();
     }
 
-    public void SetSteeringInput(Vector2 input)
-    {
-        SteeringInput = input;
-    }
-
     private void ResetRuntime()
     {
         IsHoldControlled = false;
@@ -227,8 +215,6 @@ public class CharacterActionRuntime : MonoBehaviour
         IsReleasing = false;
 
         CurrentActionData = null;
-
-        SteeringInput = Vector2.zero;
 
         IsExecuting = false;
 

@@ -22,7 +22,6 @@ public class ClimbDetector : MonoBehaviour
 
     public bool TryDetect(
         ParkourActionData actionData,
-        LayerMask parkourLayers,
         out ParkourTarget target)
     {
         target = default;
@@ -145,12 +144,6 @@ public class ClimbDetector : MonoBehaviour
             Quaternion.LookRotation(
                 -wallHit.normal,
                 Vector3.up);
-        
-        bool landingOnNavMesh = UnityEngine.AI.NavMesh.SamplePosition(
-            landingPosition,
-            out UnityEngine.AI.NavMeshHit navHit,
-            0.1f,
-            UnityEngine.AI.NavMesh.AllAreas);
 
         target = new ParkourTarget(
             ParkourActionType.Climb,

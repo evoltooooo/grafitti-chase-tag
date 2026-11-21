@@ -5,7 +5,6 @@ public class CharacterAnimator : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterMotor characterMotor;    [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private Animator animator;
-    [SerializeField] private CharacterActionLibrary actionLibrary;
     [SerializeField] private ParkourTrajectoryMotionController trajectoryMotionController;
 
     [Header("Animation Settings")]
@@ -64,12 +63,6 @@ public class CharacterAnimator : MonoBehaviour
         {
             animator =
                 GetComponentInChildren<Animator>();
-        }
-
-        if (actionLibrary == null)
-        {
-            actionLibrary =
-                GetComponentInParent<CharacterActionLibrary>();
         }
 
         if (trajectoryMotionController == null)
@@ -249,11 +242,6 @@ public class CharacterAnimator : MonoBehaviour
             motionType != ActionMotionType.Hybrid &&
             motionType != ActionMotionType.Specialized)
         {
-            Debug.Log(
-                $"ROOT MOTION SKIPPED | Frame={Time.frameCount} | " +
-                $"MotionType={motionType}"
-            );
-
             return;
         }
 
@@ -267,31 +255,6 @@ public class CharacterAnimator : MonoBehaviour
         }
 
         Quaternion deltaRotation = animator.deltaRotation;
-
-        Debug.Log(
-            $"ROOT MOTION | Frame={Time.frameCount} | " +
-            $"Action={actionRuntime.CurrentActionType} | " +
-            $"MotionType={motionType} | " +
-            $"ApplyRootMotion={animator.applyRootMotion} | " +
-            $"DeltaPosition={deltaPosition:F4} | " +
-            $"DeltaMagnitude={deltaPosition.magnitude:F4}"
-        );
-
-        if (actionRuntime.CurrentParkourActionType ==
-            ParkourActionType.Vault)
-        {
-            AnimatorStateInfo state =
-                animator.GetCurrentAnimatorStateInfo(0);
-
-            Debug.Log(
-                $"VAULT ROOT MOTION DIAGNOSTIC | " +
-                $"Frame={Time.frameCount} | " +
-                $"NormalizedTime={state.normalizedTime % 1f:F3} | " +
-                $"Delta={deltaPosition:F4} | " +
-                $"IsMatching={animator.isMatchingTarget} | " +
-                $"Position={transform.position:F4}"
-            );
-        }
 
         characterMotor.ApplyActionMotion(
             deltaPosition,

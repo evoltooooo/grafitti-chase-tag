@@ -6,9 +6,6 @@ public class CharacterTargetMatcher : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterActionRuntime actionRuntime;
 
-    [Header("Debug")]
-    [SerializeField] private bool logMatching = true;
-
     [Header("VFX")]
     [SerializeField] private CharacterVFXController vfxController;
 
@@ -53,18 +50,6 @@ public class CharacterTargetMatcher : MonoBehaviour
             actionRuntime == null)
         {
             return;
-        }
-
-        // TEMPORARY CLIMB DIAGNOSTIC
-        if (actionRuntime.IsExecuting &&
-            actionRuntime.CurrentParkourActionType ==
-                ParkourActionType.Climb)
-        {
-            AnimatorStateInfo state =
-                animator.GetCurrentAnimatorStateInfo(0);
-
-            CharacterMotor motor =
-                GetComponent<CharacterMotor>();
         }
 
         // -------------------------------------------------
@@ -240,19 +225,6 @@ public class CharacterTargetMatcher : MonoBehaviour
         // We can now safely stop if another match is active.
         if (animator.isMatchingTarget)
             return;
-
-        if (actionRuntime.CurrentParkourActionType ==
-            ParkourActionType.Vault)
-        {
-            Debug.Log(
-                $"VAULT MATCH CHECK | " +
-                $"State={stateInfo.fullPathHash} | " +
-                $"NormalizedTime={normalizedTime:F3} | " +
-                $"Start={phase.matchStartTime:F3} | " +
-                $"End={phase.matchEndTime:F3} | " +
-                $"IsMatching={animator.isMatchingTarget}"
-            );
-        }
 
         float matchStart =
             phase.matchStartTime;
@@ -477,17 +449,6 @@ public class CharacterTargetMatcher : MonoBehaviour
             vfxController.PlayTargetContactShockwave(
                 target.InteractionPosition,
                 target.SurfaceNormal
-            );
-        }
-
-        if (logMatching)
-        {
-            Debug.Log(
-                $"TARGET CONTACT VFX | " +
-                $"Action={actionType} | " +
-                $"Phase={phase.animationStateName} | " +
-                $"Time={normalizedTime:F3} | " +
-                $"Position={target.InteractionPosition:F3}"
             );
         }
     }

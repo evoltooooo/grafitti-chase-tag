@@ -31,15 +31,10 @@ public class PlayerManager : MonoBehaviour
     {
         if (GameplayInputLock.IsLocked)
         {
-            actionRuntime.SetSteeringInput(Vector2.zero);
             characterMotor.SetMovementInput(Vector2.zero);
             actionController.SetMovementIntent(default);
             return;
         }
-        
-        actionRuntime.SetSteeringInput(
-            inputManager.MovementInput
-        );
 
         characterMotor.SetMovementInput(
             inputManager.MovementInput

@@ -11,10 +11,6 @@ public class ClimbAnimationEntry : MonoBehaviour
     [Header("Animation Entry")]
     [SerializeField, Min(0f)]
     private float transitionDuration = 0.05f;
-
-    [Header("Debug")]
-    [SerializeField] private bool logTransitions = true;
-
     private bool climbEntryRequested;
 
     private void Awake()
