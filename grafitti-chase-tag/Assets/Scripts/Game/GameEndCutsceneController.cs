@@ -189,6 +189,8 @@ public class GameEndCutsceneController : MonoBehaviour
             if (rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
                 uiCameraCanvas = rootCanvas;
         }
+
+        videoPlayer.waitForFirstFrame = true;
     }
 
     private void Start()
@@ -328,6 +330,27 @@ public class GameEndCutsceneController : MonoBehaviour
             yield return null;
 
         videoPlayer.Play();
+    
+        // Wait until the first video frame is available.
+        while (videoPlayer.frame < 0)
+            yield return null;
+
+        // Reveal the Game End scene only after video playback is ready.
+        SceneTransitionController transition =
+            SceneTransitionController.Instance;
+
+        if (transition != null)
+        {
+            transition.SetAlphaInstant(1f);
+            transition.FadeIn();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "GAME END CUTSCENE | SceneTransitionController not found.",
+                this
+            );
+        }
 
         yield return new WaitForSecondsRealtime(
             delayBeforeWinGraphic

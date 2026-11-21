@@ -1388,7 +1388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameEndUIManager
   winnerText: {fileID: 997725792}
   elapsedTimeText: {fileID: 398042690}
-  useDebugResults: 1
+  useDebugResults: 0
   debugWinner: PLAYER WINS!
   debugElapsedTime: 125
 --- !u!4 &1154052085
@@ -1850,7 +1850,7 @@ MonoBehaviour:
   winSettleEase: 3
   delayBeforeWinGraphic: 1.5
   winGraphicFadeInDuration: 0.3
-  winGraphicDisplayDuration: 3
+  winGraphicDisplayDuration: 2.3
   backgroundFadeDuration: 0.5
   resultRevealDelay: 0
   playAgainButtonTransform: {fileID: 1749370449}
@@ -1858,11 +1858,11 @@ MonoBehaviour:
   playAgainButtonWhiteTransform: {fileID: 1087085309}
   mainMenuButtonWhiteTransform: {fileID: 330449156}
   buttonHoverScaleMultiplier: 1.12
-  buttonHoverDuration: 0.12
+  buttonHoverDuration: 0.2
   buttonHoverEase: 6
-  buttonHoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  useDebugWinner: 1
-  debugWinner: AI WINS!
+  buttonHoverColor: {r: 0.93962264, g: 0.9171615, b: 0.6577358, a: 1}
+  useDebugWinner: 0
+  debugWinner: PLAYER WINS!
 --- !u!328 &1723233171
 VideoPlayer:
   m_ObjectHideFlags: 0

@@ -39,10 +39,7 @@ public class LoadingSceneController : MonoBehaviour
             SceneTransitionController.Instance;
 
         if (transition != null)
-        {
-            // Reveal the Loading Scene and its loading text.
             transition.SetAlphaInstant(0f);
-        }
 
         float loadingStartTime = Time.realtimeSinceStartup;
 
@@ -69,16 +66,14 @@ public class LoadingSceneController : MonoBehaviour
             yield return null;
 
         while (Time.realtimeSinceStartup - loadingStartTime <
-               minimumLoadingDuration)
+            minimumLoadingDuration)
         {
             yield return null;
         }
 
         // Cover the Loading Scene before activating the destination.
         if (transition != null)
-        {
             transition.SetAlphaInstant(1f);
-        }
 
         operation.allowSceneActivation = true;
 
@@ -89,10 +84,23 @@ public class LoadingSceneController : MonoBehaviour
             $"LOADING SCENE | Destination activated: {destinationScene}"
         );
 
-        // The coroutine survives scene activation because this
-        // LoadingSceneController is persistent.
+        // Game End handles its own fade-in after its video is ready.
+        if (destinationScene == "Game End")
+        {
+            Destroy(gameObject);
+            yield break;
+        }
+
+        // Allow the destination scene to initialize behind the overlay.
+        yield return null;
+
+        transition = SceneTransitionController.Instance;
+
         if (transition != null)
         {
+            // Explicitly guarantee that the fade starts from black.
+            transition.SetAlphaInstant(1f);
+
             transition.FadeIn(() =>
             {
                 Destroy(gameObject);
@@ -100,6 +108,11 @@ public class LoadingSceneController : MonoBehaviour
         }
         else
         {
+            Debug.LogWarning(
+                "LOADING SCENE | SceneTransitionController not found. " +
+                "Cannot play destination fade-in."
+            );
+
             Destroy(gameObject);
         }
     }

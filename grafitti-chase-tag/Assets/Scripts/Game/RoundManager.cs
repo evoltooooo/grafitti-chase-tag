@@ -94,6 +94,8 @@ public class RoundManager : MonoBehaviour
     private CharacterAnimator playerCharacterAnimator;
     private CharacterAnimator aiCharacterAnimator;
 
+    private bool hasStartedAfterIntro;
+
     private void Start()
     {
         // Character initialization is handled by
@@ -243,9 +245,38 @@ public class RoundManager : MonoBehaviour
 
         isInitialized = true;
 
-        BeginRound();
+        // Keep gameplay locked while the intro cutscene plays.
+        GameplayInputLock.SetLocked(true);
+
+        Debug.Log(
+            "ROUND MANAGER | Characters initialized. Waiting for intro cutscene."
+        );
 
         return true;
+    }
+
+    public void StartGameAfterIntro()
+    {
+        if (!isInitialized)
+        {
+            Debug.LogError(
+                "ROUND MANAGER | Cannot start game. Characters are not initialized.",
+                this
+            );
+
+            return;
+        }
+
+        if (hasStartedAfterIntro)
+            return;
+
+        hasStartedAfterIntro = true;
+
+        Debug.Log(
+            "ROUND MANAGER | Intro finished. Starting first round."
+        );
+
+        BeginRound();
     }
 
     private bool PositionCharactersForNewRound()
