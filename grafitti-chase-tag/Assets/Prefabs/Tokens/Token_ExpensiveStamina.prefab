@@ -5073,6 +5073,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuffNerfToken
   tokenData: {fileID: 11400000, guid: a6d639c0aa83f7942aa838bedf5935de, type: 2}
   tokenPrefabRoot: {fileID: 7226126545323133797}
+  buffPickupSFX: {fileID: 0}
+  nerfPickupSFX: {fileID: 8300000, guid: 25dad2be3cd028d41b8e7e3830321759, type: 3}
+  pickupVolume: 1
 --- !u!1 &8502727568769147028
 GameObject:
   m_ObjectHideFlags: 0

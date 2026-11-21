@@ -8,6 +8,13 @@ public class BuffNerfToken : MonoBehaviour
     [SerializeField] private BuffNerfTokenData tokenData;
     [SerializeField] private GameObject tokenPrefabRoot;
 
+    [Header("Pickup Audio")]
+    [SerializeField] private AudioClip buffPickupSFX;
+    [SerializeField] private AudioClip nerfPickupSFX;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float pickupVolume = 1f;
+
     private bool hasBeenCollected;
 
     public BuffNerfTokenData TokenData => tokenData;
@@ -66,6 +73,20 @@ public class BuffNerfToken : MonoBehaviour
         }
 
         hasBeenCollected = true;
+
+        // Play pickup sound based on token category.
+        AudioClip pickupClip =
+            tokenData.Category == BuffNerfTokenCategory.Buff
+                ? buffPickupSFX
+                : nerfPickupSFX;
+
+        if (pickupClip != null && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                pickupClip,
+                pickupVolume
+            );
+        }
 
         // Attempt to apply the effect.
         // A role-restricted token may return false, but the token

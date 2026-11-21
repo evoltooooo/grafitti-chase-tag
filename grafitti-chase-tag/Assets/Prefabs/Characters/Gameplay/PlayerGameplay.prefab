@@ -75,6 +75,9 @@ GameObject:
   - component: {fileID: 5398065799143971523}
   - component: {fileID: 2867343956264558065}
   - component: {fileID: 524416826334592965}
+  - component: {fileID: 5577430874894969281}
+  - component: {fileID: 2277663192940360260}
+  - component: {fileID: 4827237413413495160}
   m_Layer: 10
   m_Name: PlayerGameplay
   m_TagString: Player
@@ -722,6 +725,151 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterTaggedVisual
   characterRenderers: []
   taggedMaterial: {fileID: 2100000, guid: c09a27b103f0bdb41a61b36ec5974cf6, type: 2}
+--- !u!114 &5577430874894969281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2764837311570349066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d166bbd585dff4eb2b7f745a9ee5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterActionSFX
+  actionRuntime: {fileID: 0}
+  jumpSFX: {fileID: 8300000, guid: 14237b845e6b72449a7460ce908cb697, type: 3}
+  climbSFX: {fileID: 8300000, guid: 14237b845e6b72449a7460ce908cb697, type: 3}
+  poleSpinVaultSFX: {fileID: 8300000, guid: 70dc26d7d6bb29b4aa4f48d972a8294e, type: 3}
+  slideSFX: {fileID: 8300000, guid: 8a97f6fb6a7b1544aadd1e9eb5f4a052, type: 3}
+  ticTacSFX: {fileID: 8300000, guid: 14237b845e6b72449a7460ce908cb697, type: 3}
+  wallReboundSFX: {fileID: 8300000, guid: 14237b845e6b72449a7460ce908cb697, type: 3}
+  spraySFX: {fileID: 8300000, guid: ac5a5d97827f68f4da81604f47f803aa, type: 3}
+  jumpStartTime: 0.7
+  climbStartTime: 0.6
+  poleSpinVaultStartTime: 0.4
+  slideStartTime: 0.3
+  ticTacStartTime: 0.6
+  wallReboundStartTime: 0.6
+  sprayStartTime: 0.2
+  volumeMultiplier: 1
+--- !u!82 &2277663192940360260
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2764837311570349066}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &4827237413413495160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2764837311570349066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d999ecca337a54cb5116a7846e9780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterMovementSFX
+  characterMotor: {fileID: 0}
+  actionRuntime: {fileID: 0}
+  movementAudioSource: {fileID: 0}
+  runLoopSFX: {fileID: 8300000, guid: 6b4438c1a48dcfc4386e98739062f131, type: 3}
+  runVolume: 0.5
+  sprintVolume: 0.7
+  minimumMovementSpeed: 0.2
+  volumeFadeSpeed: 4
 --- !u!1 &2877723193901325571
 GameObject:
   m_ObjectHideFlags: 0
