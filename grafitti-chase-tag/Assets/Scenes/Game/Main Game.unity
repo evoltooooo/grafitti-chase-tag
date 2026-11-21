@@ -887,6 +887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneBGM
   bgmClip: {fileID: 8300000, guid: a93b0fc654347704e8943e2b6960723b, type: 3}
+  loopBGM: 1
 --- !u!1 &116826453
 GameObject:
   m_ObjectHideFlags: 0
@@ -1765,10 +1766,10 @@ MonoBehaviour:
   spawnEast: {fileID: 87981737}
   spawnNorth: {fileID: 1294357279}
   spawnSouth: {fileID: 1539275166}
-  roundDuration: 60
+  roundDuration: 5
   intermissionDuration: 3
   pointsPerRound: 1
-  winsRequired: 1
+  winsRequired: 3
   maximumRounds: 5
   roundResultDuration: 6
   sceneNavigation: {fileID: 1854618609}

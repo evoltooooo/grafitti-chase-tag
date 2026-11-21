@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourActionData
   actionType: 7
   actionState: 8
-  animationStateName: M|PoleSpin_Full
+  animationStateName: Armature|PoleSpin_Full
   motionType: 4
   holdToExecute: 1
   duration: 1
@@ -95,7 +95,7 @@ MonoBehaviour:
     rotationSpeed: 5
   useTargetMatching: 1
   targetMatchPhases:
-  - animationStateName: M|PoleSpin_Full
+  - animationStateName: Armature|PoleSpin_Full
     matchStartTime: 0.05
     matchEndTime: 0.25
     matchBodyPart: 5

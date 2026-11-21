@@ -268,6 +268,8 @@ public class RoundManager : MonoBehaviour
 
         hasStartedAfterIntro = true;
 
+        GameRecordsManager.StartNewSession();
+
         BeginRound();
     }
 
@@ -617,6 +619,22 @@ public class RoundManager : MonoBehaviour
             aiController.ResetForNewRound();
 
         LastRoundElapsedTime = roundElapsedTime;
+
+        GameRecordsManager.RegisterRoundResult(
+            playerRole.CurrentRole,
+            winningRole,
+            LastRoundElapsedTime
+        );
+
+        Debug.Log(
+            $"GAME RECORDS | " +
+            $"Player Role: {playerRole.CurrentRole} | " +
+            $"Winner: {winningRole} | " +
+            $"Fastest Chaser: {GameRecordsManager.FastestChaserTime:F2}s | " +
+            $"Longest Evader Streak: {GameRecordsManager.LongestEvaderStreak} | " +
+            $"Current Evader Streak: {GameRecordsManager.CurrentEvaderStreak} | " +
+            $"Save Path: {GameRecordsManager.GetSavePath()}"
+        );
 
         AwardPoints(winningRole);
 

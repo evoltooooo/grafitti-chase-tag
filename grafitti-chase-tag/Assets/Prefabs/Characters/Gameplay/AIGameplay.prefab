@@ -1192,7 +1192,6 @@ MonoBehaviour:
   animator: {fileID: 0}
   actionRuntime: {fileID: 0}
   transitionDuration: 0.05
-  logTransitions: 1
 --- !u!114 &401968688573732563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1271,7 +1270,6 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: fa9920a1a00f1c84381b272d330c2b21, type: 2}
   cameraTransform: {fileID: 0}
   stamina: {fileID: 4490397878742005613}
-  stateController: {fileID: 1756852253650979984}
   actionRuntime: {fileID: 7384677459750694408}
   animator: {fileID: 0}
   buffNerf: {fileID: 0}
@@ -1296,7 +1294,6 @@ MonoBehaviour:
   characterMotor: {fileID: 8134855246977039806}
   actionRuntime: {fileID: 7384677459750694408}
   animator: {fileID: 6872611785136902895}
-  actionLibrary: {fileID: 2350029078160153916}
   trajectoryMotionController: {fileID: 0}
   dampTime: 0.1
 --- !u!114 &4490397878742005613
@@ -1532,14 +1529,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterActionLibrary
   actions:
-  - {fileID: 11400000, guid: 3c4e4e0d851ddd14da3e53e5ddf640b3, type: 2}
-  - {fileID: 11400000, guid: 5b3e56a6ac2ba6744a05e089134ea8bc, type: 2}
-  - {fileID: 11400000, guid: 651fbca3849c82c41979af4780142795, type: 2}
-  - {fileID: 11400000, guid: 2535b14b608e40c44ae9964d489c319c, type: 2}
-  - {fileID: 11400000, guid: f411a787a981fc749ae8f1df27d89706, type: 2}
-  - {fileID: 11400000, guid: fec5e80a2b350c44fa8b1357c73fc483, type: 2}
-  - {fileID: 11400000, guid: e10529720004c694390b99fe6e949275, type: 2}
-  - {fileID: 11400000, guid: 05f4f0802f216ca4bab3f55129144140, type: 2}
+  - {fileID: 11400000, guid: 3a42bc6b703bad04da8f1f41229f5b83, type: 2}
+  - {fileID: 11400000, guid: c8e89e986f8ff674bb484ac8ed0dfb2f, type: 2}
+  - {fileID: 11400000, guid: 6c109ac0323031448aaefae6322ac606, type: 2}
+  - {fileID: 11400000, guid: 6d27853d0e307294ebfcbe337f811a47, type: 2}
+  - {fileID: 11400000, guid: 9322f20d6ffcdc348a3b5cfbb098bd13, type: 2}
+  - {fileID: 11400000, guid: ae53037c575b68b4e8429833f56a9f0f, type: 2}
+  - {fileID: 11400000, guid: 45079d0d567794b498c5c27f3511b43f, type: 2}
+  - {fileID: 11400000, guid: 047b72bc2ec3aca4f9b8912c069a271e, type: 2}
 --- !u!114 &6981586479008444620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1585,7 +1582,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterTargetMatcher
   animator: {fileID: 6872611785136902895}
   actionRuntime: {fileID: 7384677459750694408}
-  logMatching: 1
   vfxController: {fileID: 0}
 --- !u!114 &8701421845148593774
 MonoBehaviour:
