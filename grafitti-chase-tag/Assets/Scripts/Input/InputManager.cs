@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     public bool SprintHeld { get; private set; }
 
     public event Action PausePressed;
+    public event Action SkipIntroPressed;
 
     private void Awake()
     {
@@ -36,6 +37,9 @@ public class InputManager : MonoBehaviour
 
         playerControls.Action.Pause.performed +=
             _ => PausePressed?.Invoke();
+        
+        playerControls.Action.SkipIntro.performed +=
+    _       => SkipIntroPressed?.Invoke();
     }
 
     private void OnEnable()

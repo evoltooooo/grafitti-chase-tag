@@ -650,6 +650,8 @@ MonoBehaviour:
   winnerTransform: {fileID: 997725791}
   playAgainTransform: {fileID: 1749370449}
   mainMenuTransform: {fileID: 2075595437}
+  playAgainHover: {fileID: 1749370455}
+  mainMenuHover: {fileID: 2075595443}
   titleStartOffset: {x: 0, y: 50}
   elapsedTitleStartOffset: {x: 0, y: 30}
   elapsedScoreStartOffset: {x: 0, y: 30}
@@ -1435,7 +1437,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameEndUIManager
   winnerText: {fileID: 997725792}
   elapsedTimeText: {fileID: 398042690}
-  useDebugResults: 0
+  useDebugResults: 1
   debugWinner: PLAYER WINS!
   debugElapsedTime: 125
 --- !u!4 &1154052085
@@ -1976,15 +1978,7 @@ MonoBehaviour:
   winGraphicDisplayDuration: 2.3
   backgroundFadeDuration: 0.5
   resultRevealDelay: 0
-  playAgainButtonTransform: {fileID: 1749370449}
-  mainMenuButtonTransform: {fileID: 2075595437}
-  playAgainButtonWhiteTransform: {fileID: 1087085309}
-  mainMenuButtonWhiteTransform: {fileID: 330449156}
-  buttonHoverScaleMultiplier: 1.12
-  buttonHoverDuration: 0.2
-  buttonHoverEase: 6
-  buttonHoverColor: {r: 0.93962264, g: 0.9171615, b: 0.6577358, a: 1}
-  useDebugWinner: 0
+  useDebugWinner: 1
   debugWinner: PLAYER WINS!
 --- !u!328 &1723233171
 VideoPlayer:
@@ -2036,6 +2030,7 @@ GameObject:
   - component: {fileID: 1749370450}
   - component: {fileID: 1749370453}
   - component: {fileID: 1749370454}
+  - component: {fileID: 1749370455}
   m_Layer: 5
   m_Name: PlayAgainButton
   m_TagString: Untagged
@@ -2084,7 +2079,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -2183,6 +2178,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d622ba7129da824a8a2c833f1766332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonSFX
+  useBackSFX: 0
+--- !u!114 &1749370455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749370448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719158174f6c3ab438ba5a274dbe88bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonHoverScale
+  hoverScaleMultiplier: 1.1
+  hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hoverDuration: 0.15
+  returnDuration: 0.15
+  hoverEase: 27
+  returnEase: 9
 --- !u!1 &1828197051
 GameObject:
   m_ObjectHideFlags: 0
@@ -2436,6 +2450,7 @@ GameObject:
   - component: {fileID: 2075595438}
   - component: {fileID: 2075595441}
   - component: {fileID: 2075595442}
+  - component: {fileID: 2075595443}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -2484,7 +2499,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -2583,6 +2598,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d622ba7129da824a8a2c833f1766332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonSFX
+  useBackSFX: 0
+--- !u!114 &2075595443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075595436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719158174f6c3ab438ba5a274dbe88bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonHoverScale
+  hoverScaleMultiplier: 1.1
+  hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hoverDuration: 0.15
+  returnDuration: 0.15
+  hoverEase: 27
+  returnEase: 9
 --- !u!1 &2082614830
 GameObject:
   m_ObjectHideFlags: 0

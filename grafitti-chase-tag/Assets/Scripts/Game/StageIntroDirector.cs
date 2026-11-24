@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Playables;
 
 public class StageIntroDirector : MonoBehaviour
@@ -20,6 +19,8 @@ public class StageIntroDirector : MonoBehaviour
     [Header("Cutscene Objects")]
     [SerializeField] private GameObject fadeOverlayRoot;
     [SerializeField] private CanvasGroup fadeOverlayGroup;
+
+    private InputManager inputManager;
 
     private bool isPlaying;
     private bool introCompleted;
@@ -66,6 +67,17 @@ public class StageIntroDirector : MonoBehaviour
             gameplayHUDRoot.SetActive(false);
     }
 
+    public void SetInputManager(InputManager manager)
+    {
+        if (inputManager != null)
+            inputManager.SkipIntroPressed -= OnSkipIntroPressed;
+
+        inputManager = manager;
+
+        if (inputManager != null)
+            inputManager.SkipIntroPressed += OnSkipIntroPressed;
+    }
+
     private void Start()
     {
         if (playableDirector.playableAsset == null)
@@ -81,32 +93,6 @@ public class StageIntroDirector : MonoBehaviour
         StartIntro();
     }
 
-    private void Update()
-    {
-        if (!isPlaying || introCompleted)
-            return;
-
-        if (Mouse.current == null)
-            return;
-
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            if (!skipHintRevealed)
-            {
-                skipHintRevealed = true;
-
-                if (skipHintText != null)
-                    skipHintText.gameObject.SetActive(true);
-
-                Debug.Log("STAGE INTRO | Skip instruction revealed.");
-
-                return;
-            }
-
-            SkipIntro();
-        }
-    }
-
     private void StartIntro()
     {
         isPlaying = true;
@@ -118,6 +104,26 @@ public class StageIntroDirector : MonoBehaviour
         playableDirector.Play();
 
         Debug.Log("STAGE INTRO | Timeline started.");
+    }
+
+    private void OnSkipIntroPressed()
+    {
+        if (!isPlaying || introCompleted)
+            return;
+
+        if (!skipHintRevealed)
+        {
+            skipHintRevealed = true;
+
+            if (skipHintText != null)
+                skipHintText.gameObject.SetActive(true);
+
+            Debug.Log("STAGE INTRO | Skip instruction revealed.");
+
+            return;
+        }
+
+        SkipIntro();
     }
 
     private void SkipIntro()
@@ -200,5 +206,8 @@ public class StageIntroDirector : MonoBehaviour
     {
         if (playableDirector != null)
             playableDirector.stopped -= OnTimelineStopped;
+
+        if (inputManager != null)
+            inputManager.SkipIntroPressed -= OnSkipIntroPressed;
     }
 }

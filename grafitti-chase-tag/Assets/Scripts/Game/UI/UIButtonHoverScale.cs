@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
     [Header("Easing")]
     [SerializeField] private Ease hoverEase = Ease.OutBack;
     [SerializeField] private Ease returnEase = Ease.OutCubic;
+
+    public event Action<bool> HoverStateChanged;
 
     private Button button;
     private RectTransform buttonTransform;
@@ -82,6 +85,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (button == null || !button.IsInteractable())
             return;
 
+        HoverStateChanged?.Invoke(true);
+
         AnimateScale(
             originalScale * hoverScaleMultiplier,
             hoverDuration,
@@ -94,6 +99,8 @@ public class UIButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        HoverStateChanged?.Invoke(false);
+
         ReturnToOriginal();
     }
 

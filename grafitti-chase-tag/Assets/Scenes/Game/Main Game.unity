@@ -8990,6 +8990,7 @@ MonoBehaviour:
   characterParent: {fileID: 1952360920}
   roundManager: {fileID: 180384352}
   pauseManager: {fileID: 677708225}
+  stageIntroDirector: {fileID: 851084361}
   gameplayCamera: {fileID: 1668787150}
   cameraOcclusionFade: {fileID: 174239201}
   playerStaminaDisplay: {fileID: 1206542635}

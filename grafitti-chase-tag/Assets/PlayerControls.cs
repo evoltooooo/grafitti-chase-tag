@@ -347,6 +347,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skip Intro"",
+                    ""type"": ""Button"",
+                    ""id"": ""41e7ba95-5ef8-4ba0-ba3b-d18adde7d6ae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -448,6 +457,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""73173be8-8da0-44a9-9941-3cdff5e00ed2"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip Intro"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -466,6 +486,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Action_Interaction = m_Action.FindAction("Interaction", throwIfNotFound: true);
         m_Action_Tag = m_Action.FindAction("Tag", throwIfNotFound: true);
         m_Action_Pause = m_Action.FindAction("Pause", throwIfNotFound: true);
+        m_Action_SkipIntro = m_Action.FindAction("Skip Intro", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -660,6 +681,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Action_Interaction;
     private readonly InputAction m_Action_Tag;
     private readonly InputAction m_Action_Pause;
+    private readonly InputAction m_Action_SkipIntro;
     /// <summary>
     /// Provides access to input actions defined in input action map "Action".
     /// </summary>
@@ -695,6 +717,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Action/Pause".
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_Action_Pause;
+        /// <summary>
+        /// Provides access to the underlying input action "Action/SkipIntro".
+        /// </summary>
+        public InputAction @SkipIntro => m_Wrapper.m_Action_SkipIntro;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -739,6 +765,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @SkipIntro.started += instance.OnSkipIntro;
+            @SkipIntro.performed += instance.OnSkipIntro;
+            @SkipIntro.canceled += instance.OnSkipIntro;
         }
 
         /// <summary>
@@ -768,6 +797,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @SkipIntro.started -= instance.OnSkipIntro;
+            @SkipIntro.performed -= instance.OnSkipIntro;
+            @SkipIntro.canceled -= instance.OnSkipIntro;
         }
 
         /// <summary>
@@ -872,5 +904,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Skip Intro" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkipIntro(InputAction.CallbackContext context);
     }
 }

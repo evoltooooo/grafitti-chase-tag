@@ -1,12 +1,12 @@
+using System;
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.InputSystem;
 
 public class MainMenuButtonAnimator : MonoBehaviour
 {
     [Header("Button References")]
     [SerializeField] private RectTransform[] buttonTransforms = new RectTransform[3];
-    [SerializeField] private UnityEngine.UI.Image[] buttonWhiteImages = new UnityEngine.UI.Image[3];
+    [SerializeField] private UIButtonHoverScale[] buttonHoverComponents = new UIButtonHoverScale[3];
 
     [Header("Group Movement")]
     [SerializeField] private float pushDistance = 18f;
@@ -21,20 +21,19 @@ public class MainMenuButtonAnimator : MonoBehaviour
 
     private Vector2[] originalPositions;
 
-    private Canvas rootCanvas;
-    private Camera uiCamera;
+    private Action<bool>[] hoverCallbacks;
 
     private int currentHoveredIndex = -1;
 
     private void Awake()
     {
         if (buttonTransforms == null ||
-            buttonWhiteImages == null ||
+            buttonHoverComponents == null ||
             buttonTransforms.Length != 3 ||
-            buttonWhiteImages.Length != 3)
+            buttonHoverComponents.Length != 3)
         {
             Debug.LogError(
-                "MAIN MENU BUTTON ANIMATOR | Exactly 3 button references are required.",
+                "MAIN MENU BUTTON ANIMATOR | Exactly 3 button transforms and hover components are required.",
                 this
             );
 
@@ -43,29 +42,12 @@ public class MainMenuButtonAnimator : MonoBehaviour
         }
 
         originalPositions = new Vector2[3];
-
-        Canvas parentCanvas = GetComponentInParent<Canvas>();
-
-        if (parentCanvas == null)
-        {
-            Debug.LogError(
-                "MAIN MENU BUTTON ANIMATOR | No parent Canvas found.",
-                this
-            );
-
-            enabled = false;
-            return;
-        }
-
-        rootCanvas = parentCanvas.rootCanvas;
-
-        if (rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-            uiCamera = rootCanvas.worldCamera;
+        hoverCallbacks = new Action<bool>[3];
 
         for (int i = 0; i < 3; i++)
         {
             if (buttonTransforms[i] == null ||
-                buttonWhiteImages[i] == null)
+                buttonHoverComponents[i] == null)
             {
                 Debug.LogError(
                     $"MAIN MENU BUTTON ANIMATOR | Missing reference at index {i}.",
@@ -78,46 +60,39 @@ public class MainMenuButtonAnimator : MonoBehaviour
 
             originalPositions[i] =
                 buttonTransforms[i].anchoredPosition;
+
+            int index = i;
+
+            hoverCallbacks[i] = isHovered =>
+                HandleButtonHover(index, isHovered);
+
+            buttonHoverComponents[i].HoverStateChanged +=
+                hoverCallbacks[i];
         }
     }
 
-    private void Update()
+    private void HandleButtonHover(int index, bool isHovered)
     {
-        int hoveredIndex = GetHoveredButtonIndex();
+        if (!isActiveAndEnabled)
+            return;
 
-        if (hoveredIndex != currentHoveredIndex)
-        {
-            SetHoveredButton(hoveredIndex);
-        }
-    }
-
-    private int GetHoveredButtonIndex()
-    {
-        // Ignore Main Menu hover detection while the guide is open.
+        // Ignore hover movement while the Guide Display is open.
         if (guideDisplay != null && guideDisplay.activeInHierarchy)
-            return -1;
-
-        if (Mouse.current == null)
-            return -1;
-
-        Vector2 pointerPosition = Mouse.current.position.ReadValue();
-
-        // Check the visible white button surfaces.
-        for (int i = 0; i < 3; i++)
         {
-            RectTransform hitArea =
-                buttonWhiteImages[i].rectTransform;
+            if (currentHoveredIndex != -1)
+                SetHoveredButton(-1);
 
-            if (RectTransformUtility.RectangleContainsScreenPoint(
-                hitArea,
-                pointerPosition,
-                uiCamera))
-            {
-                return i;
-            }
+            return;
         }
 
-        return -1;
+        if (isHovered)
+        {
+            SetHoveredButton(index);
+        }
+        else if (currentHoveredIndex == index)
+        {
+            SetHoveredButton(-1);
+        }
     }
 
     private void SetHoveredButton(int hoveredIndex)
@@ -170,6 +145,22 @@ public class MainMenuButtonAnimator : MonoBehaviour
                 buttonTransforms[i].anchoredPosition =
                     originalPositions[i];
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (buttonHoverComponents == null || hoverCallbacks == null)
+            return;
+
+        for (int i = 0; i < buttonHoverComponents.Length; i++)
+        {
+            if (buttonHoverComponents[i] == null ||
+                hoverCallbacks[i] == null)
+                continue;
+
+            buttonHoverComponents[i].HoverStateChanged -=
+                hoverCallbacks[i];
         }
     }
 }

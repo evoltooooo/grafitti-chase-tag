@@ -13,6 +13,7 @@ public class GameplayCharacterSpawner : MonoBehaviour
     [Header("Manager References")]
     [SerializeField] private RoundManager roundManager;
     [SerializeField] private PauseManager pauseManager;
+    [SerializeField] private StageIntroDirector stageIntroDirector;
 
     [Header("Camera References")]
     [SerializeField] private CinemachineCamera gameplayCamera;
@@ -60,6 +61,18 @@ public class GameplayCharacterSpawner : MonoBehaviour
 
         InputManager playerInputManager =
             spawnedPlayer.GetComponent<InputManager>();
+        
+        if (stageIntroDirector != null && playerInputManager != null)
+        {
+            stageIntroDirector.SetInputManager(playerInputManager);
+        }
+        else
+        {
+            Debug.LogError(
+                "GAMEPLAY SPAWNER | StageIntroDirector or Player InputManager is missing.",
+                this
+            );
+        }
 
         if (pauseManager != null && playerInputManager != null)
         {
