@@ -168,6 +168,9 @@ public class RoleShuffleController : MonoBehaviour
         {
             SetTitle(playerRole);
 
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayRoleReveal();
+
             if (selectedTitleImage != null)
             {
                 selectedTitleImage.transform.localScale =
@@ -275,6 +278,9 @@ public class RoleShuffleController : MonoBehaviour
                             ? CharacterRoleType.Chaser
                             : CharacterRoleType.Evader
                     );
+
+                    if (AudioManager.Instance != null)
+                        AudioManager.Instance.PlayRoleShuffleTick();
                 });
             }
         }

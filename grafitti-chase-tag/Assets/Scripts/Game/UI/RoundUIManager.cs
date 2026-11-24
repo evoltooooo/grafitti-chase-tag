@@ -223,6 +223,15 @@ public class RoundUIManager : MonoBehaviour
                 ? taggedSprite
                 : evadedSprite;
 
+        // Play SFX according to the result image being displayed.
+        if (AudioManager.Instance != null)
+        {
+            if (resultSprite == taggedSprite)
+                AudioManager.Instance.PlayPlayerTagged();
+            else if (resultSprite == evadedSprite)
+                AudioManager.Instance.PlayPlayerEvaded();
+        }
+
         ShowTaggedImage(resultSprite);
 
         if (roundResultText != null)

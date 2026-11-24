@@ -20,6 +20,26 @@ public class AudioManager : MonoBehaviour
     [Min(1)]
     [SerializeField] private int pooledVoiceCount = 8;
 
+    [Header("UI SFX")]
+    [SerializeField] private AudioClip buttonHoverSFX;
+    [SerializeField] private AudioClip buttonClickSFX;
+    [SerializeField] private AudioClip buttonBackSFX;
+
+    [Header("Role Shuffle SFX")]
+    [SerializeField] private AudioClip roleShuffleTickSFX;
+    [SerializeField] private AudioClip roleRevealSFX;
+
+    [Header("Countdown SFX")]
+    [SerializeField] private AudioClip countdownTickSFX;
+    [SerializeField] private AudioClip countdownGoSFX;
+
+    [Header("Tag Result SFX")]
+    [SerializeField] private AudioClip playerTaggedSFX;
+    [SerializeField] private AudioClip playerEvadedSFX;
+
+    [Header("Token SFX")]
+    [SerializeField] private AudioClip tokenSpawnSFX;
+
     [Header("BGM Settings")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioMixerGroup bgmMixerGroup;
@@ -191,6 +211,71 @@ public class AudioManager : MonoBehaviour
             clip,
             Mathf.Clamp01(volumeMultiplier)
         );
+    }
+
+
+    // Plays a configured clip through the pooled SFX AudioSources.
+    private void PlayConfiguredSFX(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+
+        PlaySFX(clip, 1f, 0f);
+    }
+
+    // UI
+    public void PlayButtonHover()
+    {
+        PlayConfiguredSFX(buttonHoverSFX);
+    }
+
+    public void PlayButtonClick()
+    {
+        PlayConfiguredSFX(buttonClickSFX);
+    }
+
+    public void PlayButtonBack()
+    {
+        PlayConfiguredSFX(buttonBackSFX);
+    }
+
+    // Role Shuffle
+    public void PlayRoleShuffleTick()
+    {
+        PlayConfiguredSFX(roleShuffleTickSFX);
+    }
+
+    public void PlayRoleReveal()
+    {
+        PlayConfiguredSFX(roleRevealSFX);
+    }
+
+    // Countdown
+    public void PlayCountdownTick()
+    {
+        PlayConfiguredSFX(countdownTickSFX);
+    }
+
+    public void PlayCountdownGo()
+    {
+        PlayConfiguredSFX(countdownGoSFX);
+    }
+
+    // Tag Result
+    public void PlayPlayerTagged()
+    {
+        PlayConfiguredSFX(playerTaggedSFX);
+    }
+
+    public void PlayPlayerEvaded()
+    {
+        PlayConfiguredSFX(playerEvadedSFX);
+    }
+
+    // Tokens
+    public void PlayTokenSpawn()
+    {
+        PlayConfiguredSFX(tokenSpawnSFX);
     }
 
     public void SetSFXVolume(float volume)

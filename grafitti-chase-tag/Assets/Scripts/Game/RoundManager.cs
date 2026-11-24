@@ -96,6 +96,8 @@ public class RoundManager : MonoBehaviour
 
     private bool hasStartedAfterIntro;
 
+    private int lastCountdownSecond;
+
     private void Start()
     {
         // Character initialization is handled by
@@ -368,7 +370,22 @@ public class RoundManager : MonoBehaviour
 
         if (countdownTimer <= 0f)
         {
+            // Play once when the countdown finishes.
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayCountdownGo();
+
             ActivateRound();
+            return;
+        }
+
+        int currentSecond = Mathf.CeilToInt(countdownTimer);
+
+        if (currentSecond < lastCountdownSecond)
+        {
+            lastCountdownSecond = currentSecond;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayCountdownTick();
         }
     }
 
@@ -487,7 +504,14 @@ public class RoundManager : MonoBehaviour
             aiController.ResetForNewRound();
 
         countdownTimer = countdownDuration;
+
+        lastCountdownSecond = Mathf.CeilToInt(countdownTimer);
+
         CurrentState = RoundState.Countdown;
+
+        // Play the initial countdown sound (usually 3).
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayCountdownTick();
 
         Debug.Log(
             $"ROUND COUNTDOWN | Round={CurrentRound} | " +

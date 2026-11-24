@@ -257,6 +257,11 @@ public class BuffNerfManager : MonoBehaviour
             SpawnToken(selectedTokens[i], positions[i]);
         }
 
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayTokenSpawn();
+        }
+
         spawnTimer = spawnInterval;
 
         TokensSpawned?.Invoke();
