@@ -2,8 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 using DG.Tweening;
-using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
 public class GameEndCutsceneController : MonoBehaviour
 {
@@ -67,46 +65,6 @@ public class GameEndCutsceneController : MonoBehaviour
     [SerializeField, Min(0f)]
     private float resultRevealDelay = 0f;
 
-    [Header("Result Button References")]
-    [SerializeField] private RectTransform playAgainButtonTransform;
-    [SerializeField] private RectTransform mainMenuButtonTransform;
-
-    [SerializeField] private RectTransform playAgainButtonWhiteTransform;
-    [SerializeField] private RectTransform mainMenuButtonWhiteTransform;
-
-    [Header("Button Hover Settings")]
-    [SerializeField, Min(1f)]
-    private float buttonHoverScaleMultiplier = 1.12f;
-
-    [SerializeField, Min(0f)]
-    private float buttonHoverDuration = 0.12f;
-
-    [SerializeField]
-    private Ease buttonHoverEase = Ease.OutQuad;
-
-    [SerializeField]
-    private Color buttonHoverColor = Color.yellow;
-
-    private Image playAgainButtonWhiteImage;
-    private Image mainMenuButtonWhiteImage;
-
-    private Vector3 playAgainOriginalScale;
-    private Vector3 mainMenuOriginalScale;
-
-    private Color playAgainOriginalColor;
-    private Color mainMenuOriginalColor;
-
-    private Tween playAgainScaleTween;
-    private Tween playAgainColorTween;
-
-    private Tween mainMenuScaleTween;
-    private Tween mainMenuColorTween;
-
-    private Canvas uiCameraCanvas;
-
-    private int currentHoveredButton = -1;
-    private bool resultButtonsReady;
-
     [Header("Debug")]
     [SerializeField] private bool useDebugWinner = false;
     [SerializeField] private string debugWinner = "PLAYER WINS!";
@@ -117,11 +75,7 @@ public class GameEndCutsceneController : MonoBehaviour
             winGraphicGroup == null ||
             winGraphicTransform == null ||
             backgroundGroup == null ||
-            resultTransition == null ||
-            playAgainButtonTransform == null ||
-            mainMenuButtonTransform == null ||
-            playAgainButtonWhiteTransform == null ||
-            mainMenuButtonWhiteTransform == null)
+            resultTransition == null)
         {
             Debug.LogError(
                 "GAME END CUTSCENE | Missing references.",
@@ -148,47 +102,6 @@ public class GameEndCutsceneController : MonoBehaviour
 
         winGraphicTransform.localScale =
             originalWinScale * winStartScale;
-        
-        playAgainButtonWhiteImage =
-            playAgainButtonWhiteTransform.GetComponent<Image>();
-
-        mainMenuButtonWhiteImage =
-            mainMenuButtonWhiteTransform.GetComponent<Image>();
-
-        if (playAgainButtonWhiteImage == null ||
-            mainMenuButtonWhiteImage == null)
-        {
-            Debug.LogError(
-                "GAME END CUTSCENE | Button White Image missing.",
-                this
-            );
-
-            enabled = false;
-            return;
-        }
-
-        playAgainOriginalScale =
-            playAgainButtonTransform.localScale;
-
-        mainMenuOriginalScale =
-            mainMenuButtonTransform.localScale;
-
-        playAgainOriginalColor =
-            playAgainButtonWhiteImage.color;
-
-        mainMenuOriginalColor =
-            mainMenuButtonWhiteImage.color;
-
-        Canvas rootCanvas =
-            playAgainButtonWhiteTransform.GetComponentInParent<Canvas>();
-
-        if (rootCanvas != null)
-        {
-            rootCanvas = rootCanvas.rootCanvas;
-
-            if (rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                uiCameraCanvas = rootCanvas;
-        }
 
         videoPlayer.waitForFirstFrame = true;
     }
@@ -197,113 +110,7 @@ public class GameEndCutsceneController : MonoBehaviour
     {
         StartCoroutine(PlayCutscene());
     }
-
-    private void Update()
-    {
-        if (!resultButtonsReady)
-            return;
-
-        if (Mouse.current == null)
-            return;
-
-        int hoveredButton = GetHoveredButtonIndex();
-
-        if (hoveredButton != currentHoveredButton)
-        {
-            SetHoveredButton(hoveredButton);
-        }
-    }
-
-    private int GetHoveredButtonIndex()
-    {
-        Vector2 pointerPosition =
-            Mouse.current.position.ReadValue();
-
-        Camera eventCamera = uiCameraCanvas != null
-            ? uiCameraCanvas.worldCamera
-            : null;
-
-        if (RectTransformUtility.RectangleContainsScreenPoint(
-            playAgainButtonWhiteTransform,
-            pointerPosition,
-            eventCamera))
-        {
-            return 0;
-        }
-
-        if (RectTransformUtility.RectangleContainsScreenPoint(
-            mainMenuButtonWhiteTransform,
-            pointerPosition,
-            eventCamera))
-        {
-            return 1;
-        }
-
-        return -1;
-    }
-
-    private void SetHoveredButton(int hoveredButton)
-    {
-        currentHoveredButton = hoveredButton;
-
-        AnimatePlayAgainButton(false);
-        AnimateMainMenuButton(false);
-
-        if (hoveredButton == 0)
-            AnimatePlayAgainButton(true);
-
-        else if (hoveredButton == 1)
-            AnimateMainMenuButton(true);
-    }
-
-    private void AnimatePlayAgainButton(bool hovered)
-    {
-        playAgainScaleTween?.Kill();
-        playAgainColorTween?.Kill();
-
-        Vector3 targetScale = hovered
-            ? playAgainOriginalScale * buttonHoverScaleMultiplier
-            : playAgainOriginalScale;
-
-        Color targetColor = hovered
-            ? buttonHoverColor
-            : playAgainOriginalColor;
-
-        playAgainScaleTween = playAgainButtonTransform
-            .DOScale(targetScale, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-
-        playAgainColorTween = playAgainButtonWhiteImage
-            .DOColor(targetColor, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-    }
-
-    private void AnimateMainMenuButton(bool hovered)
-    {
-        mainMenuScaleTween?.Kill();
-        mainMenuColorTween?.Kill();
-
-        Vector3 targetScale = hovered
-            ? mainMenuOriginalScale * buttonHoverScaleMultiplier
-            : mainMenuOriginalScale;
-
-        Color targetColor = hovered
-            ? buttonHoverColor
-            : mainMenuOriginalColor;
-
-        mainMenuScaleTween = mainMenuButtonTransform
-            .DOScale(targetScale, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-
-        mainMenuColorTween = mainMenuButtonWhiteImage
-            .DOColor(targetColor, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-    }
-
+    
     private IEnumerator PlayCutscene()
     {
         string winner = useDebugWinner
@@ -393,8 +200,6 @@ public class GameEndCutsceneController : MonoBehaviour
         // Reveal the existing result UI.
         resultTransition.ShowResults();
 
-        resultButtonsReady = true;
-
         Debug.Log(
             $"GAME END CUTSCENE | Finished. Winner: {winner}",
             this
@@ -471,11 +276,5 @@ public class GameEndCutsceneController : MonoBehaviour
     {
         DOTween.Kill(winGraphicGroup);
         DOTween.Kill(backgroundGroup);
-
-        playAgainScaleTween?.Kill();
-        playAgainColorTween?.Kill();
-
-        mainMenuScaleTween?.Kill();
-        mainMenuColorTween?.Kill();
     }
 }

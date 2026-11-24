@@ -10,6 +10,8 @@ public class MainMenuTransitionController : MonoBehaviour
     [SerializeField] private CanvasGroup playGroup;
     [SerializeField] private CanvasGroup creditsGroup;
     [SerializeField] private CanvasGroup exitGroup;
+    [SerializeField] private CanvasGroup guideGroup;
+    [SerializeField] private CanvasGroup settingsGroup;
 
     [SerializeField] private CanvasGroup highScoreGroup;
 
@@ -22,6 +24,8 @@ public class MainMenuTransitionController : MonoBehaviour
     [SerializeField] private RectTransform playTransform;
     [SerializeField] private RectTransform creditsTransform;
     [SerializeField] private RectTransform exitTransform;
+    [SerializeField] private RectTransform guideTransform;
+    [SerializeField] private RectTransform settingsTransform;
     [SerializeField] private RectTransform highScoreTransform;
 
     [Header("Entry Start Offsets")]
@@ -30,12 +34,16 @@ public class MainMenuTransitionController : MonoBehaviour
     [SerializeField] private Vector2 creditsStartOffset = new Vector2(-50f, 0f);
     [SerializeField] private Vector2 exitStartOffset = new Vector2(-50f, 0f);
     [SerializeField] private Vector2 highScoreStartOffset = new Vector2(60f, 0f);
+    [SerializeField] private Vector2 guideStartOffset = new Vector2(-50f, 0f);
+    [SerializeField] private Vector2 settingsStartOffset = new Vector2(-50f, 0f);
 
     [Header("Animation Timing")]
     [SerializeField] private float titleDuration = 0.5f;
     [SerializeField] private float playDuration = 0.4f;
     [SerializeField] private float creditsDuration = 0.4f;
     [SerializeField] private float exitButtonDuration = 0.4f;
+    [SerializeField] private float guideDuration = 0.4f;
+    [SerializeField] private float settingsDuration = 0.4f;
     [SerializeField] private float highScoreDuration = 0.5f;
 
     [Header("Animation Delays")]
@@ -43,6 +51,8 @@ public class MainMenuTransitionController : MonoBehaviour
     [SerializeField] private float playDelay = 0.15f;
     [SerializeField] private float creditsDelay = 0.3f;
     [SerializeField] private float exitButtonDelay = 0.45f;
+    [SerializeField] private float guideDelay = 0.6f;
+    [SerializeField] private float settingsDelay = 0.75f;
     [SerializeField] private float highScoreDelay = 0.2f;
 
     [Header("Scale Settings")]
@@ -50,11 +60,11 @@ public class MainMenuTransitionController : MonoBehaviour
     
     [Header("Animation Easing")]
     [SerializeField] private Ease titleEase = Ease.OutCubic;
-
     [SerializeField] private Ease playEase = Ease.OutBack;
     [SerializeField] private Ease creditsEase = Ease.OutBack;
     [SerializeField] private Ease exitButtonEase = Ease.OutBack;
-
+    [SerializeField] private Ease guideEase = Ease.OutBack;
+    [SerializeField] private Ease settingsEase = Ease.OutBack;
     [SerializeField] private Ease highScoreEase = Ease.OutCubic;
 
     [Header("Controller References")]
@@ -65,10 +75,14 @@ public class MainMenuTransitionController : MonoBehaviour
     private Vector2 originalCreditsPosition;
     private Vector2 originalExitPosition;
     private Vector2 originalHighScorePosition;
+    private Vector2 originalGuidePosition;
+    private Vector2 originalSettingsPosition;
 
     private Vector3 originalPlayScale;
     private Vector3 originalCreditsScale;
     private Vector3 originalExitScale;
+    private Vector3 originalGuideScale;
+    private Vector3 originalSettingsScale;
 
     private Sequence entrySequence;
 
@@ -103,6 +117,12 @@ public class MainMenuTransitionController : MonoBehaviour
         valid &= CheckReference(creditsTransform, nameof(creditsTransform));
         valid &= CheckReference(exitTransform, nameof(exitTransform));
         valid &= CheckReference(highScoreTransform, nameof(highScoreTransform));
+
+        valid &= CheckReference(guideGroup, nameof(guideGroup));
+        valid &= CheckReference(settingsGroup, nameof(settingsGroup));
+
+        valid &= CheckReference(guideTransform, nameof(guideTransform));
+        valid &= CheckReference(settingsTransform, nameof(settingsTransform));
 
         return valid;
     }
@@ -139,6 +159,12 @@ public class MainMenuTransitionController : MonoBehaviour
         originalPlayScale = playTransform.localScale;
         originalCreditsScale = creditsTransform.localScale;
         originalExitScale = exitTransform.localScale;
+
+        originalGuidePosition = guideTransform.anchoredPosition;
+        originalSettingsPosition = settingsTransform.anchoredPosition;
+
+        originalGuideScale = guideTransform.localScale;
+        originalSettingsScale = settingsTransform.localScale;
     }
 
     private void PrepareInitialState()
@@ -191,6 +217,31 @@ public class MainMenuTransitionController : MonoBehaviour
         // Move high score panel in from the right.
         highScoreTransform.anchoredPosition =
             originalHighScorePosition + highScoreStartOffset;
+        
+        // Hide Guide and Settings buttons.
+        guideGroup.alpha = 0f;
+        settingsGroup.alpha = 0f;
+
+        // Disable interaction until entrance finishes.
+        guideGroup.interactable = false;
+        guideGroup.blocksRaycasts = false;
+
+        settingsGroup.interactable = false;
+        settingsGroup.blocksRaycasts = false;
+
+        // Move buttons in from the left.
+        guideTransform.anchoredPosition =
+            originalGuidePosition + guideStartOffset;
+
+        settingsTransform.anchoredPosition =
+            originalSettingsPosition + settingsStartOffset;
+
+        // Start buttons slightly smaller.
+        guideTransform.localScale =
+            originalGuideScale * buttonStartScale;
+
+        settingsTransform.localScale =
+            originalSettingsScale * buttonStartScale;
     }
 
     private void PlayEntryAnimation()
@@ -290,6 +341,52 @@ public class MainMenuTransitionController : MonoBehaviour
             ).SetEase(exitButtonEase)
         );
 
+        // Guide button.
+        entrySequence.Insert(
+            animationStartTime + guideDelay,
+            guideGroup.DOFade(1f, guideDuration)
+                .SetEase(Ease.OutQuad)
+        );
+
+        entrySequence.Insert(
+            animationStartTime + guideDelay,
+            guideTransform.DOAnchorPos(
+                originalGuidePosition,
+                guideDuration
+            ).SetEase(guideEase)
+        );
+
+        entrySequence.Insert(
+            animationStartTime + guideDelay,
+            guideTransform.DOScale(
+                originalGuideScale,
+                guideDuration
+            ).SetEase(guideEase)
+        );
+
+        // Settings button.
+        entrySequence.Insert(
+            animationStartTime + settingsDelay,
+            settingsGroup.DOFade(1f, settingsDuration)
+                .SetEase(Ease.OutQuad)
+        );
+
+        entrySequence.Insert(
+            animationStartTime + settingsDelay,
+            settingsTransform.DOAnchorPos(
+                originalSettingsPosition,
+                settingsDuration
+            ).SetEase(settingsEase)
+        );
+
+        entrySequence.Insert(
+            animationStartTime + settingsDelay,
+            settingsTransform.DOScale(
+                originalSettingsScale,
+                settingsDuration
+            ).SetEase(settingsEase)
+        );
+
         // High score.
         entrySequence.Insert(
             animationStartTime + highScoreDelay,
@@ -329,6 +426,12 @@ public class MainMenuTransitionController : MonoBehaviour
 
         exitGroup.interactable = interactable;
         exitGroup.blocksRaycasts = interactable;
+
+        guideGroup.interactable = interactable;
+        guideGroup.blocksRaycasts = interactable;
+
+        settingsGroup.interactable = interactable;
+        settingsGroup.blocksRaycasts = interactable;
     }
 
 public void PlayExitAnimation(Action onComplete)

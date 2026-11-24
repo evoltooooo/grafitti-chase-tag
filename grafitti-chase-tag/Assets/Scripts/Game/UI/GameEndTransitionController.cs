@@ -19,6 +19,10 @@ public class GameEndTransitionController : MonoBehaviour
     [SerializeField] private RectTransform winnerTransform;
     [SerializeField] private RectTransform playAgainTransform;
     [SerializeField] private RectTransform mainMenuTransform;
+    
+    [Header("Button Hover Components")]
+    [SerializeField] private UIButtonHoverScale playAgainHover;
+    [SerializeField] private UIButtonHoverScale mainMenuHover;
 
     [Header("Entry Start Offsets")]
     [SerializeField] private Vector2 titleStartOffset = new(0f, 50f);
@@ -109,6 +113,9 @@ public class GameEndTransitionController : MonoBehaviour
         valid &= CheckReference(playAgainTransform, nameof(playAgainTransform));
         valid &= CheckReference(mainMenuTransform, nameof(mainMenuTransform));
 
+        valid &= CheckReference(playAgainHover, nameof(playAgainHover));
+        valid &= CheckReference(mainMenuHover, nameof(mainMenuHover));
+
         return valid;
     }
 
@@ -136,6 +143,9 @@ public class GameEndTransitionController : MonoBehaviour
 
         originalPlayAgainScale = playAgainTransform.localScale;
         originalMainMenuScale = mainMenuTransform.localScale;
+
+        playAgainHover.SetOriginalScale(originalPlayAgainScale);
+        mainMenuHover.SetOriginalScale(originalMainMenuScale);
     }
 
     private void PrepareInitialState()

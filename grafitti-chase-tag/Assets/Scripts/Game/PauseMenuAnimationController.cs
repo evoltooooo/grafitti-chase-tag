@@ -26,16 +26,11 @@ public class PauseMenuAnimationController : MonoBehaviour
     [SerializeField] private RectTransform resumeButtonTransform;
     [SerializeField] private RectTransform exitButtonTransform;
 
-    [Header("Button Hover References")]
-    [SerializeField] private Image resumeButtonImage;
-    [SerializeField] private Image exitButtonImage;
-
-    [Header("Confirmation Button Hover References")]
-    [SerializeField] private RectTransform yesButtonTransform;
-    [SerializeField] private RectTransform noButtonTransform;
-
-    [SerializeField] private Image yesButtonImage;
-    [SerializeField] private Image noButtonImage;
+    [Header("Button Hover Components")]
+    [SerializeField] private UIButtonHoverScale resumeButtonHover;
+    [SerializeField] private UIButtonHoverScale exitButtonHover;
+    [SerializeField] private UIButtonHoverScale yesButtonHover;
+    [SerializeField] private UIButtonHoverScale noButtonHover;
 
     [Header("Button Hover Settings")]
     [SerializeField, Min(1f)] private float buttonHoverScale = 1.1f;
@@ -98,31 +93,6 @@ public class PauseMenuAnimationController : MonoBehaviour
     private Vector3 resumeButtonOriginalScale;
     private Vector3 exitButtonOriginalScale;
 
-    private Color resumeButtonOriginalColor;
-    private Color exitButtonOriginalColor;
-
-    private Tween resumeButtonHoverScaleTween;
-    private Tween resumeButtonHoverColorTween;
-    private Tween exitButtonHoverScaleTween;
-    private Tween exitButtonHoverColorTween;
-
-    private Vector3 yesButtonOriginalScale;
-    private Vector3 noButtonOriginalScale;
-
-    private Color yesButtonOriginalColor;
-    private Color noButtonOriginalColor;
-
-    private Tween yesButtonHoverScaleTween;
-    private Tween yesButtonHoverColorTween;
-
-    private Tween noButtonHoverScaleTween;
-    private Tween noButtonHoverColorTween;
-
-    private Canvas rootCanvas;
-    private Camera uiCamera;
-
-    private int currentHoveredIndex = -1;
-
     private Sequence pauseSequence;
     private Sequence closeSequence;
     private Sequence confirmationSequence;
@@ -142,239 +112,15 @@ public class PauseMenuAnimationController : MonoBehaviour
 
         CacheOriginalValues();
 
-        rootCanvas = pauseScreenGroup.GetComponent<Canvas>();
-
-        if (rootCanvas == null)
-            rootCanvas = pauseScreenGroup.GetComponentInParent<Canvas>();
-
-        if (rootCanvas != null)
-        {
-            rootCanvas = rootCanvas.rootCanvas;
-
-            if (rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                uiCamera = rootCanvas.worldCamera;
-        }
-
         PrepareInitialState();
     }
-
-    private void Update()
-    {
-        if (pauseManager == null || !pauseManager.IsPaused ||
-            isAnimating || isExiting)
-        {
-            if (currentHoveredIndex != -1)
-                SetHoveredButton(-1);
-
-            return;
-        }
-
-        int hoveredIndex = isConfirmationOpen
-            ? GetConfirmationHoveredButtonIndex()
-            : GetPauseHoveredButtonIndex();
-
-        if (hoveredIndex != currentHoveredIndex)
-            SetHoveredButton(hoveredIndex);
-    }
-
-    private int GetPauseHoveredButtonIndex()
-    {
-        if (Mouse.current == null)
-            return -1;
-
-        Vector2 pointerPosition = Mouse.current.position.ReadValue();
-
-        if (RectTransformUtility.RectangleContainsScreenPoint(
-            resumeButtonImage.rectTransform, pointerPosition, uiCamera))
-            return 0;
-
-        if (RectTransformUtility.RectangleContainsScreenPoint(
-            exitButtonImage.rectTransform, pointerPosition, uiCamera))
-            return 1;
-
-        return -1;
-    }
-
-    private int GetConfirmationHoveredButtonIndex()
-    {
-        if (Mouse.current == null)
-            return -1;
-
-        Vector2 pointerPosition = Mouse.current.position.ReadValue();
-
-        if (RectTransformUtility.RectangleContainsScreenPoint(
-            yesButtonImage.rectTransform, pointerPosition, uiCamera))
-            return 2;
-
-        if (RectTransformUtility.RectangleContainsScreenPoint(
-            noButtonImage.rectTransform, pointerPosition, uiCamera))
-            return 3;
-
-        return -1;
-    }
-
-    private void SetHoveredButton(int hoveredIndex)
-    {
-        int previousHoveredIndex = currentHoveredIndex;
-        currentHoveredIndex = hoveredIndex;
-
-        // Restore previously hovered button.
-        switch (previousHoveredIndex)
-        {
-            case 0: AnimateResumeButton(false); break;
-            case 1: AnimateExitButton(false); break;
-            case 2: AnimateYesButton(false); break;
-            case 3: AnimateNoButton(false); break;
-        }
-
-        // Animate newly hovered button.
-        switch (hoveredIndex)
-        {
-            case 0: AnimateResumeButton(true); break;
-            case 1: AnimateExitButton(true); break;
-            case 2: AnimateYesButton(true); break;
-            case 3: AnimateNoButton(true); break;
-        }
-    }
-
-    private void AnimateResumeButton(bool hovered)
-    {
-        RectTransform target = resumeButtonTransform;
-
-        resumeButtonHoverScaleTween?.Kill();
-        resumeButtonHoverColorTween?.Kill();
-
-        Vector3 targetScale = hovered
-            ? resumeButtonOriginalScale * buttonHoverScale
-            : resumeButtonOriginalScale;
-
-        Color targetColor = hovered
-            ? buttonHoverColor
-            : resumeButtonOriginalColor;
-
-        resumeButtonHoverScaleTween = target
-            .DOScale(targetScale, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-
-        resumeButtonHoverColorTween = resumeButtonImage
-            .DOColor(targetColor, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-    }
-
-    private void AnimateExitButton(bool hovered)
-    {
-        RectTransform target = exitButtonTransform;
-
-        exitButtonHoverScaleTween?.Kill();
-        exitButtonHoverColorTween?.Kill();
-
-       Vector3 targetScale = hovered
-            ? exitButtonOriginalScale * buttonHoverScale
-            : exitButtonOriginalScale;
-
-        Color targetColor = hovered
-            ? buttonHoverColor
-            : exitButtonOriginalColor;
-
-        exitButtonHoverScaleTween = target
-            .DOScale(targetScale, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-
-        exitButtonHoverColorTween = exitButtonImage
-            .DOColor(targetColor, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-    }
-
-    private void AnimateYesButton(bool hovered)
-    {
-        yesButtonHoverScaleTween?.Kill();
-        yesButtonHoverColorTween?.Kill();
-
-        Vector3 targetScale = hovered
-            ? yesButtonOriginalScale * buttonHoverScale
-            : yesButtonOriginalScale;
-
-        Color targetColor = hovered
-            ? buttonHoverColor
-            : yesButtonOriginalColor;
-
-        yesButtonHoverScaleTween = yesButtonTransform
-            .DOScale(targetScale, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-
-        yesButtonHoverColorTween = yesButtonImage
-            .DOColor(targetColor, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-    }
-
-    private void AnimateNoButton(bool hovered)
-    {
-        noButtonHoverScaleTween?.Kill();
-        noButtonHoverColorTween?.Kill();
-
-        Vector3 targetScale = hovered
-            ? noButtonOriginalScale * buttonHoverScale
-            : noButtonOriginalScale;
-
-        Color targetColor = hovered
-            ? buttonHoverColor
-            : noButtonOriginalColor;
-
-        noButtonHoverScaleTween = noButtonTransform
-            .DOScale(targetScale, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-
-        noButtonHoverColorTween = noButtonImage
-            .DOColor(targetColor, buttonHoverDuration)
-            .SetEase(buttonHoverEase)
-            .SetUpdate(true);
-    }
-
+    
     private void ResetButtonHoverImmediately()
     {
-        resumeButtonHoverScaleTween?.Kill();
-        resumeButtonHoverColorTween?.Kill();
-        exitButtonHoverScaleTween?.Kill();
-        exitButtonHoverColorTween?.Kill();
-        yesButtonHoverScaleTween?.Kill();
-        yesButtonHoverColorTween?.Kill();
-        noButtonHoverScaleTween?.Kill();
-        noButtonHoverColorTween?.Kill();
-
-        yesButtonTransform.localScale = yesButtonOriginalScale;
-        noButtonTransform.localScale = noButtonOriginalScale;
-
-        yesButtonImage.color = yesButtonOriginalColor;
-        noButtonImage.color = noButtonOriginalColor;
-
-        if (resumeButtonTransform != null)
-        {
-            resumeButtonTransform.localScale = resumeButtonOriginalScale;
-        }
-
-        if (resumeButtonImage != null)
-        {
-            resumeButtonImage.color = resumeButtonOriginalColor;
-        }
-
-        if (exitButtonTransform != null)
-        {
-            exitButtonTransform.localScale = exitButtonOriginalScale;
-        }
-
-        if (exitButtonImage != null)
-        {
-            exitButtonImage.color = exitButtonOriginalColor;
-        }
-
-        currentHoveredIndex = -1;
+        resumeButtonHover.ResetHoverImmediately();
+        exitButtonHover.ResetHoverImmediately();
+        yesButtonHover.ResetHoverImmediately();
+        noButtonHover.ResetHoverImmediately();
     }
 
     private void OnEnable()
@@ -419,9 +165,6 @@ public class PauseMenuAnimationController : MonoBehaviour
         valid &= Check(buttonsTransform, nameof(buttonsTransform));
         valid &= Check(confirmationTransform, nameof(confirmationTransform));
 
-        valid &= Check(resumeButtonImage, nameof(resumeButtonImage));   
-        valid &= Check(exitButtonImage, nameof(exitButtonImage));
-
         // Individual button references.
         valid &= Check(resumeButtonGroup, nameof(resumeButtonGroup));
         valid &= Check(exitButtonGroup, nameof(exitButtonGroup));
@@ -429,12 +172,10 @@ public class PauseMenuAnimationController : MonoBehaviour
         valid &= Check(resumeButtonTransform, nameof(resumeButtonTransform));
         valid &= Check(exitButtonTransform, nameof(exitButtonTransform));
 
-        // Confirmation button references.
-        valid &= Check(yesButtonTransform, nameof(yesButtonTransform));
-        valid &= Check(noButtonTransform, nameof(noButtonTransform));
-
-        valid &= Check(yesButtonImage, nameof(yesButtonImage));
-        valid &= Check(noButtonImage, nameof(noButtonImage));
+        valid &= Check(resumeButtonHover, nameof(resumeButtonHover));
+        valid &= Check(exitButtonHover, nameof(exitButtonHover));
+        valid &= Check(yesButtonHover, nameof(yesButtonHover));
+        valid &= Check(noButtonHover, nameof(noButtonHover));
 
         return valid;
     }
@@ -463,14 +204,16 @@ public class PauseMenuAnimationController : MonoBehaviour
         resumeButtonOriginalScale = resumeButtonTransform.localScale;
         exitButtonOriginalScale = exitButtonTransform.localScale;
 
-        resumeButtonOriginalColor = resumeButtonImage.color;
-        exitButtonOriginalColor = exitButtonImage.color;
+        resumeButtonHover.SetOriginalScale(resumeButtonOriginalScale);
+        exitButtonHover.SetOriginalScale(exitButtonOriginalScale);
 
-        yesButtonOriginalScale = yesButtonTransform.localScale;
-        noButtonOriginalScale = noButtonTransform.localScale;
+        yesButtonHover.SetOriginalScale(
+            yesButtonHover.transform.localScale
+        );
 
-        yesButtonOriginalColor = yesButtonImage.color;
-        noButtonOriginalColor = noButtonImage.color;
+        noButtonHover.SetOriginalScale(
+            noButtonHover.transform.localScale
+        );
     }
 
     private void PrepareInitialState()
@@ -865,17 +608,5 @@ public class PauseMenuAnimationController : MonoBehaviour
         closeSequence?.Kill();
         confirmationSequence?.Kill();
         exitSequence?.Kill();
-
-        resumeButtonHoverScaleTween?.Kill();
-        resumeButtonHoverColorTween?.Kill();
-
-        exitButtonHoverScaleTween?.Kill();
-        exitButtonHoverColorTween?.Kill();
-
-        yesButtonHoverScaleTween?.Kill();
-        yesButtonHoverColorTween?.Kill();
-
-        noButtonHoverScaleTween?.Kill();
-        noButtonHoverColorTween?.Kill();
     }
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.InputSystem;
 
@@ -7,22 +6,20 @@ public class MainMenuButtonAnimator : MonoBehaviour
 {
     [Header("Button References")]
     [SerializeField] private RectTransform[] buttonTransforms = new RectTransform[3];
-    [SerializeField] private Image[] buttonWhiteImages = new Image[3];
+    [SerializeField] private UnityEngine.UI.Image[] buttonWhiteImages = new UnityEngine.UI.Image[3];
 
-    [Header("Hover Settings")]
-    [SerializeField] private float hoverScaleMultiplier = 1.12f;
+    [Header("Group Movement")]
     [SerializeField] private float pushDistance = 18f;
-    [SerializeField] private Color hoverColor = Color.yellow;
 
     [Header("Animation Settings")]
     [SerializeField] private float hoverDuration = 0.25f;
     [SerializeField] private float returnDuration = 0.2f;
-    [SerializeField] private Ease hoverEase = Ease.OutBack;
     [SerializeField] private Ease movementEase = Ease.OutQuad;
 
+    [Header("Modal UI")]
+    [SerializeField] private GameObject guideDisplay;
+
     private Vector2[] originalPositions;
-    private Vector3[] originalScales;
-    private Color[] originalColors;
 
     private Canvas rootCanvas;
     private Camera uiCamera;
@@ -31,11 +28,13 @@ public class MainMenuButtonAnimator : MonoBehaviour
 
     private void Awake()
     {
-        if (buttonTransforms.Length != 3 ||
+        if (buttonTransforms == null ||
+            buttonWhiteImages == null ||
+            buttonTransforms.Length != 3 ||
             buttonWhiteImages.Length != 3)
         {
             Debug.LogError(
-                "MAIN MENU BUTTON ANIMATOR | Exactly 3 buttons are required.",
+                "MAIN MENU BUTTON ANIMATOR | Exactly 3 button references are required.",
                 this
             );
 
@@ -44,10 +43,21 @@ public class MainMenuButtonAnimator : MonoBehaviour
         }
 
         originalPositions = new Vector2[3];
-        originalScales = new Vector3[3];
-        originalColors = new Color[3];
 
-        rootCanvas = GetComponentInParent<Canvas>().rootCanvas;
+        Canvas parentCanvas = GetComponentInParent<Canvas>();
+
+        if (parentCanvas == null)
+        {
+            Debug.LogError(
+                "MAIN MENU BUTTON ANIMATOR | No parent Canvas found.",
+                this
+            );
+
+            enabled = false;
+            return;
+        }
+
+        rootCanvas = parentCanvas.rootCanvas;
 
         if (rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
             uiCamera = rootCanvas.worldCamera;
@@ -68,12 +78,6 @@ public class MainMenuButtonAnimator : MonoBehaviour
 
             originalPositions[i] =
                 buttonTransforms[i].anchoredPosition;
-
-            originalScales[i] =
-                buttonTransforms[i].localScale;
-
-            originalColors[i] =
-                buttonWhiteImages[i].color;
         }
     }
 
@@ -89,6 +93,10 @@ public class MainMenuButtonAnimator : MonoBehaviour
 
     private int GetHoveredButtonIndex()
     {
+        // Ignore Main Menu hover detection while the guide is open.
+        if (guideDisplay != null && guideDisplay.activeInHierarchy)
+            return -1;
+
         if (Mouse.current == null)
             return -1;
 
@@ -122,11 +130,10 @@ public class MainMenuButtonAnimator : MonoBehaviour
 
         for (int i = 0; i < 3; i++)
         {
-            bool isHovered = i == hoveredIndex;
-
             Vector2 targetPosition = originalPositions[i];
 
-            if (hoveredIndex >= 0 && !isHovered)
+            // Push the other buttons away from the hovered button.
+            if (hoveredIndex >= 0 && i != hoveredIndex)
             {
                 targetPosition.y +=
                     i < hoveredIndex
@@ -134,48 +141,34 @@ public class MainMenuButtonAnimator : MonoBehaviour
                         : -pushDistance;
             }
 
-            Vector3 targetScale = originalScales[i];
-
-            if (isHovered)
-                targetScale *= hoverScaleMultiplier;
-
             buttonTransforms[i].DOKill();
-            buttonWhiteImages[i].DOKill();
 
             buttonTransforms[i]
                 .DOAnchorPos(targetPosition, duration)
-                .SetEase(movementEase);
-
-            buttonTransforms[i]
-                .DOScale(targetScale, duration)
-                .SetEase(isHovered ? hoverEase : movementEase);
-
-            buttonWhiteImages[i]
-                .DOColor(
-                    isHovered ? hoverColor : originalColors[i],
-                    duration
-                )
-                .SetEase(movementEase);
+                .SetEase(movementEase)
+                .SetUpdate(true);
         }
     }
 
     private void OnDisable()
     {
-        if (buttonTransforms != null)
-        {
-            foreach (RectTransform button in buttonTransforms)
-            {
-                if (button != null)
-                    button.DOKill();
-            }
-        }
+        currentHoveredIndex = -1;
 
-        if (buttonWhiteImages != null)
+        if (buttonTransforms == null)
+            return;
+
+        for (int i = 0; i < buttonTransforms.Length; i++)
         {
-            foreach (Image image in buttonWhiteImages)
+            if (buttonTransforms[i] == null)
+                continue;
+
+            buttonTransforms[i].DOKill();
+
+            if (originalPositions != null &&
+                i < originalPositions.Length)
             {
-                if (image != null)
-                    image.DOKill();
+                buttonTransforms[i].anchoredPosition =
+                    originalPositions[i];
             }
         }
     }

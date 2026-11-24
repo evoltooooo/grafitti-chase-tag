@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(Button))]
 public class UIButtonSFX : MonoBehaviour, IPointerEnterHandler
 {
+    [Header("Click Sound")]
+    [SerializeField] private bool useBackSFX;
+
     private Button button;
 
     private void Awake()
@@ -37,7 +40,12 @@ public class UIButtonSFX : MonoBehaviour, IPointerEnterHandler
 
     private void PlayClickSFX()
     {
-        if (AudioManager.Instance != null)
+        if (AudioManager.Instance == null)
+            return;
+
+        if (useBackSFX)
+            AudioManager.Instance.PlayButtonBack();
+        else
             AudioManager.Instance.PlayButtonClick();
     }
 }
