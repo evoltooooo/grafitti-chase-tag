@@ -21,13 +21,16 @@ public class PauseMenuAnimationController : MonoBehaviour
 
     [Header("Individual Button References")]
     [SerializeField] private CanvasGroup resumeButtonGroup;
+    [SerializeField] private CanvasGroup settingsButtonGroup;
     [SerializeField] private CanvasGroup exitButtonGroup;
 
     [SerializeField] private RectTransform resumeButtonTransform;
+    [SerializeField] private RectTransform settingsButtonTransform;
     [SerializeField] private RectTransform exitButtonTransform;
 
     [Header("Button Hover Components")]
     [SerializeField] private UIButtonHoverScale resumeButtonHover;
+    [SerializeField] private UIButtonHoverScale settingsButtonHover;
     [SerializeField] private UIButtonHoverScale exitButtonHover;
     [SerializeField] private UIButtonHoverScale yesButtonHover;
     [SerializeField] private UIButtonHoverScale noButtonHover;
@@ -91,6 +94,7 @@ public class PauseMenuAnimationController : MonoBehaviour
     private Vector3 confirmationOriginalScale;
 
     private Vector3 resumeButtonOriginalScale;
+    private Vector3 settingsButtonOriginalScale;
     private Vector3 exitButtonOriginalScale;
 
     private Sequence pauseSequence;
@@ -118,6 +122,7 @@ public class PauseMenuAnimationController : MonoBehaviour
     private void ResetButtonHoverImmediately()
     {
         resumeButtonHover.ResetHoverImmediately();
+        settingsButtonHover.ResetHoverImmediately();
         exitButtonHover.ResetHoverImmediately();
         yesButtonHover.ResetHoverImmediately();
         noButtonHover.ResetHoverImmediately();
@@ -172,6 +177,10 @@ public class PauseMenuAnimationController : MonoBehaviour
         valid &= Check(resumeButtonTransform, nameof(resumeButtonTransform));
         valid &= Check(exitButtonTransform, nameof(exitButtonTransform));
 
+        valid &= Check(settingsButtonGroup, nameof(settingsButtonGroup));
+        valid &= Check(settingsButtonTransform, nameof(settingsButtonTransform));
+        valid &= Check(settingsButtonHover, nameof(settingsButtonHover));
+
         valid &= Check(resumeButtonHover, nameof(resumeButtonHover));
         valid &= Check(exitButtonHover, nameof(exitButtonHover));
         valid &= Check(yesButtonHover, nameof(yesButtonHover));
@@ -202,9 +211,11 @@ public class PauseMenuAnimationController : MonoBehaviour
         confirmationOriginalScale = confirmationTransform.localScale;
 
         resumeButtonOriginalScale = resumeButtonTransform.localScale;
+        settingsButtonOriginalScale = settingsButtonTransform.localScale;
         exitButtonOriginalScale = exitButtonTransform.localScale;
 
         resumeButtonHover.SetOriginalScale(resumeButtonOriginalScale);
+        settingsButtonHover.SetOriginalScale(settingsButtonOriginalScale);
         exitButtonHover.SetOriginalScale(exitButtonOriginalScale);
 
         yesButtonHover.SetOriginalScale(
@@ -242,6 +253,13 @@ public class PauseMenuAnimationController : MonoBehaviour
 
         resumeButtonTransform.localScale =
             resumeButtonOriginalScale * buttonStartScale;
+
+        settingsButtonGroup.alpha = 0f;
+        settingsButtonGroup.interactable = false;
+        settingsButtonGroup.blocksRaycasts = false;
+
+        settingsButtonTransform.localScale =
+            settingsButtonOriginalScale * buttonStartScale;
 
         exitButtonTransform.localScale =
             exitButtonOriginalScale * buttonStartScale;
@@ -286,12 +304,19 @@ public class PauseMenuAnimationController : MonoBehaviour
         resumeButtonGroup.interactable = false;
         resumeButtonGroup.blocksRaycasts = false;
 
+        settingsButtonGroup.alpha = 0f;
+        settingsButtonGroup.interactable = false;
+        settingsButtonGroup.blocksRaycasts = false;
+
         exitButtonGroup.alpha = 0f;
         exitButtonGroup.interactable = false;
         exitButtonGroup.blocksRaycasts = false;
 
         resumeButtonTransform.localScale =
             resumeButtonOriginalScale * buttonStartScale;
+        
+        settingsButtonTransform.localScale =
+            settingsButtonOriginalScale * buttonStartScale;
 
         exitButtonTransform.localScale =
             exitButtonOriginalScale * buttonStartScale;
@@ -346,14 +371,28 @@ public class PauseMenuAnimationController : MonoBehaviour
             ).SetEase(buttonPopupEase)
         );
 
-        // Exit Button Popup
+        // Settings Button Popup
         pauseSequence.Insert(
             0.1f + buttonPopupDelay,
-            exitButtonGroup.DOFade(1f, buttonPopupDuration)
+            settingsButtonGroup.DOFade(1f, buttonPopupDuration)
         );
 
         pauseSequence.Insert(
             0.1f + buttonPopupDelay,
+            settingsButtonTransform.DOScale(
+                settingsButtonOriginalScale,
+                buttonPopupDuration
+            ).SetEase(buttonPopupEase)
+        );
+
+        // Exit Button Popup
+        pauseSequence.Insert(
+            0.1f + buttonPopupDelay * 2,
+            exitButtonGroup.DOFade(1f, buttonPopupDuration)
+        );
+
+        pauseSequence.Insert(
+            0.1f + buttonPopupDelay * 2,
             exitButtonTransform.DOScale(
                 exitButtonOriginalScale,
                 buttonPopupDuration
@@ -371,6 +410,9 @@ public class PauseMenuAnimationController : MonoBehaviour
 
             resumeButtonGroup.interactable = true;
             resumeButtonGroup.blocksRaycasts = true;
+
+            settingsButtonGroup.interactable = true;
+            settingsButtonGroup.blocksRaycasts = true;
 
             exitButtonGroup.interactable = true;
             exitButtonGroup.blocksRaycasts = true;
@@ -405,6 +447,9 @@ public class PauseMenuAnimationController : MonoBehaviour
 
         pauseScreenGroup.interactable = false;
         pauseScreenGroup.blocksRaycasts = false;
+
+        settingsButtonGroup.interactable = false;
+        settingsButtonGroup.blocksRaycasts = false;
 
         closeSequence = DOTween.Sequence()
             .SetUpdate(true);
@@ -455,6 +500,20 @@ public class PauseMenuAnimationController : MonoBehaviour
             0f,
             resumeButtonTransform.DOScale(
                 resumeButtonOriginalScale * buttonStartScale,
+                closeDuration
+            ).SetEase(closeEase)
+        );
+
+        // Close Settings Button individually.
+        closeSequence.Insert(
+            0f,
+            settingsButtonGroup.DOFade(0f, closeDuration)
+        );
+
+        closeSequence.Insert(
+            0f,
+            settingsButtonTransform.DOScale(
+                settingsButtonOriginalScale * buttonStartScale,
                 closeDuration
             ).SetEase(closeEase)
         );

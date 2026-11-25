@@ -5,6 +5,7 @@ public class PauseManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private RoundManager roundManager;
+    [SerializeField] private SettingsUIController settingsUIController;
 
     private InputManager inputManager;
 
@@ -36,9 +37,21 @@ public class PauseManager : MonoBehaviour
             return;
 
         if (IsPaused)
+        {
+            // Close Settings first, without resuming gameplay.
+            if (settingsUIController != null &&
+                settingsUIController.IsOpen)
+            {
+                settingsUIController.CloseSettings();
+                return;
+            }
+
             ResumeGame();
+        }
         else
+        {
             PauseGame();
+        }
     }
 
     private void PauseGame()

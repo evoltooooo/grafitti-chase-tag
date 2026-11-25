@@ -119,6 +119,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &97247327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 97247329}
+  - component: {fileID: 97247328}
+  m_Layer: 0
+  m_Name: GameSettingsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &97247328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97247327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6719e42c7a066409ad6c9591fdda1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSettingsManager
+--- !u!4 &97247329
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97247327}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 901.65967, y: 572.14935, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &558354070
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,7 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b45b5f924717874d9fbeb3078ce1ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BootloaderController
-  startupSceneName: Main Game
+  startupSceneName: Main Menu
 --- !u!4 &558354072
 Transform:
   m_ObjectHideFlags: 0
@@ -198,6 +242,7 @@ MonoBehaviour:
   sfxMixerGroup: {fileID: 0}
   sfxVolume: 1
   pooledVoiceCount: 8
+  settingsSFXPreview: {fileID: 8300000, guid: 88f1202dff804584ea1d35a46dfcf94f, type: 3}
   buttonHoverSFX: {fileID: 8300000, guid: 88f1202dff804584ea1d35a46dfcf94f, type: 3}
   buttonClickSFX: {fileID: 8300000, guid: 27ee4c5e7d4f2a3488b8d1213768d6aa, type: 3}
   buttonBackSFX: {fileID: 0}
@@ -210,7 +255,7 @@ MonoBehaviour:
   tokenSpawnSFX: {fileID: 8300000, guid: 88f1202dff804584ea1d35a46dfcf94f, type: 3}
   bgmSource: {fileID: 0}
   bgmMixerGroup: {fileID: 0}
-  bgmVolume: 0.6
+  bgmVolume: 1
   bgmFadeDuration: 1
 --- !u!82 &911583976
 AudioSource:
@@ -551,3 +596,4 @@ SceneRoots:
   - {fileID: 1752975285}
   - {fileID: 558354072}
   - {fileID: 911583977}
+  - {fileID: 97247329}

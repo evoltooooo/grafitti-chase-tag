@@ -1,4 +1,4 @@
-
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -39,6 +39,8 @@ public class ParkourCameraController : MonoBehaviour
     private Cinemachine3OrbitRig.Orbit poleSpinStartTop;
     private Cinemachine3OrbitRig.Orbit poleSpinReturnStartTop;
 
+    private readonly List<float> originalInputGains = new();
+
     private void Awake()
     {
         if (cinemachineCamera == null)
@@ -52,6 +54,8 @@ public class ParkourCameraController : MonoBehaviour
         if (inputAxisController == null)
             inputAxisController =
                 GetComponent<CinemachineInputAxisController>();
+        
+        CacheOriginalInputGains();
     }
 
     private void LateUpdate()
@@ -122,6 +126,43 @@ public class ParkourCameraController : MonoBehaviour
         else
         {
             EndActionCamera();
+        }
+    }
+
+    private void CacheOriginalInputGains()
+    {
+        originalInputGains.Clear();
+
+        if (inputAxisController == null)
+            return;
+
+        foreach (var controller in inputAxisController.Controllers)
+        {
+            originalInputGains.Add(controller.Input.Gain);
+        }
+    }
+
+    public void SetCameraSensitivity(float percentage)
+    {
+        if (inputAxisController == null)
+            return;
+
+        percentage = Mathf.Clamp01(percentage);
+
+        // The original Cinemachine configuration represents 70%.
+        float multiplier = percentage / 0.7f;
+
+        var controllers = inputAxisController.Controllers;
+
+        if (controllers.Count != originalInputGains.Count)
+            return;
+
+        for (int i = 0; i < controllers.Count; i++)
+        {
+            var controller = controllers[i];
+
+            controller.Input.Gain =
+                originalInputGains[i] * multiplier;
         }
     }
 

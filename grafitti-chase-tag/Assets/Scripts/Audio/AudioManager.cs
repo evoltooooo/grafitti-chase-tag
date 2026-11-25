@@ -20,6 +20,9 @@ public class AudioManager : MonoBehaviour
     [Min(1)]
     [SerializeField] private int pooledVoiceCount = 8;
 
+    [Header("Settings Preview SFX")]
+    [SerializeField] private AudioClip settingsSFXPreview;
+
     [Header("UI SFX")]
     [SerializeField] private AudioClip buttonHoverSFX;
     [SerializeField] private AudioClip buttonClickSFX;
@@ -47,8 +50,7 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float bgmVolume = 1f;
 
-    [SerializeField, Min(0f)]
-    private float bgmFadeDuration = 1f;
+    [SerializeField, Min(0f)] private float bgmFadeDuration = 1f;
 
     private Coroutine bgmFadeCoroutine;
 
@@ -116,6 +118,11 @@ public class AudioManager : MonoBehaviour
             voicePool.Add(voice);
             voiceStartTimes.Add(0f);
         }
+    }
+
+    public void PlaySettingsSFXPreview()
+    {
+        PlayConfiguredSFX(settingsSFXPreview);
     }
 
     public void PlaySFX(
