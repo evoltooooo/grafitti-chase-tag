@@ -706,7 +706,16 @@ MonoBehaviour:
   pageIndicator: {fileID: 1459273420}
   pagePrefabs:
   - {fileID: 2067067400983504488, guid: 9026e989022831e46a6cd246ac5c1a8f, type: 3}
-  - {fileID: 2067067400983504488, guid: b26bf400722145444acd6cd7c46387de, type: 3}
+  - {fileID: 2067067400983504488, guid: 42d3dd79b97b6a340b45c1a39fb7e81f, type: 3}
+  - {fileID: 2067067400983504488, guid: 38ee7da05c7d2524794b0d6900b16b9b, type: 3}
+  - {fileID: 2067067400983504488, guid: 8b099d30a919b5245b90449ab34ac194, type: 3}
+  - {fileID: 2067067400983504488, guid: ceddfd5e549e84943bed5e216de19ca3, type: 3}
+  - {fileID: 2067067400983504488, guid: c1ffed7d0293ee7419cf6673304da212, type: 3}
+  - {fileID: 2067067400983504488, guid: 2748529eb42833a4bb0ff709003d5c0e, type: 3}
+  - {fileID: 2067067400983504488, guid: fff92fb423d1e7643b961275685e6f66, type: 3}
+  - {fileID: 2067067400983504488, guid: f218cda1da268e44998dc7021f2437b6, type: 3}
+  - {fileID: 2067067400983504488, guid: a963349b5ab78fe4fbe7b6befd80f5a0, type: 3}
+  - {fileID: 2067067400983504488, guid: 628302e7842c8e64c95ec66601ed8ffc, type: 3}
   backgroundTargetAlpha: 0.75
   backgroundFadeInDuration: 0.3
   backgroundFadeOutDuration: 0.25
@@ -942,7 +951,7 @@ RectTransform:
   m_GameObject: {fileID: 293644376}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 0.559986, y: 0.559986, z: 0.559986}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 616299793}
@@ -1093,7 +1102,7 @@ RectTransform:
   m_GameObject: {fileID: 302991436}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 0.559986, y: 0.559986, z: 0.559986}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 616299793}

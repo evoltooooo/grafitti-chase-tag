@@ -230,6 +230,8 @@ public class RoundUIManager : MonoBehaviour
                 AudioManager.Instance.PlayPlayerTagged();
             else if (resultSprite == evadedSprite)
                 AudioManager.Instance.PlayPlayerEvaded();
+            
+            AudioManager.Instance.PlayResultDisplaySFX();
         }
 
         ShowTaggedImage(resultSprite);

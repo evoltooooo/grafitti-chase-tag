@@ -247,7 +247,7 @@ public class SettingsUIController : MonoBehaviour
         displaySequence?.Kill();
 
         displaySequence = DOTween.Sequence()
-    .SetUpdate(true);
+            .SetUpdate(true);
 
         displaySequence.Join(
             backgroundGroup.DOFade(

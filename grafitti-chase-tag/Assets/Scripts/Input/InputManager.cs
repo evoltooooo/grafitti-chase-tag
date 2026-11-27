@@ -3,7 +3,11 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    public static InputManager Instance { get; private set; }
+
     private PlayerControls playerControls;
+
+    public bool IsInitialized => playerControls != null;
 
     public Vector2 MovementInput { get; private set; }
     public Vector2 CameraInput { get; private set; }
@@ -15,6 +19,15 @@ public class InputManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         playerControls = new PlayerControls();
 
         playerControls.Movement.Movement.performed +=
@@ -37,20 +50,42 @@ public class InputManager : MonoBehaviour
 
         playerControls.Action.Pause.performed +=
             _ => PausePressed?.Invoke();
-        
+
         playerControls.Action.SkipIntro.performed +=
-    _       => SkipIntroPressed?.Invoke();
+            _ => SkipIntroPressed?.Invoke();
     }
 
     private void OnEnable()
     {
+        if (Instance != this || playerControls == null)
+            return;
+
         playerControls.Enable();
     }
 
     private void OnDisable()
     {
+        if (Instance != this || playerControls == null)
+            return;
+
         playerControls.Disable();
 
+        ResetInputValues();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance != this)
+            return;
+
+        playerControls?.Dispose();
+        playerControls = null;
+
+        Instance = null;
+    }
+
+    private void ResetInputValues()
+    {
         MovementInput = Vector2.zero;
         CameraInput = Vector2.zero;
         SprintHeld = false;

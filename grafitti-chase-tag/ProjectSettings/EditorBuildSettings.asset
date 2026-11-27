@@ -6,26 +6,23 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Game/Bootloader.unity
+    guid: b6ae304ea33ed174fbf4defce27c7010
+  - enabled: 1
     path: Assets/Scenes/Game/Main Menu.unity
     guid: 34c8bb1238a6dee48a7e175053d8fd48
-  - enabled: 1
-    path: Assets/Scenes/Game/Main Game.unity
-    guid: b5d53d65c3b281949b993eb20831e676
-  - enabled: 0
-    path: Assets/Scenes/Game/Game End.unity
-    guid: f2f3e4a39967b2843856c45977ab7e3d
   - enabled: 1
     path: Assets/Scenes/Game/Credits.unity
     guid: 29a875344d6491d4b854c13d3752d73b
   - enabled: 1
-    path: Assets/Scenes/Game/Loading.unity
-    guid: 05222ae6ceb637f41807ed2c5a972218
+    path: Assets/Scenes/Game/Main Game.unity
+    guid: b5d53d65c3b281949b993eb20831e676
   - enabled: 1
-    path: Assets/Scenes/Game/Game EndC.unity
+    path: Assets/Scenes/Game/Game End.unity
     guid: c320ae4bfc943a645b7379ce7868d508
   - enabled: 1
-    path: Assets/Scenes/Game/Bootloader.unity
-    guid: b6ae304ea33ed174fbf4defce27c7010
+    path: Assets/Scenes/Game/Loading.unity
+    guid: 05222ae6ceb637f41807ed2c5a972218
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

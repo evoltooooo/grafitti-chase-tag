@@ -60,7 +60,7 @@ public class GameplayCharacterSpawner : MonoBehaviour
         );
 
         InputManager playerInputManager =
-            spawnedPlayer.GetComponent<InputManager>();
+            InputManager.Instance;
         
         if (stageIntroDirector != null && playerInputManager != null)
         {

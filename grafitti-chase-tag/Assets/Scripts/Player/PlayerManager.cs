@@ -11,8 +11,18 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         if (inputManager == null)
-            inputManager =
-                GetComponent<InputManager>();
+            inputManager = InputManager.Instance;
+
+        if (inputManager == null)
+        {
+            Debug.LogError(
+                "PLAYER MANAGER | InputManager instance not found.",
+                this
+            );
+
+            enabled = false;
+            return;
+        }
 
         if (characterMotor == null)
             characterMotor =

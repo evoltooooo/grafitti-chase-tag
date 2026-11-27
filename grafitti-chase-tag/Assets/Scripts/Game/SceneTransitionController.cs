@@ -23,6 +23,8 @@ public class SceneTransitionController : MonoBehaviour
 
     public bool IsTransitioning => isTransitioning;
 
+    private bool fadeInOnNextSceneLoaded;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -41,6 +43,42 @@ public class SceneTransitionController : MonoBehaviour
         overlayGroup.alpha = 1f;
         overlayGroup.interactable = false;
         overlayGroup.blocksRaycasts = true;
+    }
+
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded +=
+            HandleSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -=
+            HandleSceneLoaded;
+    }
+
+    public void FadeInAfterNextSceneLoad()
+    {
+        fadeInOnNextSceneLoaded = true;
+    }
+
+    private void HandleSceneLoaded(
+        UnityEngine.SceneManagement.Scene scene,
+        UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        if (!fadeInOnNextSceneLoaded)
+            return;
+
+        fadeInOnNextSceneLoaded = false;
+
+        // Allow the destination scene's Start methods to run first.
+        StartCoroutine(FadeInAfterOneFrame());
+    }
+
+    private System.Collections.IEnumerator FadeInAfterOneFrame()
+    {
+        yield return null;
+        FadeIn();
     }
 
     public void FadeOut(Action onComplete = null)

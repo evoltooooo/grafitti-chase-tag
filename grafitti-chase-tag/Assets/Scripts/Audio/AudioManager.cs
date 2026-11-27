@@ -39,6 +39,7 @@ public class AudioManager : MonoBehaviour
     [Header("Tag Result SFX")]
     [SerializeField] private AudioClip playerTaggedSFX;
     [SerializeField] private AudioClip playerEvadedSFX;
+    [SerializeField] private AudioClip resultDisplaySFX;
 
     [Header("Token SFX")]
     [SerializeField] private AudioClip tokenSpawnSFX;
@@ -277,6 +278,11 @@ public class AudioManager : MonoBehaviour
     public void PlayPlayerEvaded()
     {
         PlayConfiguredSFX(playerEvadedSFX);
+    }
+
+    public void PlayResultDisplaySFX()
+    {
+        PlayConfiguredSFX(resultDisplaySFX);
     }
 
     // Tokens

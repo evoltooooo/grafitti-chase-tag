@@ -27,7 +27,7 @@ RectTransform:
   m_GameObject: {fileID: 479442142998314636}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.2751026, y: 1.6191975, z: 1.6948702}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6683492135473475892}
@@ -151,7 +151,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00012207031, y: -208.20831}
+  m_AnchoredPosition: {x: 0, y: -208.20831}
   m_SizeDelta: {x: 1000, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4109286963681797061
@@ -182,12 +182,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  m_text: Game ini menggunakan kombinasi Mouse dan Keyboard sebagai kontrol utama.
+    Pemain dapat menggunakan keyboard untuk mengendalikan pergerakan karakter, sementara
+    mouse digunakan untuk mengatur arah pandangan kamera selama permainan berlangsung.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 13f855ba2a261dd4185ac65f23900111, type: 2}
-  m_sharedMaterial: {fileID: 7775258650644775114, guid: 13f855ba2a261dd4185ac65f23900111, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6916c1bbee1a5ea4cabfbd58e53a7c85, type: 2}
+  m_sharedMaterial: {fileID: 2229445481428724172, guid: 6916c1bbee1a5ea4cabfbd58e53a7c85, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -218,10 +218,10 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 8
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: -4.72
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
+  m_wordWrappingRatios: 0
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 174.38248, y: 0, z: 173.6459, w: 0}
+  m_margin: {x: 186.3721, y: -53.779346, z: 185.6354, w: -39.43806}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -283,14 +283,14 @@ RectTransform:
   m_GameObject: {fileID: 1076938134720277527}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.050827, y: 3.469757, z: 6.90551}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2.6770341, y: 1.5351056, z: 3.0551667}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8062448397887409482}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00012207031, y: 50.8302}
+  m_AnchoredPosition: {x: -234, y: 63}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9184927565503480665
@@ -321,7 +321,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9683c8cdd406f334caa13828ec69ada9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c714ee6935eb3a144b697814acc49f63, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -530,8 +530,8 @@ RectTransform:
   m_GameObject: {fileID: 5315094579484725803}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.3520926, y: 1.3645952, z: 2.7158172}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.1763206, y: 1.1871978, z: 2.362761}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8062448397887409482}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -555,7 +555,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5315094579484725803}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -657,7 +657,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &728237598804678365
 RectTransform:
   m_ObjectHideFlags: 0
@@ -667,7 +667,7 @@ RectTransform:
   m_GameObject: {fileID: 5643658285264342493}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 8.722654, y: 6.363158, z: 1.945428}
+  m_LocalScale: {x: 8.975457, y: 6.363158, z: 1.945428}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8062448397887409482}
@@ -692,7 +692,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5643658285264342493}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

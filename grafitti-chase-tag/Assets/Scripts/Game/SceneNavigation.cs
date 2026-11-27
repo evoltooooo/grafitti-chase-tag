@@ -28,7 +28,7 @@ public class SceneNavigation : MonoBehaviour
 
     public void OpenGameEnd()
     {
-        LoadScene("Game EndC");
+        LoadScene("Game End");
     }
 
     public void PlayAgain()

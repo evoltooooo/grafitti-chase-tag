@@ -193,6 +193,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BootloaderController
   startupSceneName: Main Menu
+  requireAudioManager: 1
+  requireSettingsManager: 1
+  requireInputManager: 1
+  requireTransitionController: 1
 --- !u!4 &558354072
 Transform:
   m_ObjectHideFlags: 0
@@ -242,17 +246,18 @@ MonoBehaviour:
   sfxMixerGroup: {fileID: 0}
   sfxVolume: 1
   pooledVoiceCount: 8
-  settingsSFXPreview: {fileID: 8300000, guid: 88f1202dff804584ea1d35a46dfcf94f, type: 3}
-  buttonHoverSFX: {fileID: 8300000, guid: 88f1202dff804584ea1d35a46dfcf94f, type: 3}
-  buttonClickSFX: {fileID: 8300000, guid: 27ee4c5e7d4f2a3488b8d1213768d6aa, type: 3}
+  settingsSFXPreview: {fileID: 8300000, guid: 27ee4c5e7d4f2a3488b8d1213768d6aa, type: 3}
+  buttonHoverSFX: {fileID: 8300000, guid: be40c8c57a11f6146b97b4054ac92423, type: 3}
+  buttonClickSFX: {fileID: 8300000, guid: 77660464261916e40935ed29456d350a, type: 3}
   buttonBackSFX: {fileID: 0}
-  roleShuffleTickSFX: {fileID: 0}
-  roleRevealSFX: {fileID: 0}
-  countdownTickSFX: {fileID: 0}
-  countdownGoSFX: {fileID: 0}
+  roleShuffleTickSFX: {fileID: 8300000, guid: 10168c8123edd4a40a400496e52f4cc0, type: 3}
+  roleRevealSFX: {fileID: 8300000, guid: af1226b0e02cd5443bab2b841dafddff, type: 3}
+  countdownTickSFX: {fileID: 8300000, guid: 25715718540f1db41a73cbd5564674a7, type: 3}
+  countdownGoSFX: {fileID: 8300000, guid: 962bfb81a872c654c916dd56fa88cd15, type: 3}
   playerTaggedSFX: {fileID: 8300000, guid: 27ee4c5e7d4f2a3488b8d1213768d6aa, type: 3}
   playerEvadedSFX: {fileID: 8300000, guid: 25dad2be3cd028d41b8e7e3830321759, type: 3}
-  tokenSpawnSFX: {fileID: 8300000, guid: 88f1202dff804584ea1d35a46dfcf94f, type: 3}
+  resultDisplaySFX: {fileID: 0}
+  tokenSpawnSFX: {fileID: 8300000, guid: 3020e8562bd3af841a9f99ed71054ffa, type: 3}
   bgmSource: {fileID: 0}
   bgmMixerGroup: {fileID: 0}
   bgmVolume: 1
@@ -380,6 +385,7 @@ GameObject:
   - component: {fileID: 1084909356}
   - component: {fileID: 1084909355}
   - component: {fileID: 1084909354}
+  - component: {fileID: 1084909357}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -456,6 +462,94 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1084909357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084909353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
+--- !u!1 &1161518701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1161518703}
+  - component: {fileID: 1161518702}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1161518702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161518701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 906b80d3344184f429f9d2b060808749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+--- !u!4 &1161518703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161518701}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 523.1167, y: 142.60759, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -597,3 +691,4 @@ SceneRoots:
   - {fileID: 558354072}
   - {fileID: 911583977}
   - {fileID: 97247329}
+  - {fileID: 1161518703}

@@ -8,11 +8,12 @@ public class CharacterMovementSFX : MonoBehaviour
     [SerializeField] private CharacterActionRuntime actionRuntime;
     [SerializeField] private AudioSource movementAudioSource;
 
-    [Header("Running SFX")]
-    [SerializeField] private AudioClip runLoopSFX;
+    [Header("Locomotion SFX")]
+    [SerializeField] private AudioClip normalMovementSFX;
+    [SerializeField] private AudioClip sprintSFX;
 
     [Range(0f, 1f)]
-    [SerializeField] private float runVolume = 0.5f;
+    [SerializeField] private float normalMovementVolume = 0.5f;
 
     [Range(0f, 1f)]
     [SerializeField] private float sprintVolume = 0.7f;
@@ -41,9 +42,6 @@ public class CharacterMovementSFX : MonoBehaviour
         movementAudioSource.loop = true;
         movementAudioSource.spatialBlend = 0f;
         movementAudioSource.volume = 0f;
-
-        if (runLoopSFX != null)
-            movementAudioSource.clip = runLoopSFX;
     }
 
     private void Update()
@@ -54,8 +52,7 @@ public class CharacterMovementSFX : MonoBehaviour
     private void UpdateMovementSFX()
     {
         if (characterMotor == null ||
-            movementAudioSource == null ||
-            runLoopSFX == null)
+            movementAudioSource == null)
         {
             targetVolume = 0f;
             UpdateVolume();
@@ -79,20 +76,40 @@ public class CharacterMovementSFX : MonoBehaviour
         if (!shouldPlay)
         {
             targetVolume = 0f;
+            UpdateVolume();
+            return;
         }
-        else if (characterMotor.IsSprinting)
+
+        AudioClip targetClip;
+
+        if (characterMotor.IsSprinting)
         {
+            targetClip = sprintSFX;
             targetVolume = sprintVolume;
         }
         else
         {
-            targetVolume = runVolume;
+            targetClip = normalMovementSFX;
+            targetVolume = normalMovementVolume;
         }
 
-        if (shouldPlay && !movementAudioSource.isPlaying)
+        if (targetClip == null)
         {
-            movementAudioSource.clip = runLoopSFX;
+            targetVolume = 0f;
+            UpdateVolume();
+            return;
+        }
+
+        // Switch audio only when the movement type changes.
+        if (movementAudioSource.clip != targetClip)
+        {
+            movementAudioSource.Stop();
+            movementAudioSource.clip = targetClip;
             movementAudioSource.loop = true;
+            movementAudioSource.Play();
+        }
+        else if (!movementAudioSource.isPlaying)
+        {
             movementAudioSource.Play();
         }
 
