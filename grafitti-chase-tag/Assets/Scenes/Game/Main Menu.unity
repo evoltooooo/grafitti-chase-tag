@@ -706,6 +706,7 @@ MonoBehaviour:
   pageIndicator: {fileID: 1459273420}
   pagePrefabs:
   - {fileID: 2067067400983504488, guid: 9026e989022831e46a6cd246ac5c1a8f, type: 3}
+  - {fileID: 2067067400983504488, guid: 9af7fa2503ca9bb40a0ab3228f803a64, type: 3}
   - {fileID: 2067067400983504488, guid: 42d3dd79b97b6a340b45c1a39fb7e81f, type: 3}
   - {fileID: 2067067400983504488, guid: 38ee7da05c7d2524794b0d6900b16b9b, type: 3}
   - {fileID: 2067067400983504488, guid: 8b099d30a919b5245b90449ab34ac194, type: 3}
@@ -1438,7 +1439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &505724869
 RectTransform:
   m_ObjectHideFlags: 0
